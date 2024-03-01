@@ -1,0 +1,113 @@
+* {
+  padding: 0px;
+  margin: 0px;
+  font-size: 12px;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  font-weight: 400;
+  color: black;
+  background-color: white;
+  border-radius: 0px;
+  border: none;
+  user-select: none;
+  scrollbar-width: 0px;
+}
+
+*::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+
+body, html, #root, #main {
+  display: contents;
+}
+ 
+#main {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(255, 255, 255);
+  display: contents;
+
+  // upper tools
+  #upper-tools {
+    width: 100vw;
+    height: 50px;
+    background-color: black;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    #logo {
+      width: 30px;
+      height: 30px;
+      background: url('/logo.svg');
+      background-size: cover;
+      background-position: center;
+    }
+  }
+
+  // canvas
+  #canvas {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(228, 228, 228);
+    position: absolute;
+    top: 0px;
+    left: 0;
+    z-index: -50000;
+    overflow: scroll;
+
+  
+  }
+
+
+}
+
+
+// dev components
+// those will be removed on production
+#select {
+  width: 0px;
+  height: 0px;
+  background-color: rgba(131, 170, 255, 0.349);
+  border: 1px solid rgb(107, 154, 255);
+  position: absolute !important;
+  top: 0;
+  left: 0;
+}
+
+#states {
+  width: 100px;
+  height: fit-content;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  background-color: black;
+  z-index: 3;
+  * {
+    user-select: text;
+  }
+  th, td {
+    padding: 5px;
+  }
+
+  #decorators {
+    display: contents;
+
+    * {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      z-index: 40000;
+    }
+
+    #top-resize:hover {
+      transform: scaleX(50);
+    }
+  }
+}
