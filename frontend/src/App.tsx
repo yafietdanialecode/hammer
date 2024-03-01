@@ -26,6 +26,9 @@ function App() {
   const [includeSelectingUpto, set_includeSelectingUpto] = useState({x: 0, y: 0});
   // lists of selected elements in this cordinate
   const [selectedElements, set_selectedElements] = useState([]);
+  // show all selected elements wrapper
+  const [multiSelectedElementsWrapperDivStartFrom, set_multiSelectedElementsWrapperDivStartFrom] = useState({ x: 0, y: 0});
+  const [multiSelectedElementsWrapperDivInclude, set_multiSelectedElementsWrapperDivInclude] = useState({ x: 0, y: 0});
 
 
   // seleElement
@@ -43,6 +46,7 @@ function App() {
   // editing features
   const [textEditingModeEnabled, set_textEditingModeEnabled] = useState(false);
   
+
 
 
   useEffect(() => {
@@ -77,6 +81,48 @@ function App() {
       let res = getCIArea(startSelectingFrom, includeSelectingUpto)
       set_selectedElements(res);
       
+      // create a wrapper elemnt
+      if(res.length == 1){
+        // this means user selected one element only
+
+      }else if(res.length > 1){
+        // this means user selected multiple elements only
+        
+        let startFromMax = { x: 20000, y: 2000000 };
+        let includeUpToMax = { x: -20000, y: -200000 };
+        
+        
+        res.forEach((each: any) => {
+          
+          // some varialble to clean the code
+          let eTop = top(each);
+          let eLeft = left(each);
+          let eRight = right(each);
+          let eBottom = bottom(each);
+          
+          if(eTop < startFromMax.y){ // the top minimum value of element
+            startFromMax.y = eTop;
+            console.log('top: ' + eTop);
+          }
+          if(eLeft < startFromMax.x){ // the left minimum value of element
+            startFromMax.x = eLeft;
+            console.log('left: ' + eLeft)
+          }
+          if(eRight > includeUpToMax.x){ // the right maximum value of element
+            includeUpToMax.x = eRight;
+            console.log('right ' + eRight);
+          }
+          if(eBottom > includeUpToMax.y){ // the bottom maximum value of element
+            includeUpToMax.y = eBottom;
+            console.log('bottom: ' + eBottom); 
+          }
+          
+        })
+
+        set_multiSelectedElementsWrapperDivStartFrom(startFromMax);
+        set_multiSelectedElementsWrapperDivInclude(includeUpToMax)
+        console.log('height: ' + (includeUpToMax.y - startFromMax.y))
+      }
     }
     
   }
@@ -220,6 +266,18 @@ function App() {
         }}
         ></div>
       }
+
+      {selectedElements.length > 1 && <div id='selected-elements-wapper'
+        style={{
+          position: 'absolute',
+          top: px(multiSelectedElementsWrapperDivStartFrom.y + scrollTop),
+          left: px(multiSelectedElementsWrapperDivStartFrom.x + scrollLeft),
+          width: px((multiSelectedElementsWrapperDivInclude.x - multiSelectedElementsWrapperDivStartFrom.x)),
+          height: px(multiSelectedElementsWrapperDivInclude.y - multiSelectedElementsWrapperDivStartFrom.y),
+        }}
+        >
+
+        </div>}
       </div>
 
 
@@ -228,6 +286,7 @@ function App() {
       states are a key value pairs of useState hooks list 
       those display the value in real time
       */}
+      {/* root states */}
       <table id="states">
         <tbody>
         <tr>
@@ -270,6 +329,12 @@ function App() {
           <td>{selectedElements.map((each: any) => <p key={each}>{each}</p>
           )}</td>
         </tr>
+        <tr>
+          <td>multiSelectedElementsWrapperDiv</td>
+          <td>{multiSelectedElementsWrapperDivStartFrom.x}:{multiSelectedElementsWrapperDivInclude.x}</td>
+          <td>{multiSelectedElementsWrapperDivStartFrom.y}:{multiSelectedElementsWrapperDivInclude.y}</td>
+        </tr>
+
         </tbody>
       </table>
 
@@ -300,8 +365,8 @@ function App() {
         position: 'absolute',
         top: px(top(seleElement) - 20),
         left: px(left(seleElement) + (width(seleElement) / 2)),
-        width: '10px',
-        height: '10px',
+        width: '6px',
+        height: '6px',
         background: 'rgb(107, 154, 255)',
         zIndex: 30,
         cursor: 'crosshair',

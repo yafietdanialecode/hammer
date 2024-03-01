@@ -62,24 +62,25 @@ body, html, #root, #main {
     z-index: -50000;
     overflow: scroll;
 
-  
-  }
-
-
-}
-
-
-// dev components
+  // dev components
 // those will be removed on production
-#select {
+#select, #selected-elements-wapper {
   width: 0px;
-  height: 0px;
+  height: 400px;
   background-color: rgba(131, 170, 255, 0.349);
   border: 1px solid rgb(107, 154, 255);
   position: absolute !important;
   top: 0;
   left: 0;
 }
+
+  }
+
+
+}
+
+
+
 
 #states {
   width: 100px;
