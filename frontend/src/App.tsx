@@ -1,6 +1,4 @@
-import { MouseEvent, WheelEvent, useEffect, useState, useSyncExternalStore } from 'react'
-import reactLogo from './assets/react.svg'
-import appLogo from '/vite.svg'
+import { MouseEvent, useEffect, useState } from 'react'
 import './App.css'
 import gEBID from './modules/gEBID';
 import { bottom, height, left, right, top, width } from './modules/getStyle';
@@ -84,7 +82,7 @@ function App() {
       // create a wrapper elemnt
       if(res.length == 1){
         // this means user selected one element only
-
+        set_seleElement(res[0]);
       }else if(res.length > 1){
         // this means user selected multiple elements only
         
@@ -95,10 +93,10 @@ function App() {
         res.forEach((each: any) => {
           
           // some varialble to clean the code
-          let eTop = top(each);
-          let eLeft = left(each);
-          let eRight = right(each);
-          let eBottom = bottom(each);
+          let eTop: any = top(each);
+          let eLeft: any = left(each);
+          let eRight: any = right(each);
+          let eBottom: any = bottom(each);
           
           if(eTop < startFromMax.y){ // the top minimum value of element
             startFromMax.y = eTop;
@@ -121,7 +119,7 @@ function App() {
 
         set_multiSelectedElementsWrapperDivStartFrom(startFromMax);
         set_multiSelectedElementsWrapperDivInclude(includeUpToMax)
-        console.log('height: ' + (includeUpToMax.y - startFromMax.y))
+        set_seleElement('selected-elements-wapper');
       }
     }
     
@@ -145,7 +143,7 @@ function App() {
       <div id="canvas"
       tabIndex={-1}
       draggable={false}
-      onMouseDown={(e: MouseEvent) => {
+      onMouseDown={(e: any) => {
       if(
         e.target.id !== 'select'
         ){
@@ -153,9 +151,11 @@ function App() {
       }
       
       if(e.target.id !== 'canvas'){ // this if statement will be remlaced by modes
+        let l: any = left(e.target.id);
+        let t: any = top(e.target.id);
         set_objectCursorDifference({
-          x: (e.clientX + scrollLeft) - (left(e.target.id) + scrollLeft),
-          y: (e.clientY + scrollTop) - (top(e.target.id) + scrollTop)
+          x: (e.clientX + scrollLeft) - (l + scrollLeft),
+          y: (e.clientY + scrollTop) - (t + scrollTop)
         })
         set_startMovingObject(true)
       }
@@ -179,6 +179,18 @@ function App() {
       if(startMovingObject){
         gEBID(seleElement)!.style.top = px((e.clientY + scrollTop) - objectCursorDifference.y)
         gEBID(seleElement)!.style.left = px((e.clientX + scrollLeft) - objectCursorDifference.x)
+        
+        if(seleElement === 'selected-elements-wapper' && selectedElements.length > 1){
+        
+        selectedElements.map((each: String) => {
+        
+        let topDiff:any = top('selected-elements-wapper') - top(each);
+        let leftDiff:any = left('selected-elements-wapper') - left(each);
+
+          gEBID(each)!.style.top = px(((e.clientY + scrollTop) - objectCursorDifference.y) + topDiff);
+          gEBID(each)!.style.left = px(((e.clientX + scrollLeft) - objectCursorDifference.x) + leftDiff);
+      })
+        }
       }
       }}
       onWheel={(e: MouseEvent) => {
