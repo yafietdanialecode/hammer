@@ -1,57 +1,51 @@
 import gEBID from "./gEBID";
 
-export function top(id: string){
+export function top(id: string): number {
     if(gEBID(id)){
         let element = gEBID(id) as HTMLElement;
         return element.getBoundingClientRect().top
-    }else {
-        return false;
     }
+    return 0;
 }
 
-export function right(id: string){
+export function right(id: string): number{
     if(gEBID(id)){
         let element = gEBID(id) as HTMLElement;
         return element.getBoundingClientRect().right
-    }else {
-        return false;
     }
+    return 0;
 }
 
-export function bottom(id: string){
+export function bottom(id: string): number{
     if(gEBID(id)){
         let element = gEBID(id) as HTMLElement;
         return element.getBoundingClientRect().bottom
-    }else {
-        return false;
     }
+    return 0;
 }
 
 
-export function left(id: string){
+export function left(id: string): number{
     if(gEBID(id)){
         let element = gEBID(id) as HTMLElement;
         return element.getBoundingClientRect().left
-    }else {
-        return false;
     }
+    return 0;
 }
 
-export function width(id: string){
+export function width(id: string): number{
     if(gEBID(id)){
         let element = gEBID(id) as HTMLElement;
         return element.getBoundingClientRect().width
-    }else {
-        return false;
     }
+    return 0;
 }
 
 
-export function height(id: string){
+export function height(id: string): number{
     if(gEBID(id)){
         let element = gEBID(id) as HTMLElement;
         return element.getBoundingClientRect().height
-    }else {
-        return false;
     }
+    return 0;
 }

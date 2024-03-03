@@ -64,7 +64,7 @@ body, html, #root, #main {
 
   // dev components
 // those will be removed on production
-#select, #selected-elements-wapper {
+#select, #selected-elements-wrapper {
   width: 0px;
   height: 400px;
   background-color: rgba(131, 170, 255, 0.349);
@@ -74,10 +74,9 @@ body, html, #root, #main {
   left: 0;
 }
 
-// #selected-elements-wapper:active {
-//   background: transparent;
-//   border: none;
-// }
+#selected-elements-wrapper {
+  border: none;
+}
   }
 
 
@@ -94,9 +93,7 @@ body, html, #root, #main {
   right: 0px;
   background-color: black;
   z-index: 3;
-  * {
-    user-select: text;
-  }
+  
   th, td {
     padding: 5px;
   }

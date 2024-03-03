@@ -7,7 +7,7 @@ export function getCIArea(
     end: { x: number, y: number}
 ){
     let elements = gEBID('canvas')?.querySelectorAll('*');
-    let ids = [];
+    let ids: any = [];
     elements?.forEach((element: any) => {
         ids.push(element.id)
     });
@@ -15,7 +15,7 @@ export function getCIArea(
     let filteredIDList: any = [];
     ids.map((each: any) => {
         // check for unwanted ids
-        if(each !== 'select'){ // b/c select element is inside canvas we have to escape it
+        if(each !== 'select' && each !== 'selected-elements-wrapper'){ // b/c select element is inside canvas we have to escape it
             let x_lt: any = left(each) + gScrLeft('canvas'); // left position of element
             let y_t: any = top(each) + gScrlTop('canvas'); // top position of element
             let x_rt: any = right(each) + gScrLeft('canvas'); // right position of element

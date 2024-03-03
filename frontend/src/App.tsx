@@ -5,9 +5,11 @@ import { bottom, height, left, right, top, width } from './modules/getStyle';
 import { px } from './modules/unit';
 import { gScrLeft, gScrlTop } from './modules/scroll';
 import { getCIArea } from './modules/getCIArea';
+import Logic from './modules/Logic';
 
 function App() {
 
+  
   // indicates how much user scrolled
   const [scrollTop, set_scrollTop] = useState(0);
   const [scrollLeft, set_scrollLeft] = useState(0);
@@ -23,15 +25,14 @@ function App() {
   // tracks where the selection stopped
   const [includeSelectingUpto, set_includeSelectingUpto] = useState({x: 0, y: 0});
   // lists of selected elements in this cordinate
-  const [selectedElements, set_selectedElements] = useState([]);
+  const [selectedElements, set_selectedElements]: any = useState([]);
+
   // show all selected elements wrapper
   const [multiSelectedElementsWrapperDivStartFrom, set_multiSelectedElementsWrapperDivStartFrom] = useState({ x: 0, y: 0});
   const [multiSelectedElementsWrapperDivInclude, set_multiSelectedElementsWrapperDivInclude] = useState({ x: 0, y: 0});
 
-
   // seleElement
   const [seleElement, set_seleElement] = useState('');
-  const [zIndex, set_zIndex] = useState(0)
 
   // cursor based
   const [cursorStyle, set_cursorStyle] = useState('default');
@@ -39,7 +40,6 @@ function App() {
   // movement
   const [startMovingObject, set_startMovingObject] = useState(false);
   const [objectCursorDifference, set_objectCursorDifference] = useState({x: 0, y: 0})
-  const [movementX, set_movementX] = useState(0);
   
   // editing features
   const [textEditingModeEnabled, set_textEditingModeEnabled] = useState(false);
@@ -56,9 +56,21 @@ function App() {
     // updating user's scroll amount 
     set_scrollTop(gScrlTop('canvas')!);
     set_scrollLeft(gScrLeft('canvas')!);    
+
+    // below is to move selected elements to needed position
+    // if(startMovingObject && seleElement === 'selected-elements-wrapper' && selectedElements.length > 1){
+    //   selectedElements.map((each: any) => {
+    //     gEBID(each)!.style.top = px(((mousePosition.y + scrollTop) - objectCursorDifference.y) + multiSelectedElementsDiffFromDiv[each].y);
+    //     gEBID(each)!.style.left = px(((mousePosition.x + scrollLeft) - objectCursorDifference.x) + multiSelectedElementsDiffFromDiv[each].x);
+
+    //   })
+    // }
   })
 
   window.addEventListener('mousemove', (e: any) => {
+
+    
+
     if(selectionStarted && !startMovingObject){
       set_selectionStarted2(true);
       set_includeSelectingUpto({
@@ -72,59 +84,13 @@ function App() {
 
   window.onmouseup = (e: any) => {
     set_startMovingObject(false);
-    if(selectionStarted && selectionStarted2){
-      
-      set_selectionStarted(false);
-      set_selectionStarted2(false);
-      let res = getCIArea(startSelectingFrom, includeSelectingUpto)
-      set_selectedElements(res);
-      
-      // create a wrapper elemnt
-      if(res.length == 1){
-        // this means user selected one element only
-        set_seleElement(res[0]);
-      }else if(res.length > 1){
-        // this means user selected multiple elements only
-        
-        let startFromMax = { x: 20000, y: 2000000 };
-        let includeUpToMax = { x: -20000, y: -200000 };
-        
-        
-        res.forEach((each: any) => {
-          
-          // some varialble to clean the code
-          let eTop: any = top(each);
-          let eLeft: any = left(each);
-          let eRight: any = right(each);
-          let eBottom: any = bottom(each);
-          
-          if(eTop < startFromMax.y){ // the top minimum value of element
-            startFromMax.y = eTop;
-            console.log('top: ' + eTop);
-          }
-          if(eLeft < startFromMax.x){ // the left minimum value of element
-            startFromMax.x = eLeft;
-            console.log('left: ' + eLeft)
-          }
-          if(eRight > includeUpToMax.x){ // the right maximum value of element
-            includeUpToMax.x = eRight;
-            console.log('right ' + eRight);
-          }
-          if(eBottom > includeUpToMax.y){ // the bottom maximum value of element
-            includeUpToMax.y = eBottom;
-            console.log('bottom: ' + eBottom); 
-          }
-          
-        })
+    set_selectionStarted(false);
+    set_selectionStarted2(false);
 
-        set_multiSelectedElementsWrapperDivStartFrom(startFromMax);
-        set_multiSelectedElementsWrapperDivInclude(includeUpToMax)
-        set_seleElement('selected-elements-wapper');
-      }
-    }
     
   }
 
+  const logic = new Logic('root', { CANAS_ID: 'canvas' })
   return (
     <>
       <div id="main"
@@ -177,19 +143,74 @@ function App() {
       }}
       onMouseMove={(e: MouseEvent) => {
       if(startMovingObject){
-        gEBID(seleElement)!.style.top = px((e.clientY + scrollTop) - objectCursorDifference.y)
-        gEBID(seleElement)!.style.left = px((e.clientX + scrollLeft) - objectCursorDifference.x)
+        gEBID(seleElement)!.style.top = px((e.clientY + scrollTop) - objectCursorDifference.y);
+        gEBID(seleElement)!.style.left = px((e.clientX + scrollLeft) - objectCursorDifference.x);
         
-        if(seleElement === 'selected-elements-wapper' && selectedElements.length > 1){
-        
-        selectedElements.map((each: String) => {
-        
-        let topDiff:any = top('selected-elements-wapper') - top(each);
-        let leftDiff:any = left('selected-elements-wapper') - left(each);
+      //   if(seleElement === 'selected-elements-wrapper' && selectedElements.length > 1){
+      //   let diff = {};
 
-          gEBID(each)!.style.top = px(((e.clientY + scrollTop) - objectCursorDifference.y) + topDiff);
-          gEBID(each)!.style.left = px(((e.clientX + scrollLeft) - objectCursorDifference.x) + leftDiff);
-      })
+      //   selectedElements.map((each: String) => {
+        
+      //   let topDiff:any = top('selected-elements-wrapper') - top(each);
+      //   let leftDiff:any = left('selected-elements-wrapper') - left(each);
+
+      //   diff[each] = {};
+      //   diff[each].x = leftDiff;
+      //   diff[each].y = topDiff;
+      // })
+      // set_multiSelectedElementsDiffFromDiv(diff)
+      //   }
+      }
+
+      if(selectionStarted && selectionStarted2){
+      
+        let res = getCIArea(startSelectingFrom, includeSelectingUpto)
+        set_selectedElements(res);
+        
+        // create a wrapper elemnt
+        if(res.length == 1){
+          // this means user selected one element only
+          set_seleElement(res[0]);
+        }else if(res.length > 1){
+          // this means user selected multiple elements only
+          
+          let startFromMax = { x: 20000, y: 2000000 };
+          let includeUpToMax = { x: -20000, y: -200000 };
+          
+          
+          res.forEach((each: any) => {
+            
+            // some varialble to clean the code
+            let eTop: any = top(each);
+            let eLeft: any = left(each);
+            let eRight: any = right(each);
+            let eBottom: any = bottom(each);
+            
+            if(eTop < startFromMax.y){ // the top minimum value of element
+              startFromMax.y = eTop;
+              console.log('top: ' + eTop);
+            }
+            if(eLeft < startFromMax.x){ // the left minimum value of element
+              startFromMax.x = eLeft;
+              console.log('left: ' + eLeft)
+            }
+            if(eRight > includeUpToMax.x){ // the right maximum value of element
+              includeUpToMax.x = eRight;
+              console.log('right ' + eRight);
+            }
+            if(eBottom > includeUpToMax.y){ // the bottom maximum value of element
+              includeUpToMax.y = eBottom;
+              console.log('bottom: ' + eBottom); 
+            }
+            
+          })
+          startFromMax.x += scrollLeft;
+          startFromMax.y += scrollTop
+          includeUpToMax.x += scrollLeft;
+          includeUpToMax.y += scrollTop; 
+          set_multiSelectedElementsWrapperDivStartFrom(startFromMax);
+          set_multiSelectedElementsWrapperDivInclude(includeUpToMax)
+          set_seleElement('selected-elements-wrapper');
         }
       }
       }}
@@ -199,7 +220,7 @@ function App() {
           set_scrollLeft(gScrLeft('canvas')!);
 
       }}
-      onClick={(e: MouseEvent) => {
+      onClick={(e: any) => {
         /*
         this is for selecting elements one by one
         removing element from selected ones
@@ -208,15 +229,35 @@ function App() {
         */
           // and this feature needs the user to hold shift key to
           if(e.shiftKey){
-            let id = e.target.id;
-            let exists: any = selectedElements.some((element: any) => element === id);
+            let id: any = e.target.id;
+            let exists: boolean = selectedElements.some((element: string) => element === id);
             if(exists){
-              set_selectedElements(selectedElements.filter((each: any) => each !== id));
-            }else if(!exists) {
+              set_selectedElements(selectedElements.filter((each: string) => each !== id));
+            }else if(exists == false) {
               set_selectedElements([...selectedElements, id]);  
             }
           }
 
+      }}
+      onKeyDown={(e: any) => {
+        if(e.key == 'Delete'){
+          selectedElements.map((each: any) => {
+            if(gEBID(each) && each.length > 0 && logic.CANVA_ELEMENT_EXCEPTION.every((id: any) => id !== each)){
+              gEBID(each)?.remove()
+            }
+          });
+          set_seleElement('canvas');
+          set_selectedElements(false);
+          set_selectionStarted2(false);
+          set_selectedElements([]);
+        }else 
+        if(e.key == 'a' && e.ctrlKey){
+          logic.selectAll(
+            'canvas',
+            logic.CANVA_ELEMENT_EXCEPTION,
+            set_selectedElements
+            )
+        }
       }}
       >
         <div
@@ -240,7 +281,7 @@ function App() {
         >Click Here</button>
         <h1
         id='title-1'
-        style={{ position: 'absolute', top: '100px', background: 'none', fontSize: '32px', zIndex: zIndex + 1}}>I'm The Title Sir</h1>
+        style={{ position: 'absolute', top: '100px', background: 'none', fontSize: '32px', zIndex: 1}}>I'm The Title Sir</h1>
 
         {/* <div id="page-0" data-type='page'
         style={{
@@ -279,11 +320,11 @@ function App() {
         ></div>
       }
 
-      {selectedElements.length > 1 && <div id='selected-elements-wapper'
+      {selectedElements.length > 1 && <div id='selected-elements-wrapper'
         style={{
           position: 'absolute',
-          top: px(multiSelectedElementsWrapperDivStartFrom.y + scrollTop),
-          left: px(multiSelectedElementsWrapperDivStartFrom.x + scrollLeft),
+          top: px(multiSelectedElementsWrapperDivStartFrom.y),
+          left: px(multiSelectedElementsWrapperDivStartFrom.x),
           width: px((multiSelectedElementsWrapperDivInclude.x - multiSelectedElementsWrapperDivStartFrom.x)),
           height: px(multiSelectedElementsWrapperDivInclude.y - multiSelectedElementsWrapperDivStartFrom.y),
         }}
@@ -302,49 +343,53 @@ function App() {
       <table id="states">
         <tbody>
         <tr>
-          <th>name</th><th>value</th>
+          <th>state</th>
+          <th>value</th>
         </tr>
+
+        <tr>
+          <td>scrollTop</td>
+          <td>{scrollTop}</td>
+        </tr>
+
+        <tr>
+          <td>scrollLeft</td>
+          <td>{scrollLeft}</td>
+        </tr>
+
         <tr>
           <td>selectionStarted</td>
-          <td>{selectionStarted ? '🟢' : '🔴'}</td>
+          <td>{selectionStarted ? '🟢': '🔴'}</td>
         </tr>
+
         <tr>
-          <td>selectedElement</td>
-          <td>#{seleElement}</td>
+          <td>selectionStarted2</td>
+          <td>{selectionStarted2 ? '🟢' : '🔴'}</td>
         </tr>
-        <tr>
-          <td>startSelectingFrom</td>
-          <td>{startSelectingFrom.x} <br /> {startSelectingFrom.y}</td>
-        </tr>
-        <tr>
-          <td>includeSelectingUpto</td>
-          <td>{includeSelectingUpto.x} <br /> {includeSelectingUpto.y}</td>
-        </tr>
+
         <tr>
           <td>selectionType</td>
           <td>{selectionType}</td>
         </tr>
+
         <tr>
-          <td>scroll</td>
-          <td>{scrollTop}<br/>{scrollLeft}</td>
+          <td>startSelectingFrom</td>
+          <td>
+          X:{startSelectingFrom.x} <br />
+          Y:{startSelectingFrom.y}</td>
         </tr>
+
         <tr>
-          <td>objectCursorDifference</td>
-          <td>{objectCursorDifference.x} <br /> {objectCursorDifference.y}</td>
+          <td>includesSeletingUpto</td>
+          <td>
+            X:{includeSelectingUpto.x} <br />
+            Y:{includeSelectingUpto.y}
+          </td>
         </tr>
-        <tr>
-          <td>startMovingObject</td>
-          <td>{startMovingObject ? '🟢' : '🔴'}</td>
-        </tr>
+
         <tr>
           <td>selectedElements</td>
-          <td>{selectedElements.map((each: any) => <p key={each}>{each}</p>
-          )}</td>
-        </tr>
-        <tr>
-          <td>multiSelectedElementsWrapperDiv</td>
-          <td>{multiSelectedElementsWrapperDivStartFrom.x}:{multiSelectedElementsWrapperDivInclude.x}</td>
-          <td>{multiSelectedElementsWrapperDivStartFrom.y}:{multiSelectedElementsWrapperDivInclude.y}</td>
+          <td>{selectedElements.map((each: any) => <p key={each}>{each}</p>)}</td>
         </tr>
 
         </tbody>
@@ -388,7 +433,7 @@ function App() {
       />}
 
         {/* this is the top resize feature of element */}
-        {(!startMovingObject && gEBID(seleElement) != false) && <div id="top-resize"
+        {(!startMovingObject && gEBID(seleElement)) && <div id="top-resize"
         style={{
           position: 'absolute',
           top: px(top(seleElement) - 1),
@@ -402,7 +447,7 @@ function App() {
         ></div>}
 
         {/* top-left corner resize button */}
-        {(!startMovingObject && gEBID(seleElement) != false) && <div id="topleft-resize"
+        {(!startMovingObject && gEBID(seleElement)) && <div id="topleft-resize"
         style={{
           position: 'absolute',
           top: px(top(seleElement) - 3),
@@ -417,7 +462,7 @@ function App() {
 
 
         {/* this is the right resize feature of element */}
-        {(!startMovingObject && gEBID(seleElement) != false) && <div id="right-resize"
+        {(!startMovingObject && gEBID(seleElement)) && <div id="right-resize"
         style={{ 
           position: 'absolute',
           top: px(top(seleElement)),
@@ -431,7 +476,7 @@ function App() {
         ></div>}
 
         {/* top-right corner resize button */}
-        {(!startMovingObject && gEBID(seleElement) != false) && <div id="topright-resize"
+        {(!startMovingObject && gEBID(seleElement)) && <div id="topright-resize"
         style={{
           position: 'absolute',
           top: px(top(seleElement) - 3),
@@ -445,7 +490,7 @@ function App() {
         ></div>}
 
         {/* this is the bottom resize feature of element */}
-        {(!startMovingObject && gEBID(seleElement) != false) && <div id="bottom-resize"
+        {(!startMovingObject && gEBID(seleElement)) && <div id="bottom-resize"
         style={{ 
           position: 'absolute',
           top: px(bottom(seleElement)),
@@ -459,7 +504,7 @@ function App() {
         ></div>}
 
         {/* bottom-right corner resize button */}
-        {(!startMovingObject && gEBID(seleElement) != false) && <div id="bottomright-resize"
+        {(!startMovingObject && gEBID(seleElement)) && <div id="bottomright-resize"
         style={{
           position: 'absolute',
           top: px(bottom(seleElement) - 3),
@@ -473,7 +518,7 @@ function App() {
         ></div>}
 
         {/* this is the left resize feature of element */}
-        {(!startMovingObject && gEBID(seleElement) != false) && <div id="left-resize"
+        {(!startMovingObject && gEBID(seleElement)) && <div id="left-resize"
         style={{ 
           position: 'absolute',
           top: px(top(seleElement)),
@@ -487,7 +532,7 @@ function App() {
         ></div>}
 
         {/* bottom-left corner resize button */}
-        {(!startMovingObject && gEBID(seleElement) != false) && <div id="bottomleft-resize"
+        {(!startMovingObject && gEBID(seleElement)) && <div id="bottomleft-resize"
         style={{
           position: 'absolute',
           top: px(bottom(seleElement) - 3),

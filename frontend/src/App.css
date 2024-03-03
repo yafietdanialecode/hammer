@@ -59,7 +59,7 @@ body, html, #root, #main {
   z-index: -50000;
   overflow: scroll;
 }
-#main #canvas #select, #main #canvas #selected-elements-wapper {
+#main #canvas #select, #main #canvas #selected-elements-wrapper {
   width: 0px;
   height: 400px;
   background-color: rgba(131, 170, 255, 0.349);
@@ -67,6 +67,9 @@ body, html, #root, #main {
   position: absolute !important;
   top: 0;
   left: 0;
+}
+#main #canvas #selected-elements-wrapper {
+  border: none;
 }
 
 #states {
@@ -78,11 +81,6 @@ body, html, #root, #main {
   right: 0px;
   background-color: black;
   z-index: 3;
-}
-#states * {
-  -webkit-user-select: text;
-     -moz-user-select: text;
-          user-select: text;
 }
 #states th, #states td {
   padding: 5px;
