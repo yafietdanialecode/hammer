@@ -72,10 +72,17 @@ body, html, #root, #main {
   position: absolute !important;
   top: 0;
   left: 0;
+  z-index: 50000;
 }
 
 #selected-elements-wrapper {
   border: none;
+  background-color: rgba(131, 170, 255, 0.349);
+  position: absolute !important;
+
+   * {
+    z-index: -111;
+   }
 }
   }
 
@@ -111,5 +118,38 @@ body, html, #root, #main {
     #top-resize:hover {
       transform: scaleX(50);
     }
+  }
+}
+
+
+#context-menu {
+  position: fixed;
+  width: 130px;
+  height: 150px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 5px;
+  overflow: scroll;
+  box-shadow: 1px 1px 3px rgb(223, 223, 223);
+
+  p {
+    font-family: tahoma;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    background-color: transparent;
+    color: rgb(0, 0, 0);
+    
+    span {
+      background-color: transparent;
+      color: rgb(116, 116, 116);
+    }
+  }
+  p:hover {
+    background-color: rgba(226, 226, 226, 0.329);
+  }
+  p:active {
+    background-color: rgba(255, 255, 255, 0.329);
   }
 }

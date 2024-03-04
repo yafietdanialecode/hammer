@@ -26,6 +26,7 @@ function App() {
   const [includeSelectingUpto, set_includeSelectingUpto] = useState({x: 0, y: 0});
   // lists of selected elements in this cordinate
   const [selectedElements, set_selectedElements]: any = useState([]);
+  // selected elements difference between 
 
   // show all selected elements wrapper
   const [multiSelectedElementsWrapperDivStartFrom, set_multiSelectedElementsWrapperDivStartFrom] = useState({ x: 0, y: 0});
@@ -44,6 +45,16 @@ function App() {
   // editing features
   const [textEditingModeEnabled, set_textEditingModeEnabled] = useState(false);
   
+  // context options
+  const [displayContext, set_displayContext] = useState(false);
+  const [contextMenuPosition, set_contextMenuPosition] = useState({ x: 0, y: 0})
+
+  // mouse states
+  const [mousePosition, set_mousePosition] = useState({
+    x: 0,
+    y: 0
+  })
+  
 
 
 
@@ -56,19 +67,12 @@ function App() {
     // updating user's scroll amount 
     set_scrollTop(gScrlTop('canvas')!);
     set_scrollLeft(gScrLeft('canvas')!);    
-
-    // below is to move selected elements to needed position
-    // if(startMovingObject && seleElement === 'selected-elements-wrapper' && selectedElements.length > 1){
-    //   selectedElements.map((each: any) => {
-    //     gEBID(each)!.style.top = px(((mousePosition.y + scrollTop) - objectCursorDifference.y) + multiSelectedElementsDiffFromDiv[each].y);
-    //     gEBID(each)!.style.left = px(((mousePosition.x + scrollLeft) - objectCursorDifference.x) + multiSelectedElementsDiffFromDiv[each].x);
-
-    //   })
-    // }
   })
 
   window.addEventListener('mousemove', (e: any) => {
 
+    // update mouse position
+    set_mousePosition({x: e.clientX, y: e.clientY});
     
 
     if(selectionStarted && !startMovingObject){
@@ -83,11 +87,35 @@ function App() {
   })
 
   window.onmouseup = (e: any) => {
+
     set_startMovingObject(false);
     set_selectionStarted(false);
-    set_selectionStarted2(false);
+    set_selectionStarted2(false); 
 
+     // saving the difference
+
+    if(selectedElements.length > 1 && !startMovingObject){
+      const wrapper = gEBID('selected-elements-wrapper')!
+      selectedElements.map((each: string) => {
+        let copy: any = gEBID(each)?.cloneNode(true);
+        // some editings
+        copy.style.top = px(((top(each) - multiSelectedElementsWrapperDivStartFrom.y)) + scrollTop);
+        copy.style.left = px((left(each) - multiSelectedElementsWrapperDivStartFrom.x) + scrollLeft);
+        gEBID(each)?.remove()
+        wrapper.append(copy)
+
+      })
+    }
     
+  }
+
+  window.oncontextmenu = (e: any) => {
+    e.preventDefault();
+    set_displayContext(true)
+    set_contextMenuPosition({
+      x: e.clientX,
+      y: e.clientY
+    })
   }
 
   const logic = new Logic('root', { CANAS_ID: 'canvas' })
@@ -109,7 +137,24 @@ function App() {
       <div id="canvas"
       tabIndex={-1}
       draggable={false}
+
       onMouseDown={(e: any) => {
+        set_displayContext(false)
+
+        if(selectedElements.length > 1 && e.target.id !== 'selected-elements-wrapper'){
+          // if user selects something before append those to the real dom
+
+        selectedElements.map((each: any) => {
+          let copy: any = gEBID(each)?.cloneNode(true);
+          copy.style.top = px(top(each) + scrollTop);
+          copy.style.left = px(left(each) + scrollLeft);
+
+          gEBID(each)?.remove();
+          gEBID('canvas')!.append(copy);
+        })
+        }
+
+
       if(
         e.target.id !== 'select'
         ){
@@ -127,6 +172,7 @@ function App() {
       }
 
       if(e.target.id === 'canvas'){
+
           set_selectionType('components');
           set_startSelectingFrom({
             x: e.clientX + scrollLeft,
@@ -137,29 +183,17 @@ function App() {
             x: e.clientX + scrollLeft,
             y: e.clientY + scrollTop
           })
-          set_selectedElements([]);
           set_selectionStarted(true);
+          set_selectedElements([]);
+
         }
       }}
       onMouseMove={(e: MouseEvent) => {
-      if(startMovingObject){
+
+        if(startMovingObject){
         gEBID(seleElement)!.style.top = px((e.clientY + scrollTop) - objectCursorDifference.y);
         gEBID(seleElement)!.style.left = px((e.clientX + scrollLeft) - objectCursorDifference.x);
         
-      //   if(seleElement === 'selected-elements-wrapper' && selectedElements.length > 1){
-      //   let diff = {};
-
-      //   selectedElements.map((each: String) => {
-        
-      //   let topDiff:any = top('selected-elements-wrapper') - top(each);
-      //   let leftDiff:any = left('selected-elements-wrapper') - left(each);
-
-      //   diff[each] = {};
-      //   diff[each].x = leftDiff;
-      //   diff[each].y = topDiff;
-      // })
-      // set_multiSelectedElementsDiffFromDiv(diff)
-      //   }
       }
 
       if(selectionStarted && selectionStarted2){
@@ -212,33 +246,20 @@ function App() {
           set_multiSelectedElementsWrapperDivInclude(includeUpToMax)
           set_seleElement('selected-elements-wrapper');
         }
+
       }
       }}
+
+
       onWheel={(e: MouseEvent) => {
+
             // updating user's scroll amount 
           set_scrollTop(gScrlTop('canvas')!);
           set_scrollLeft(gScrLeft('canvas')!);
-
+          
       }}
-      onClick={(e: any) => {
-        /*
-        this is for selecting elements one by one
-        removing element from selected ones
-        // if this element is selected it will remove it from the selectedElements List
-        // if this element is not selected it will add it to the selectedElements List
-        */
-          // and this feature needs the user to hold shift key to
-          if(e.shiftKey){
-            let id: any = e.target.id;
-            let exists: boolean = selectedElements.some((element: string) => element === id);
-            if(exists){
-              set_selectedElements(selectedElements.filter((each: string) => each !== id));
-            }else if(exists == false) {
-              set_selectedElements([...selectedElements, id]);  
-            }
-          }
-
-      }}
+      
+      
       onKeyDown={(e: any) => {
         if(e.key == 'Delete'){
           selectedElements.map((each: any) => {
@@ -258,6 +279,12 @@ function App() {
             set_selectedElements
             )
         }
+        if(e.key == ']'){
+          gEBID(seleElement)!.style.zIndex = gEBID(seleElement)!.style.zIndex + 1 
+        }
+        if(e.key == '['){
+          gEBID(seleElement)!.style.zIndex = `${parseInt(gEBID(seleElement)!.style.zIndex) - 1}` 
+        }
       }}
       >
         <div
@@ -267,7 +294,7 @@ function App() {
           left: px(window.innerWidth + scrollLeft + 100),
           width: '10px',
           height: '10px',
-          background: 'transparentcd front'
+          background: 'transparent'
         }}
         ></div>
 
@@ -276,12 +303,13 @@ function App() {
           position: 'absolute',
           top: '200px',
           left: '200px',
-          padding: '10px 20px'
+          padding: '10px 20px',
+          zIndex: 1
         }}
         >Click Here</button>
         <h1
         id='title-1'
-        style={{ position: 'absolute', top: '100px', background: 'none', fontSize: '32px', zIndex: 1}}>I'm The Title Sir</h1>
+        style={{ position: 'absolute', top: '100px', background: 'none', fontSize: '32px', zIndex: 2}}>I'm The Title Sir</h1>
 
         {/* <div id="page-0" data-type='page'
         style={{
@@ -302,7 +330,8 @@ function App() {
           top: '100px',
           left: '750px',
           background: 'white',
-          position: 'absolute'
+          position: 'absolute',
+          zIndex: 3
         }}
         ></div>
 
@@ -327,9 +356,10 @@ function App() {
           left: px(multiSelectedElementsWrapperDivStartFrom.x),
           width: px((multiSelectedElementsWrapperDivInclude.x - multiSelectedElementsWrapperDivStartFrom.x)),
           height: px(multiSelectedElementsWrapperDivInclude.y - multiSelectedElementsWrapperDivStartFrom.y),
+          zIndex: 50000
         }}
         >
-
+          
         </div>}
       </div>
 
@@ -392,10 +422,83 @@ function App() {
           <td>{selectedElements.map((each: any) => <p key={each}>{each}</p>)}</td>
         </tr>
 
+        <tr>
+          <td>multiSelectedElementsWrapperDivStartFrom</td>
+          <td>
+            X:{multiSelectedElementsWrapperDivStartFrom.x} <br/>
+            Y: {multiSelectedElementsWrapperDivStartFrom.y}
+          </td>
+        </tr>
+
+        <tr>
+          <td>multiSelectedElementsWrapperDivInclude</td>
+          <td>
+            X:{multiSelectedElementsWrapperDivInclude.x} <br/>
+            Y: {multiSelectedElementsWrapperDivInclude.y}
+          </td>
+        </tr>
+
+        <tr>
+          <td>seleElement</td>
+          <td>{seleElement}</td>
+        </tr>
+
+        <tr>
+          <td>cursorStyle</td>
+          <td>{cursorStyle}</td>
+        </tr>
+
+        <tr>
+          <td>startMovingObject</td>
+          <td>{startMovingObject ? '🟢' : '🔴'}</td>
+        </tr>
+
+        <tr>
+          <td>objectCursorDifference</td>
+          <td>
+            X: {objectCursorDifference.x} <br/>
+            Y: {objectCursorDifference.y}
+          </td>
+        </tr>
+
+        <tr>
+          <td>textEditingModeEnabled</td>
+          <td>{textEditingModeEnabled ? '🟢' : '🔴'}</td>
+        </tr>
+
+        <tr>
+          <td>displayContext</td>
+          <td>{displayContext ? '🟢' : '🔴'}</td>
+        </tr>
+
+        <tr>
+          <td>contextMenuPosition</td>
+          <td>
+            X: {contextMenuPosition.x} <br/>
+            Y: {contextMenuPosition.y}
+          </td>
+        </tr>
+
+        <tr>
+          <td>mousePosition</td>
+          <td>
+            X: {mousePosition.x} <br />
+            Y: {mousePosition.y}
+          </td>
+        </tr>
+
+        <tr>
+          <td>window</td>
+          <td>
+          height: {window.innerHeight} <br />
+          width: {window.innerWidth} <br />
+          </td>
+        </tr>
+
         </tbody>
       </table>
 
-      {/* <table id="states">
+      <table id="states">
         <caption>Element State</caption>
         <tbody>
         <tr>
@@ -409,12 +512,33 @@ function App() {
           <td>position value</td>
           <td>l: {left(seleElement)! + scrollLeft}<br/>t: {top(seleElement)! + scrollTop}<br/>r: {right(seleElement)!}<br/>b: {bottom(seleElement)}</td>
         </tr>
+        <tr>
+          <td>zIndex</td>
+          <td>{gEBID(seleElement)?.style.zIndex}</td>
+        </tr>
+
         </tbody>
-      </table> */}
+      </table>
 
       {/* those are element feature previewers and decorators */}
       {(document.getElementById(seleElement) && seleElement !== 'canvas') && <div id="decorators">
         
+      {/* element descriptor */}
+      {(!startMovingObject && gEBID(seleElement)) && <div 
+      style={{
+        position: 'absolute',
+        top: px(top(seleElement) - 15),
+        left: px(left(seleElement)),
+        width: '6px',
+        height: '6px',
+        zIndex: 30,
+        borderRadius: '50px',
+        background: 'transparent',
+        color: 'rgb(107, 154, 255)',
+        fontSize: '10px'
+    }}
+      >{gEBID(seleElement)?.tagName}</div>}
+
 
       {/* rotate feature */}
       {(!startMovingObject && gEBID(seleElement)) &&<div 
@@ -544,6 +668,29 @@ function App() {
           cursor: 'ne-resize'
         }}
         ></div>}
+      </div>}
+
+
+
+      {/* context menu */}
+      {(displayContext && gEBID(seleElement)) && <div id='context-menu'
+      style={{
+        top: px(contextMenuPosition.y),
+        left: px(contextMenuPosition.x),
+        zIndex: 50000
+      }}
+      >
+        <p
+        onClick={() => {
+          let exception = logic.CANVA_ELEMENT_EXCEPTION.every((each: any) => each !== seleElement);
+          if(exception)
+            gEBID(seleElement)?.remove()
+          set_displayContext(false)
+        }}
+        >Delete <span>del</span></p>
+        <p>Copy <span>ctr + c</span></p>
+        <p>Paste <span>ctr + v</span></p>
+        <p>Edit <span>ctr + e</span></p>
       </div>}
       
       </div>

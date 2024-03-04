@@ -15,7 +15,11 @@ export function getCIArea(
     let filteredIDList: any = [];
     ids.map((each: any) => {
         // check for unwanted ids
-        if(each !== 'select' && each !== 'selected-elements-wrapper'){ // b/c select element is inside canvas we have to escape it
+        if(
+            each !== 'select' && 
+            each !== 'selected-elements-wrapper' &&
+            gEBID(each)?.getAttribute('data-type') !== 'page'
+            ){ // b/c select element is inside canvas we have to escape it
             let x_lt: any = left(each) + gScrLeft('canvas'); // left position of element
             let y_t: any = top(each) + gScrlTop('canvas'); // top position of element
             let x_rt: any = right(each) + gScrLeft('canvas'); // right position of element
