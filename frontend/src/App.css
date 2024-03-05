@@ -75,7 +75,7 @@ body, html, #root, #main {
   position: absolute !important;
 }
 #main #canvas #selected-elements-wrapper * {
-  z-index: -111;
+  pointer-events: none;
 }
 
 #states {

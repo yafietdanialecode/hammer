@@ -81,7 +81,7 @@ body, html, #root, #main {
   position: absolute !important;
 
    * {
-    z-index: -111;
+    pointer-events: none;
    }
 }
   }

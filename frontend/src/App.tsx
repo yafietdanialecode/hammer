@@ -287,14 +287,17 @@ function App() {
         }
       }}
       >
+        {/* this makes the scrolling feature possible */}
         <div
+
         style={{
           position: 'absolute',
           top: px(window.innerHeight + scrollTop + 100),
           left: px(window.innerWidth + scrollLeft + 100),
           width: '10px',
           height: '10px',
-          background: 'transparent'
+          background: 'transparent',
+          pointerEvents: 'none'
         }}
         ></div>
 
@@ -304,12 +307,13 @@ function App() {
           top: '200px',
           left: '200px',
           padding: '10px 20px',
-          zIndex: 1
+          zIndex: 1,
+          width: '150px'
         }}
         >Click Here</button>
         <h1
         id='title-1'
-        style={{ position: 'absolute', top: '100px', background: 'none', fontSize: '32px', zIndex: 2}}>I'm The Title Sir</h1>
+        style={{ width: '250px', position: 'absolute', top: '100px', background: 'none', fontSize: '32px', zIndex: 2}}>I'm The Title Sir</h1>
 
         {/* <div id="page-0" data-type='page'
         style={{
