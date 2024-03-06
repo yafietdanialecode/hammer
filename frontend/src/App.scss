@@ -89,11 +89,11 @@ body, html, #root, #main {
 
   #states {
   width: fit-content;
-  height: 50vh;
-  overflow: auto;
+  height: 40vh !important;
+  overflow: scroll;
   position: fixed;
-  bottom: 0px;
   right: 0px;
+  top: 0px;
   background-color: black;
   z-index: 3;
   

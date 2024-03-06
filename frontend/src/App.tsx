@@ -43,7 +43,9 @@ function App() {
   // movement
   const [startMovingObject, set_startMovingObject] = useState(false);
   const [objectCursorDifference, set_objectCursorDifference] = useState({x: 0, y: 0})
-  
+  const [movingFrom, set_movingFrom] = useState('canvas');
+  const [movingTo, set_movingTo] = useState('canvas');
+ 
   // editing features
   const [textEditingModeEnabled, set_textEditingModeEnabled] = useState(false);
   
@@ -104,6 +106,51 @@ function App() {
   })
 
   window.onmouseup = (e: any) => {
+
+    // when user releases the mouse
+    if(movingFrom !== movingTo) {
+      // moving single component features below
+      // if you need multipe next to this block
+      // moving single component from canvas > page
+      if(seleElement && selectedElements.length < 2 && seleElement !== 'selected-elements-wrapper'){
+        if(movingFrom == 'canvas' && movingTo != 'canvas' && gEBID(seleElement)!.getAttribute('data-type') !== 'page'){
+        let clone:any = gEBID(seleElement)!.cloneNode(true);
+        clone.style.top = px(top(seleElement) - top(movingTo));
+        clone.style.left = px(left(seleElement) - left(movingTo));
+        gEBID(seleElement)?.remove();
+        gEBID(movingTo)?.append(clone);
+      }
+      // moving single component from page > canvas
+      if(movingFrom !== 'canvas' && movingTo == 'canvas' && gEBID(seleElement)!.getAttribute('data-type') !== 'page'){
+        let clone:any = gEBID(seleElement)!.cloneNode(true);
+        
+        clone.style.top = px((e.clientY - (objectCursorDifference.y - top(gEBID(e.target.id)!.parentElement!.id))) + scrollTop);
+        clone.style.left = px((e.clientX - (objectCursorDifference.x - left(gEBID(e.target.id)!.parentElement!.id))) + scrollLeft);
+        gEBID(seleElement)?.remove();
+        gEBID(movingTo)?.append(clone);
+      }
+      // moving single component from page > page
+      if(movingFrom !== 'canvas'
+       &&
+        movingTo !== 'canvas'
+       && 
+        gEBID(seleElement)!.getAttribute('data-type') !== 'page'
+       &&
+        gEBID(movingFrom)!.getAttribute('data-type') == 'page'
+        &&
+        gEBID(movingTo)!.getAttribute('data-type') == 'page'
+      ){
+        let clone:any = gEBID(seleElement)!.cloneNode(true);
+
+        clone.style.top = px((e.clientY - (objectCursorDifference.y - top(gEBID(seleElement)!.parentElement!.id))) - top(movingTo));
+        clone.style.left = px((e.clientX - (objectCursorDifference.x - left(gEBID(seleElement)!.parentElement!.id))) - left(movingTo));
+
+        gEBID(seleElement)?.remove();
+        gEBID(movingTo)?.append(clone);
+      }
+}
+
+    }
 
     /**
      * when user release there mouse
@@ -187,6 +234,7 @@ function App() {
 
       {/* canvas */}
       <div id="canvas"
+      
       /**
        * tabIndex is assigned to -1 to make it focusable element for 
        * features like keyboard and mouse
@@ -201,6 +249,7 @@ function App() {
         // some variables
         let id = e.target.id;
         let element = gEBID(id)!;
+
         // some checks
         let isCanvas = e.target.id === 'canvas' ? true : false;
         let isItsParentCanvas = gEBID(id)!.parentElement!.id === 'canvas' ? true : false;
@@ -209,7 +258,12 @@ function App() {
          * [ simply the parent of the element by the time they toched by pointer ]
          */
         if(!isCanvas)
-          set_fromWhereAreTheComponent(gEBID(e.target.id)!.parentElement!.id);
+
+        // if this element is not canvas
+        set_movingFrom(gEBID(id)!.parentElement!.id)
+        set_movingTo(gEBID(id)!.parentElement!.id)
+        
+        set_fromWhereAreTheComponent(gEBID(e.target.id)!.parentElement!.id);
 
         /**
          * the code below must be cleaners
@@ -261,12 +315,21 @@ function App() {
        * this value is the one who helped as to move the element with respect to referencing point in it 
        */
       if(e.target.id !== 'canvas'){ // this if statement will be remlaced by modes
-        let l: any = left(e.target.id);
-        let t: any = top(e.target.id);
-        set_objectCursorDifference({
+        if(gEBID(e.target.id)!.parentElement!.id == 'canvas'){
+          let l: any = left(e.target.id);
+          let t: any = top(e.target.id);
+          set_objectCursorDifference({
           x: (e.clientX + scrollLeft) - (l + scrollLeft),
           y: (e.clientY + scrollTop) - (t + scrollTop)
         })
+        }else {
+          let l: any = left(e.target.id) - left(gEBID(e.target.id)!.parentElement!.id);
+        let t: any = top(e.target.id) - top(gEBID(e.target.id)!.parentElement!.id);
+        set_objectCursorDifference({
+          x: ((e.clientX + scrollLeft) - (l + scrollLeft)),
+          y: (e.clientY + scrollTop) - (t + scrollTop)
+        })
+        }
         set_startMovingObject(true)
       }
 
@@ -275,6 +338,11 @@ function App() {
        * this works if you put pointer in the canvas
        */
       if(e.target.id === 'canvas'){
+
+        // if canvas is working
+        set_movingFrom('canvas');
+        set_movingTo('canvas');
+
           /**
            * selection type is important for future features
            * because we need to separate text editing selection and component selection 
@@ -318,14 +386,48 @@ function App() {
       }}
 
 
-      onMouseMove={(e: MouseEvent) => {
+      onMouseMove={(e: any) => {
       /**
        * this is the code who set's selected component position
        * both top and left
        */
       if(startMovingObject){
-        gEBID(seleElement)!.style.top = px((e.clientY + scrollTop) - objectCursorDifference.y);
-        gEBID(seleElement)!.style.left = px((e.clientX + scrollLeft) - objectCursorDifference.x);
+        if(gEBID(seleElement)!.parentElement!.id === 'canvas') {
+          gEBID(seleElement)!.style.top = px((e.clientY + scrollTop) - objectCursorDifference.y);
+          gEBID(seleElement)!.style.left = px((e.clientX + scrollLeft) - objectCursorDifference.x);
+        }
+        else if(gEBID(seleElement)!.parentElement?.getAttribute('data-type') === 'page') {
+          gEBID(seleElement)!.style.top = px(((e.clientY) - objectCursorDifference.y));
+          gEBID(seleElement)!.style.left = px((e.clientX) - objectCursorDifference.x);
+        }
+        // this is where elements get appended inside and page and get out from page
+        if(seleElement.length > 0 || selectedElements.length > 1){
+
+          let all = gEBID('main')!.querySelectorAll('*');
+          let results: any = [];
+          let x_start = e.clientX + scrollLeft;
+          let y_start = e.clientY + scrollTop;
+          
+          all.forEach((element: any) => {
+            if(
+              top(element.id) + scrollTop < y_start && 
+              left(element.id) + scrollLeft < x_start &&
+              right(element.id) + scrollLeft > x_start &&
+              bottom(element.id) + scrollTop > y_start &&
+              (element.id === 'canvas' || element.getAttribute('data-type') === 'page')
+              ) {
+                results.push(element.id)
+            }
+          })
+
+          if(results.length == 1){
+            set_movingTo(results[0]);
+          }else {
+            set_movingTo(results[1])
+          }
+          
+        }
+
       }
 
       /**
@@ -510,16 +612,16 @@ function App() {
         id='title-1'
         style={{ width: '250px', position: 'absolute', top: '100px', background: 'none', fontSize: '32px', zIndex: 2}}>I'm The Title Sir</h1>
 
-        {/* <div id="page-0" data-type='page'
+        <div id="page-0" data-type='page'
         style={{
           width: "480px",
           height: '800px',
           top: '100px',
-          left: '250px',
+          left: '350px',
           background: 'white',
           position: 'absolute'
         }}
-        ></div> */}
+        ></div>
 
 
 <div id="page-1" data-type='page'
@@ -535,7 +637,10 @@ function App() {
         >
       <h1
       style={{
-        fontSize: '42px'
+        fontSize: '42px',
+        position: 'absolute',
+        top: '0px',
+        left: '0px'
       }}
       id='titie-inside-page'>Hello I'm Page</h1>
         </div>
@@ -575,8 +680,16 @@ function App() {
       those display the value in real time
       */}
       {/* root states */}
-      {4 < 0 && <table id="states">
+      {<table id="states">
         <tbody>
+        <tr>
+          <td>movingFrom</td>
+          <td>{movingFrom}</td>
+        </tr>
+        <tr>
+          <td>movingTo</td>
+          <td>{movingTo}</td>
+        </tr>
         <tr>
           <td>fromWhereAreTheComponent</td>
           <td>{fromWhereAreTheComponent}</td>
@@ -585,7 +698,6 @@ function App() {
           <th>state</th>
           <th>value</th>
         </tr>
-
         <tr>
           <td>scrollTop</td>
           <td>{scrollTop}</td>
