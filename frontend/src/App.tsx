@@ -139,28 +139,50 @@ function App() {
       draggable={false}
 
       onMouseDown={(e: any) => {
+        /**
+         * the code below must be cleaners
+         * cleaners are codes who reset opened things if we user needs to close them easily
+         * simpliy they reset states
+         */
         set_displayContext(false)
 
-        if(selectedElements.length > 1 && e.target.id !== 'selected-elements-wrapper'){
+        /*
+        * this is after user selects and do his thing 
+        * and he needs to stop selection
+        * we identify that by
+        *   1. if there are selected elements
+        *   2. if selected element is not the wrapper (the selection box)
+        *   3. if user doesn't user shiftKey ( because he might be making an elemnt part of selection or removing element from selected ones)
+        * 
+        */
+        if(selectedElements.length > 1 && e.target.id !== 'selected-elements-wrapper' && !e.shiftKey){
           // if user selects something before append those to the real dom
 
         selectedElements.map((each: any) => {
           let copy: any = gEBID(each)?.cloneNode(true);
           copy.style.top = px(top(each) + scrollTop);
           copy.style.left = px(left(each) + scrollLeft);
-
+          set_selectedElements([])
           gEBID(each)?.remove();
           gEBID('canvas')!.append(copy);
         })
         }
 
-
+        /**
+         * this is the component who register the element selected if the elemnt is not the exception
+         * select is the blue box who follows you when you are selecting the elements in the ui 
+        */
       if(
         e.target.id !== 'select'
         ){
         set_seleElement(e.target.id);
       }
       
+      /**
+       * this is for moving object feature
+       * this helps to find the difference with cursor and moving object
+       * this value is the one who helped as to move the element with respect to referencing point in it 
+       */
       if(e.target.id !== 'canvas'){ // this if statement will be remlaced by modes
         let l: any = left(e.target.id);
         let t: any = top(e.target.id);
@@ -171,26 +193,55 @@ function App() {
         set_startMovingObject(true)
       }
 
+      /**
+       * this is all about selecting element feature
+       * this works if you put pointer in the canvas
+       */
       if(e.target.id === 'canvas'){
-
+          /**
+           * selection type is important for future features
+           * because we need to separate text editing selection and component selection 
+           * this prevents crush when users need to edit text and when they select the text
+           */
           set_selectionType('components');
+          /**
+           * set_startSelectingFrom
+           * identifyes where user needs to start selecting from 
+           */
           set_startSelectingFrom({
             x: e.clientX + scrollLeft,
             y: e.clientY + scrollTop
           })
           
+          /**
+           * set_includeSelectingUpto
+           * identifies how far selecting includes
+           * or the end of selectiion
+           */
           set_includeSelectingUpto({
             x: e.clientX + scrollLeft,
             y: e.clientY + scrollTop
           })
+          /**
+           * set_selectionStarted
+           * this announces the user started selecting
+           * but this doesn't mean the "select" div displays instead 
+           * we need another check called "set_selectionStarted2" which will be enabled 
+           * when user starts moving his mouse at first time after this enabled
+           */
           set_selectionStarted(true);
+          /**
+           * this clears the selected components
+           * user's action tells us he needs to ungroup those components
+           */
           set_selectedElements([]);
 
         }
+
       }}
       onMouseMove={(e: MouseEvent) => {
 
-        if(startMovingObject){
+      if(startMovingObject){
         gEBID(seleElement)!.style.top = px((e.clientY + scrollTop) - objectCursorDifference.y);
         gEBID(seleElement)!.style.left = px((e.clientX + scrollLeft) - objectCursorDifference.x);
         
@@ -307,8 +358,10 @@ function App() {
           top: '200px',
           left: '200px',
           padding: '10px 20px',
-          zIndex: 1,
-          width: '150px'
+          zIndex: 3,
+          width: '150px',
+          background: 'black',
+          color: 'white'
         }}
         >Click Here</button>
         <h1
@@ -331,11 +384,11 @@ function App() {
         style={{
           width: "480px",
           height: '800px',
-          top: '100px',
-          left: '750px',
+          top: '300px',
+          left: '250px',
           background: 'white',
           position: 'absolute',
-          zIndex: 3
+          zIndex: 1
         }}
         ></div>
 
