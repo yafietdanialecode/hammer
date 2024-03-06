@@ -87,14 +87,10 @@ body, html, #root, #main {
   }
 
 
-}
-
-
-
-
-#states {
-  width: 100px;
-  height: fit-content;
+  #states {
+  width: fit-content;
+  height: 50vh;
+  overflow: auto;
   position: fixed;
   bottom: 0px;
   right: 0px;
@@ -120,6 +116,13 @@ body, html, #root, #main {
     }
   }
 }
+
+
+}
+
+
+
+
 
 
 #context-menu {
@@ -153,3 +156,4 @@ body, html, #root, #main {
     background-color: rgba(255, 255, 255, 0.329);
   }
 }
+

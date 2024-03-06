@@ -6,6 +6,7 @@ import { px } from './modules/unit';
 import { gScrLeft, gScrlTop } from './modules/scroll';
 import { getCIArea } from './modules/getCIArea';
 import Logic from './modules/Logic';
+import componentName from './modules/componentName';
 
 function App() {
 
@@ -13,8 +14,8 @@ function App() {
   // indicates how much user scrolled
   const [scrollTop, set_scrollTop] = useState(0);
   const [scrollLeft, set_scrollLeft] = useState(0);
-  
-  // indicates the selection event
+
+  // selection event verification 1
   const [selectionStarted, set_selectionStarted] = useState(false)
   // this is second confirmation for mouse selectionstarted
   const [selectionStarted2, set_selectionStarted2] = useState(false)
@@ -26,7 +27,8 @@ function App() {
   const [includeSelectingUpto, set_includeSelectingUpto] = useState({x: 0, y: 0});
   // lists of selected elements in this cordinate
   const [selectedElements, set_selectedElements]: any = useState([]);
-  // selected elements difference between 
+  // where the selected component comes
+  const [fromWhereAreTheComponent, set_fromWhereAreTheComponent] = useState('canvas')
 
   // show all selected elements wrapper
   const [multiSelectedElementsWrapperDivStartFrom, set_multiSelectedElementsWrapperDivStartFrom] = useState({ x: 0, y: 0});
@@ -57,24 +59,39 @@ function App() {
   
 
 
-
+  /**
+   * this is the hook that will start when 
+   * the page loaded and rendered 
+   * [ only once it opened ]
+   */
   useEffect(() => {
     console.log("page initiated");
 
   }, [])
 
+  /**
+   * this is the hook that will execute every time
+   * react updates the ui
+   * [ infinite loop might occur so be careful ]
+   */
   useEffect(() => {
     // updating user's scroll amount 
     set_scrollTop(gScrlTop('canvas')!);
-    set_scrollLeft(gScrLeft('canvas')!);    
+    set_scrollLeft(gScrLeft('canvas')!);   
+
   })
 
+  // when mouse move in the whole window
   window.addEventListener('mousemove', (e: any) => {
 
-    // update mouse position
+    // update mouse position every time 
     set_mousePosition({x: e.clientX, y: e.clientY});
     
 
+    /**
+     * when user selects in component mode 
+     * this descides how inclusive the selected range or zone will be
+     */
     if(selectionStarted && !startMovingObject){
       set_selectionStarted2(true);
       set_includeSelectingUpto({
@@ -88,17 +105,41 @@ function App() {
 
   window.onmouseup = (e: any) => {
 
+    /**
+     * when user release there mouse
+     * we need to stop events like:
+     *      - moving object
+     *      - selection verifications (both)
+     */
     set_startMovingObject(false);
     set_selectionStarted(false);
     set_selectionStarted2(false); 
 
-     // saving the difference
-
+    
+    /**
+     * after user selects some component 
+     * we will clone them and do some edits
+     * and append them to the wrapper (moving object wrapper)
+     * this helps us to don't update position of each selected
+     * element when we need to move them
+     */
     if(selectedElements.length > 1 && !startMovingObject){
+      // wrapper
       const wrapper = gEBID('selected-elements-wrapper')!
+      /**
+       * for each selected elements we will edit and append them to wrapper
+       */
       selectedElements.map((each: string) => {
+        /**
+         * we clone them b/c they will be removed from the previous position temporarly
+         */
         let copy: any = gEBID(each)?.cloneNode(true);
-        // some editings
+
+        /**
+         * top and left position of the wrapper and canvas is different
+         * that's why we update the elements position and append the new 
+         * one to the wrapper
+         */
         copy.style.top = px(((top(each) - multiSelectedElementsWrapperDivStartFrom.y)) + scrollTop);
         copy.style.left = px((left(each) - multiSelectedElementsWrapperDivStartFrom.x) + scrollLeft);
         gEBID(each)?.remove()
@@ -109,6 +150,11 @@ function App() {
     
   }
 
+  /**
+   * browsers default context menu options are not permitted
+   * because we need more custom workflows and if we don't prevent
+   * them they might crush the application in some cases
+   */
   window.oncontextmenu = (e: any) => {
     e.preventDefault();
     set_displayContext(true)
@@ -118,7 +164,10 @@ function App() {
     })
   }
 
+  // this is the logic class
   const logic = new Logic('root', { CANAS_ID: 'canvas' })
+
+
   return (
     <>
       <div id="main"
@@ -129,16 +178,39 @@ function App() {
       >
 
       {/* upper tools */}
+      {/* 
+        * currently it holds the logo
+       */}
       <div id="upper-tools">
         <div id="logo"/>
       </div>
 
       {/* canvas */}
       <div id="canvas"
+      /**
+       * tabIndex is assigned to -1 to make it focusable element for 
+       * features like keyboard and mouse
+       */
       tabIndex={-1}
+      /**
+       * draggable is bad for images for dev environment not production
+       */
       draggable={false}
 
       onMouseDown={(e: any) => {
+        // some variables
+        let id = e.target.id;
+        let element = gEBID(id)!;
+        // some checks
+        let isCanvas = e.target.id === 'canvas' ? true : false;
+        let isItsParentCanvas = gEBID(id)!.parentElement!.id === 'canvas' ? true : false;
+        /**
+         * registor where the selected elements from
+         * [ simply the parent of the element by the time they toched by pointer ]
+         */
+        if(!isCanvas)
+          set_fromWhereAreTheComponent(gEBID(e.target.id)!.parentElement!.id);
+
         /**
          * the code below must be cleaners
          * cleaners are codes who reset opened things if we user needs to close them easily
@@ -158,6 +230,11 @@ function App() {
         if(selectedElements.length > 1 && e.target.id !== 'selected-elements-wrapper' && !e.shiftKey){
           // if user selects something before append those to the real dom
 
+          /**
+           * this makes a clone of elemnts in wrapper and 
+           * append them to there original place like (canvas & page)
+           * 
+           */
         selectedElements.map((each: any) => {
           let copy: any = gEBID(each)?.cloneNode(true);
           copy.style.top = px(top(each) + scrollTop);
@@ -239,14 +316,25 @@ function App() {
         }
 
       }}
-      onMouseMove={(e: MouseEvent) => {
 
+
+      onMouseMove={(e: MouseEvent) => {
+      /**
+       * this is the code who set's selected component position
+       * both top and left
+       */
       if(startMovingObject){
         gEBID(seleElement)!.style.top = px((e.clientY + scrollTop) - objectCursorDifference.y);
         gEBID(seleElement)!.style.left = px((e.clientX + scrollLeft) - objectCursorDifference.x);
-        
       }
 
+      /**
+       * if selection of elements verifyed by two verifications
+       * know this code will do:
+       *    - identify which elemnts could be selected and regester them
+       *    - and tells the wrapper (for moving elemnts ) the information like
+       *      what is it's position and size
+       */
       if(selectionStarted && selectionStarted2){
       
         let res = getCIArea(startSelectingFrom, includeSelectingUpto)
@@ -299,12 +387,43 @@ function App() {
         }
 
       }
+
+
+      /**
+       * if user is moving elements only not pages
+       * we will actually move components inside the wrapper
+       * wrapper in this code means the elements parent
+       * if user's mouse starts grabbing the element from the out side (canvas)
+       *        - when user enters pages we have to move the elment inside the page
+       *
+       * if user's mosue starts grabbing the elemtn from the inside (pages)
+       *        - when user move the component to the outside (canvas) move the elemnent to outside
+       */
+
+        if(startMovingObject || (selectionStarted2 && selectionStarted)){
+          
+          // for go up
+          if(mousePosition.y < 100){
+            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: -4, left: 0})
+          }
+          // for go down
+          if(mousePosition.y > window.innerHeight - 50){            
+            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: 4, left: 0})
+          }
+
+          if(startMovingObject){
+            gEBID(seleElement)!.style.top = px((mousePosition.y + scrollTop) - objectCursorDifference.y);
+            gEBID(seleElement)!.style.left = px((mousePosition.x + scrollLeft) - objectCursorDifference.x);
+          }
+          
+
+        }
       }}
 
 
       onWheel={(e: MouseEvent) => {
 
-            // updating user's scroll amount 
+          // updating user's scroll amount 
           set_scrollTop(gScrlTop('canvas')!);
           set_scrollLeft(gScrLeft('canvas')!);
           
@@ -312,6 +431,20 @@ function App() {
       
       
       onKeyDown={(e: any) => {
+
+        /**
+         * WARNING:
+         * remember if every thing is stable
+         * make those functionalities dependent on not user's text editing event 
+         * is enabled
+         * [ simply : if user's editText state enabled those should not work]
+         */
+
+        // all key events actions related to canvas element are hear
+
+        /**
+         * to delete elemnt by pressing del key in laptop
+         */
         if(e.key == 'Delete'){
           selectedElements.map((each: any) => {
             if(gEBID(each) && each.length > 0 && logic.CANVA_ELEMENT_EXCEPTION.every((id: any) => id !== each)){
@@ -322,17 +455,26 @@ function App() {
           set_selectedElements(false);
           set_selectionStarted2(false);
           set_selectedElements([]);
-        }else 
+        }else
+        /**
+         * select multiple feature by pressing ctr + a/A is here */ 
         if(e.key == 'a' && e.ctrlKey){
+
           logic.selectAll(
             'canvas',
             logic.CANVA_ELEMENT_EXCEPTION,
             set_selectedElements
             )
         }
+        /**
+         * move the elemnt forward
+         */
         if(e.key == ']'){
           gEBID(seleElement)!.style.zIndex = gEBID(seleElement)!.style.zIndex + 1 
         }
+        /**
+         * move the elment backward
+         */
         if(e.key == '['){
           gEBID(seleElement)!.style.zIndex = `${parseInt(gEBID(seleElement)!.style.zIndex) - 1}` 
         }
@@ -390,7 +532,13 @@ function App() {
           position: 'absolute',
           zIndex: 1
         }}
-        ></div>
+        >
+      <h1
+      style={{
+        fontSize: '42px'
+      }}
+      id='titie-inside-page'>Hello I'm Page</h1>
+        </div>
 
         {/* dev components*/}
       {(selectionStarted && selectionStarted2 && selectionType == 'components')
@@ -427,8 +575,12 @@ function App() {
       those display the value in real time
       */}
       {/* root states */}
-      <table id="states">
+      {4 < 0 && <table id="states">
         <tbody>
+        <tr>
+          <td>fromWhereAreTheComponent</td>
+          <td>{fromWhereAreTheComponent}</td>
+        </tr>
         <tr>
           <th>state</th>
           <th>value</th>
@@ -553,29 +705,29 @@ function App() {
         </tr>
 
         </tbody>
-      </table>
+      </table>}
 
-      <table id="states">
-        <caption>Element State</caption>
-        <tbody>
-        <tr>
-          <th>name</th><th>value</th>
-        </tr>
-        <tr>
-          <td>id</td>
-          <td>{seleElement}</td>
-        </tr>
-        <tr>
-          <td>position value</td>
-          <td>l: {left(seleElement)! + scrollLeft}<br/>t: {top(seleElement)! + scrollTop}<br/>r: {right(seleElement)!}<br/>b: {bottom(seleElement)}</td>
-        </tr>
-        <tr>
-          <td>zIndex</td>
-          <td>{gEBID(seleElement)?.style.zIndex}</td>
-        </tr>
+        {/* <table id="states">
+          <caption>Element State</caption>
+          <tbody>
+          <tr>
+            <th>name</th><th>value</th>
+          </tr>
+          <tr>
+            <td>id</td>
+            <td>{seleElement}</td>
+          </tr>
+          <tr>
+            <td>position value</td>
+            <td>l: {left(seleElement)! + scrollLeft}<br/>t: {top(seleElement)! + scrollTop}<br/>r: {right(seleElement)!}<br/>b: {bottom(seleElement)}</td>
+          </tr>
+          <tr>
+            <td>zIndex</td>
+            <td>{gEBID(seleElement)?.style.zIndex}</td>
+          </tr>
 
-        </tbody>
-      </table>
+          </tbody>
+        </table> */}
 
       {/* those are element feature previewers and decorators */}
       {(document.getElementById(seleElement) && seleElement !== 'canvas') && <div id="decorators">
@@ -592,9 +744,9 @@ function App() {
         borderRadius: '50px',
         background: 'transparent',
         color: 'rgb(107, 154, 255)',
-        fontSize: '10px'
+        fontSize: '12px'
     }}
-      >{gEBID(seleElement)?.tagName}</div>}
+      >{componentName(seleElement)}</div>}
 
 
       {/* rotate feature */}

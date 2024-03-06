@@ -77,30 +77,30 @@ body, html, #root, #main {
 #main #canvas #selected-elements-wrapper * {
   pointer-events: none;
 }
-
-#states {
-  width: 100px;
-  height: -moz-fit-content;
-  height: fit-content;
+#main #states {
+  width: -moz-fit-content;
+  width: fit-content;
+  height: 50vh;
+  overflow: auto;
   position: fixed;
   bottom: 0px;
   right: 0px;
   background-color: black;
   z-index: 3;
 }
-#states th, #states td {
+#main #states th, #main #states td {
   padding: 5px;
 }
-#states #decorators {
+#main #states #decorators {
   display: contents;
 }
-#states #decorators * {
+#main #states #decorators * {
   position: absolute;
   top: 0px;
   left: 0px;
   z-index: 40000;
 }
-#states #decorators #top-resize:hover {
+#main #states #decorators #top-resize:hover {
   transform: scaleX(50);
 }
 
