@@ -107,6 +107,10 @@ function App() {
 
   window.onmouseup = (e: any) => {
 
+    /**
+     * the code inside the next if statement is a feature for migrating 
+     * a child of page to canvas or to page and a child of canvas to page
+     */
     // when user releases the mouse
     if(movingFrom !== movingTo) {
       // moving single component features below
@@ -314,8 +318,9 @@ function App() {
        * this helps to find the difference with cursor and moving object
        * this value is the one who helped as to move the element with respect to referencing point in it 
        */
-      if(e.target.id !== 'canvas'){ // this if statement will be remlaced by modes
+      if(e.target.id !== 'canvas'){ // this if statement will be replaced by modes // modes like text, move, select ...
         if(gEBID(e.target.id)!.parentElement!.id == 'canvas'){
+          // this is for moving pages, components and anything inside canvas but not page
           let l: any = left(e.target.id);
           let t: any = top(e.target.id);
           set_objectCursorDifference({
@@ -323,6 +328,7 @@ function App() {
           y: (e.clientY + scrollTop) - (t + scrollTop)
         })
         }else {
+          // this is for moving components only inside a page not inside canvas 
           let l: any = left(e.target.id) - left(gEBID(e.target.id)!.parentElement!.id);
         let t: any = top(e.target.id) - top(gEBID(e.target.id)!.parentElement!.id);
         set_objectCursorDifference({
