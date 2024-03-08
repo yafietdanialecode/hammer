@@ -71,7 +71,11 @@ function App() {
    */
   useEffect(() => {
     console.log("page initiated");
-
+    gEBID('canvas')!.scrollTo({
+      behavior: 'instant',
+      top: 10000,
+      left: 10000
+    })
   }, [])
 
   /**
@@ -243,6 +247,7 @@ function App() {
         <div id="logo"/>
         <button onClick={() => set_textEditingModeEnabled(!textEditingModeEnabled)}>Text Edit Mode</button>
         <button onClick={() => set_displayDevStates(!displayDevStates)}>states</button>
+        <button onClick={() => gEBID('canvas')!.scrollTo({ top: top('center'), left: left('center')})}>center</button>
       </div>
 
       {/* canvas */}
@@ -657,8 +662,8 @@ function App() {
 
         style={{
           position: 'absolute',
-          top: px(window.innerHeight + scrollTop + 100),
-          left: px(window.innerWidth + scrollLeft + 100),
+          top: px(window.innerHeight + scrollTop + 200000),
+          left: px(window.innerWidth + scrollLeft + 200000),
           width: '10px',
           height: '10px',
           background: 'transparent',
@@ -669,8 +674,8 @@ function App() {
         <button id='btn'
         style={{
           position: 'absolute',
-          top: '200px',
-          left: '200px',
+          top: '10100px',
+          left: '10100px',
           padding: '10px 20px',
           zIndex: 3,
           width: '150px',
@@ -680,14 +685,17 @@ function App() {
         >Click Here</button>
         <h1
         id='title-1'
-        style={{ width: '250px', position: 'absolute', top: '100px', background: 'none', fontSize: '32px', zIndex: 2}}>I'm The Title Sir</h1>
+        style={{ width: '250px', position: 'absolute', 
+        top: '10100px',
+        left: '10100px',
+        background: 'none', fontSize: '32px', zIndex: 2}}>I'm The Title Sir</h1>
 
         <div id="page-0" data-type='page'
         style={{
           width: "480px",
           height: '800px',
-          top: '100px',
-          left: '50px',
+          top: '10100px',
+          left: '10100px',
           background: 'white',
           position: 'absolute'
         }}
@@ -698,8 +706,8 @@ function App() {
         style={{
           width: "480px",
           height: '800px',
-          top: '300px',
-          left: '650px',
+          top: '10100px',
+          left: '10100px',
           background: 'white',
           position: 'absolute',
           zIndex: 1
