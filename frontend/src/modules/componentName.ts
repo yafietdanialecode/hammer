@@ -5,10 +5,10 @@ export default function componentName(id: string){
     if(gEBID(id)){
         let tagName = gEBID(id)!.tagName;
         let isPage = gEBID(id)!.getAttribute('data-type') === 'page' ? true : false;
-        let isButton = tagName === 'BUTTON';
-        let isDiv = tagName === 'DIV';
-        let isInput = tagName === 'INPUT';
-        let isText = false;
+        // let isButton = tagName === 'BUTTON';
+        // let isDiv = tagName === 'DIV';
+        // let isInput = tagName === 'INPUT';
+        // let isText = false;
         switch(tagName.toLowerCase()){
             case "h1":
                 return "Title"
