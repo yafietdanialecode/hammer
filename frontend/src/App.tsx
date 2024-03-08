@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import gEBID from './modules/gEBID';
 import { bottom, height, left, right, top, width } from './modules/getStyle';
@@ -241,6 +241,7 @@ function App() {
        */}
       <div id="upper-tools">
         <div id="logo"/>
+        <button onClick={() => set_displayDevStates(!displayDevStates)}>states</button>
       </div>
 
       {/* canvas */}
