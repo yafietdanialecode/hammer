@@ -71,14 +71,15 @@ body, html, #root, #main {
   background-position: center;
 }
 #main #canvas {
-  width: 100vw;
-  height: 100vh;
+  width: 100vw !important;
+  height: 100vh !important;
   background-color: rgb(228, 228, 228);
-  position: absolute;
-  top: 0px;
-  left: 0;
-  z-index: -50000;
-  overflow: scroll;
+  position: absolute !important;
+  top: 0px !important;
+  left: 0px !important;
+  z-index: -50000 !important;
+  overflow: auto !important;
+  touch-action: none;
   /*
     a div that wraps the selected elements and move them
     under it when you get out from it it will put them where user leaves it
@@ -101,6 +102,9 @@ body, html, #root, #main {
 }
 #main #canvas #selected-elements-wrapper * {
   pointer-events: none;
+}
+#main #canvas [data-type=page] {
+  overflow: hidden;
 }
 #main #states {
   width: -moz-fit-content;
