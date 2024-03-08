@@ -261,7 +261,6 @@ function App() {
       onMouseDown={(e: any) => {
         // some variables
         let id = e.target.id;
-        // let element = gEBID(id)!;
 
         // some checks
         let isCanvas = e.target.id === 'canvas' ? true : false;
