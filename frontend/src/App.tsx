@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import gEBID from './modules/gEBID';
 import { bottom, height, left, right, top, width } from './modules/getStyle';
@@ -234,6 +234,7 @@ function App() {
        */}
       <div id="upper-tools">
         <div id="logo"/>
+        <button onClick={() => set_textEditingModeEnabled(true)}>text</button>
       </div>
 
       {/* canvas */}
@@ -252,11 +253,9 @@ function App() {
       onMouseDown={(e: any) => {
         // some variables
         let id = e.target.id;
-        let element = gEBID(id)!;
 
         // some checks
         let isCanvas = e.target.id === 'canvas' ? true : false;
-        let isItsParentCanvas = gEBID(id)!.parentElement!.id === 'canvas' ? true : false;
         /**
          * registor where the selected elements from
          * [ simply the parent of the element by the time they toched by pointer ]
@@ -337,6 +336,7 @@ function App() {
         })
         }
         set_startMovingObject(true)
+        set_cursorStyle('grabbing')
       }
 
       /**
