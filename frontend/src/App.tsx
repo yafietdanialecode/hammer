@@ -241,6 +241,7 @@ function App() {
        */}
       <div id="upper-tools">
         <div id="logo"/>
+        <button onClick={() => set_textEditingModeEnabled(!textEditingModeEnabled)}>Text Edit Mode</button>
         <button onClick={() => set_displayDevStates(!displayDevStates)}>states</button>
       </div>
 
