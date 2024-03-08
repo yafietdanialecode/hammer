@@ -529,7 +529,7 @@ function App() {
       }}
 
 
-      onWheel={(e: MouseEvent) => {
+      onWheel={() => {
 
           // updating user's scroll amount 
           set_scrollTop(gScrlTop('canvas')!);

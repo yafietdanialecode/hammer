@@ -1,3 +1,7 @@
+
+  /*
+    clearing all defaults and adding some default values
+  */
 * {
   padding: 0px;
   margin: 0px;
@@ -19,16 +23,26 @@
 }
 
 
+/*
+  removing those elements display and
+  user only childs of main only
+*/
 body, html, #root, #main {
   display: contents;
 }
  
+/*
+  main holds canvas and upper tools and all other displayed elements
+*/
 #main {
   width: 100vw;
   height: 100vh;
   background-color: rgb(255, 255, 255);
   display: contents;
 
+  /*
+    upper tools holds some file, mode editing and project title editing
+  */
   // upper tools
   #upper-tools {
     width: 100vw;
@@ -50,7 +64,10 @@ body, html, #root, #main {
       background-position: center;
     }
   }
-
+  /*
+  CANVAS: is a div wrapper where all pages, components and some tools like wrapper, select are located
+          it is a full width locator and full height locator
+  */
   // canvas
   #canvas {
     width: 100vw;
@@ -75,6 +92,10 @@ body, html, #root, #main {
   z-index: 50000;
 }
 
+/*
+  a div that wraps the selected elements and move them
+  under it when you get out from it it will put them where user leaves it
+*/
 #selected-elements-wrapper {
   border: none;
   background-color: rgba(131, 170, 255, 0.349);
@@ -86,7 +107,10 @@ body, html, #root, #main {
 }
   }
 
-
+  /*
+    states is a development component 
+    it holds a state name and it's value
+  */
   #states {
   width: fit-content;
   height: 40vh !important;
