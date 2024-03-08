@@ -261,11 +261,10 @@ function App() {
       onMouseDown={(e: any) => {
         // some variables
         let id = e.target.id;
-        // let element = gEBID(id)!;
 
         // some checks
         let isCanvas = e.target.id === 'canvas' ? true : false;
-        let isItsParentCanvas = gEBID(id)!.parentElement!.id === 'canvas' ? true : false;
+        // let isItsParentCanvas = gEBID(id)!.parentElement!.id === 'canvas' ? true : false;
         /**
          * registor where the selected elements from
          * [ simply the parent of the element by the time they toched by pointer ]
