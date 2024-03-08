@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { MouseEvent, useEffect, useState } from 'react'
 import './App.css'
 import gEBID from './modules/gEBID';
 import { bottom, height, left, right, top, width } from './modules/getStyle';
@@ -58,6 +58,9 @@ function App() {
     x: 0,
     y: 0
   })
+
+  // dev states
+  const [displayDevStates, set_displayDevStates] = useState(false)
   
 
 
@@ -112,15 +115,19 @@ function App() {
      * a child of page to canvas or to page and a child of canvas to page
      */
     // when user releases the mouse
-    if(movingFrom !== movingTo) {
+    if(movingFrom !== movingTo && startMovingObject) {
       // moving single component features below
       // if you need multipe next to this block
-      // moving single component from canvas > page
+      let parent = gEBID(seleElement)!.parentElement!.id
+
+      
       if(seleElement && selectedElements.length < 2 && seleElement !== 'selected-elements-wrapper'){
+       /* moving single component from canvas > page
+      */ 
         if(movingFrom == 'canvas' && movingTo != 'canvas' && gEBID(seleElement)!.getAttribute('data-type') !== 'page'){
         let clone:any = gEBID(seleElement)!.cloneNode(true);
-        clone.style.top = px(top(seleElement) - top(movingTo));
-        clone.style.left = px(left(seleElement) - left(movingTo));
+        clone.style.top = px((top(seleElement) - top(movingTo)));
+        clone.style.left = px((left(seleElement) - left(movingTo)));
         gEBID(seleElement)?.remove();
         gEBID(movingTo)?.append(clone);
       }
@@ -128,10 +135,11 @@ function App() {
       if(movingFrom !== 'canvas' && movingTo == 'canvas' && gEBID(seleElement)!.getAttribute('data-type') !== 'page'){
         let clone:any = gEBID(seleElement)!.cloneNode(true);
         
-        clone.style.top = px((e.clientY - (objectCursorDifference.y - top(gEBID(e.target.id)!.parentElement!.id))) + scrollTop);
-        clone.style.left = px((e.clientX - (objectCursorDifference.x - left(gEBID(e.target.id)!.parentElement!.id))) + scrollLeft);
+        clone.style.top = px(((mousePosition.y + scrollTop) - (objectCursorDifference.y - top(parent))) + scrollTop);
+        clone.style.left = px((mousePosition.x + scrollLeft) - (objectCursorDifference.x - left(parent)) + scrollLeft)
         gEBID(seleElement)?.remove();
-        gEBID(movingTo)?.append(clone);
+        gEBID('canvas')?.append(clone);
+        
       }
       // moving single component from page > page
       if(movingFrom !== 'canvas'
@@ -146,14 +154,13 @@ function App() {
       ){
         let clone:any = gEBID(seleElement)!.cloneNode(true);
 
-        clone.style.top = px((e.clientY - (objectCursorDifference.y - top(gEBID(seleElement)!.parentElement!.id))) - top(movingTo));
-        clone.style.left = px((e.clientX - (objectCursorDifference.x - left(gEBID(seleElement)!.parentElement!.id))) - left(movingTo));
+        clone.style.top = px(((e.clientY - (objectCursorDifference.y - top(gEBID(seleElement)!.parentElement!.id))) - top(movingTo)) + scrollTop);
+        clone.style.left = px(((e.clientX - (objectCursorDifference.x - left(gEBID(seleElement)!.parentElement!.id))) - left(movingTo)) + scrollLeft);
 
         gEBID(seleElement)?.remove();
         gEBID(movingTo)?.append(clone);
       }
-}
-
+      }
     }
 
     /**
@@ -234,7 +241,6 @@ function App() {
        */}
       <div id="upper-tools">
         <div id="logo"/>
-        <button onClick={() => set_textEditingModeEnabled(true)}>text</button>
       </div>
 
       {/* canvas */}
@@ -253,19 +259,20 @@ function App() {
       onMouseDown={(e: any) => {
         // some variables
         let id = e.target.id;
+        let element = gEBID(id)!;
 
         // some checks
         let isCanvas = e.target.id === 'canvas' ? true : false;
+        let isItsParentCanvas = gEBID(id)!.parentElement!.id === 'canvas' ? true : false;
         /**
          * registor where the selected elements from
          * [ simply the parent of the element by the time they toched by pointer ]
          */
-        if(!isCanvas)
-
+        if(!isCanvas){
         // if this element is not canvas
         set_movingFrom(gEBID(id)!.parentElement!.id)
         set_movingTo(gEBID(id)!.parentElement!.id)
-        
+        }
         set_fromWhereAreTheComponent(gEBID(e.target.id)!.parentElement!.id);
 
         /**
@@ -331,8 +338,8 @@ function App() {
           let l: any = left(e.target.id) - left(gEBID(e.target.id)!.parentElement!.id);
         let t: any = top(e.target.id) - top(gEBID(e.target.id)!.parentElement!.id);
         set_objectCursorDifference({
-          x: ((e.clientX + scrollLeft) - (l + scrollLeft)),
-          y: (e.clientY + scrollTop) - (t + scrollTop)
+          x: ((e.clientX + scrollLeft) - (l)),
+          y: (e.clientY + scrollTop) - (t)
         })
         }
         set_startMovingObject(true)
@@ -403,8 +410,8 @@ function App() {
           gEBID(seleElement)!.style.left = px((e.clientX + scrollLeft) - objectCursorDifference.x);
         }
         else if(gEBID(seleElement)!.parentElement?.getAttribute('data-type') === 'page') {
-          gEBID(seleElement)!.style.top = px(((e.clientY) - objectCursorDifference.y));
-          gEBID(seleElement)!.style.left = px((e.clientX) - objectCursorDifference.x);
+          gEBID(seleElement)!.style.top = px(((e.clientY - scrollTop) - objectCursorDifference.y));
+          gEBID(seleElement)!.style.left = px(((e.clientX - scrollLeft) - objectCursorDifference.x));
         }
         // this is where elements get appended inside and page and get out from page
         if(seleElement.length > 0 || selectedElements.length > 1){
@@ -512,11 +519,20 @@ function App() {
           
           // for go up
           if(mousePosition.y < 100){
-            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: -4, left: 0})
+            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: -10, left: 0})
           }
           // for go down
           if(mousePosition.y > window.innerHeight - 50){            
-            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: 4, left: 0})
+            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: 10, left: 0})
+          }
+
+          // for go up
+          if(mousePosition.x < 100){
+            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: 0, left: -10})
+          }
+          // for go down
+          if(mousePosition.x > window.innerWidth - 50){            
+            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: 0, left: 10})
           }
 
           if(startMovingObject){
@@ -529,11 +545,23 @@ function App() {
       }}
 
 
-      onWheel={() => {
+      onWheel={(e: any) => {
 
           // updating user's scroll amount 
           set_scrollTop(gScrlTop('canvas')!);
           set_scrollLeft(gScrLeft('canvas')!);
+
+          gEBID('canvas')!.scrollBy({
+            behavior: 'instant',
+            top: e.movementY,
+            left: e.movementX
+          })
+
+          console.table({
+            behavior: 'instant',
+            top: e.movementY,
+            left: e.movementX
+          })
           
       }}
       
@@ -550,7 +578,39 @@ function App() {
 
         // all key events actions related to canvas element are hear
 
-        /**
+
+        // those features work or not work based on users state
+        if(!textEditingModeEnabled){
+
+          /**
+           * those are keys will not work as default if users are not editing text
+           */
+          let directionKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+          if(directionKeys.some((key: any) => key == e.key)){
+            e.preventDefault();
+            let top_e = parseFloat(gEBID(seleElement)!.style.top);
+            let left_e = parseFloat(gEBID(seleElement)!.style.left);
+            switch(e.key){
+              case 'ArrowUp':
+                gEBID(seleElement)!.style.top = px(top_e - 1);
+              break;
+              case 'ArrowDown':
+                gEBID(seleElement)!.style.top = px(top_e + 1);
+              break;
+              case 'ArrowLeft':
+                gEBID(seleElement)!.style.left = px(left_e - 1);
+              break;
+              case 'ArrowRight':
+                gEBID(seleElement)!.style.left = px(left_e + 1);
+              break;
+              
+            }
+          }
+          /**
+           * those are keys which work if user is not editing text
+           */
+
+          /**
          * to delete elemnt by pressing del key in laptop
          */
         if(e.key == 'Delete'){
@@ -586,6 +646,9 @@ function App() {
         if(e.key == '['){
           gEBID(seleElement)!.style.zIndex = `${parseInt(gEBID(seleElement)!.style.zIndex) - 1}` 
         }
+        }
+
+  
       }}
       >
         {/* this makes the scrolling feature possible */}
@@ -623,7 +686,7 @@ function App() {
           width: "480px",
           height: '800px',
           top: '100px',
-          left: '350px',
+          left: '50px',
           background: 'white',
           position: 'absolute'
         }}
@@ -635,7 +698,7 @@ function App() {
           width: "480px",
           height: '800px',
           top: '300px',
-          left: '250px',
+          left: '650px',
           background: 'white',
           position: 'absolute',
           zIndex: 1
@@ -646,7 +709,8 @@ function App() {
         fontSize: '42px',
         position: 'absolute',
         top: '0px',
-        left: '0px'
+        left: '0px',
+        width: '300px'
       }}
       id='titie-inside-page'>Hello I'm Page</h1>
         </div>
@@ -686,7 +750,7 @@ function App() {
       those display the value in real time
       */}
       {/* root states */}
-      {<table id="states">
+      {displayDevStates && <table id="states">
         <tbody>
         <tr>
           <td>movingFrom</td>
@@ -825,7 +889,7 @@ function App() {
         </tbody>
       </table>}
 
-        {/* <table id="states">
+        {displayDevStates && <table id="states" style={{ right: '350px', height: 'fit-content'}}>
           <caption>Element State</caption>
           <tbody>
           <tr>
@@ -834,6 +898,14 @@ function App() {
           <tr>
             <td>id</td>
             <td>{seleElement}</td>
+          </tr>
+          <tr>
+            <td>width</td>
+            <td>{width(seleElement)}</td>
+          </tr>
+          <tr>
+            <td>height</td>
+            <td>{height(seleElement)}</td>
           </tr>
           <tr>
             <td>position value</td>
@@ -845,7 +917,7 @@ function App() {
           </tr>
 
           </tbody>
-        </table> */}
+        </table>}
 
       {/* those are element feature previewers and decorators */}
       {(document.getElementById(seleElement) && seleElement !== 'canvas') && <div id="decorators">
