@@ -241,8 +241,29 @@ function App() {
 
       {/* bottom mode changes */}
       <div id="left-tools">
-        <button title='Select'><i className="bi bi-cursor"></i></button>
-        <button title='Move'><i className="bi bi-arrows-move"></i></button>
+        <div 
+        style={{
+          background: 'black',
+          position: 'fixed',
+          top: '12vh',
+          left: '1vw',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '5vw',
+          borderRadius: '5px',
+          borderBottomLeftRadius: '0px',
+          borderBottomRightRadius: '0px',
+          // rowGap: '0.5vw',
+          borderBottom: '1px solid white',
+          paddingBottom: '0.5vw',
+          
+        }}
+        >
+          <button title='Select'><i className="bi bi-cursor"></i></button>
+          <button title='Move'><i className="bi bi-arrows-move"></i></button>
+        </div>
         <button title="text"><i className="bi bi-fonts"></i></button>
         <button title='image'><i className="bi bi-images"></i></button>
         <button title='page'><i className="bi bi-phone"></i></button>

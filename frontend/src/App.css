@@ -72,7 +72,7 @@ body, html, #root, #main {
 }
 #main #left-tools {
   width: 5vw;
-  height: 70vh;
+  max-height: 83vh;
   background-color: rgb(0, 0, 0);
   position: fixed;
   top: 15vh;
@@ -81,24 +81,30 @@ body, html, #root, #main {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  row-gap: 1vw;
   overflow: scroll;
   padding-bottom: 1vw;
+  padding-top: 8vw;
 }
 #main #left-tools button {
   width: 4vw;
   height: 4vw;
-  background-color: rgb(65, 65, 65);
+  background-color: transparent;
   color: white;
-  margin-top: 0.5vw;
   border-radius: 5px;
+  margin-top: 1vh;
 }
 #main #left-tools button i {
   font-size: 2vw;
   background-color: transparent;
   color: white;
+}
+#main #left-tools button:hover, #main #left-tools button:focus {
+  background-color: rgb(61, 61, 61);
+}
+#main #left-tools div button {
+  margin-top: 1vh;
 }
 #main #canvas {
   width: 100vw !important;
