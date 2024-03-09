@@ -46,7 +46,7 @@ body, html, #root, #main {
   // upper tools
   #upper-tools {
     width: 100vw;
-    height: 50px;
+    height: 10vh;
     background-color: black;
     position: fixed;
     top: 0px;
@@ -57,13 +57,25 @@ body, html, #root, #main {
     justify-content: space-around;
 
     #logo {
-      width: 30px;
-      height: 30px;
+      width: 2.1vw;
+      height: 2.1vw;
       background: url('/logo.svg');
       background-size: cover;
       background-position: center;
     }
   }
+
+  // bottom tools
+  #left-tools {
+    width: 20vw;
+    height: 90vh;
+    background-color: rgb(0, 0, 0);
+    position: fixed;
+    top: 10vh;
+    left: 0px;
+  }
+
+
   /*
   CANVAS: is a div wrapper where all pages, components and some tools like wrapper, select are located
           it is a full width locator and full height locator
