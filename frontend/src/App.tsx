@@ -239,6 +239,11 @@ function App() {
       }}
       >
 
+      {/* bottom mode changes */}
+      <div id="left-tools">
+
+      </div>
+
       {/* upper tools */}
       {/* 
         * currently it holds the logo
