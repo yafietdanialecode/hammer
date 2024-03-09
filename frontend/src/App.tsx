@@ -241,7 +241,13 @@ function App() {
 
       {/* bottom mode changes */}
       <div id="left-tools">
-
+        <button title='Select'><i className="bi bi-cursor"></i></button>
+        <button title='Move'><i className="bi bi-arrows-move"></i></button>
+        <button title="text"><i className="bi bi-fonts"></i></button>
+        <button title='image'><i className="bi bi-images"></i></button>
+        <button title='page'><i className="bi bi-phone"></i></button>
+        <button title='button'><i className="bi bi-menu-button-wide-fill"></i></button>
+        <button title='input'><i className="bi bi-input-cursor"></i></button>
       </div>
 
       {/* upper tools */}

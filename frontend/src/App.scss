@@ -67,12 +67,35 @@ body, html, #root, #main {
 
   // bottom tools
   #left-tools {
-    width: 20vw;
-    height: 90vh;
+    width: 5vw;
+    height: 70vh;
     background-color: rgb(0, 0, 0);
     position: fixed;
-    top: 10vh;
-    left: 0px;
+    top: 15vh;
+    left: 1vw;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    row-gap: 1vw;
+    overflow: scroll;
+    padding-bottom: 1vw;
+
+    button {
+      width: 4vw;
+      height: 4vw;
+      background-color: rgb(65, 65, 65);
+      color: white;
+      margin-top: 0.5vw;
+      border-radius: 5px;
+      i {
+        font-size: 2vw;
+        background-color: transparent;
+        color: white;
+      }
+    }
   }
 
 
