@@ -243,7 +243,7 @@ function App() {
       <div id="left-tools">
         <div 
         style={{
-          background: 'black',
+          background: 'white',
           position: 'fixed',
           top: '12vh',
           left: '1vw',
@@ -251,12 +251,12 @@ function App() {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          width: '5vw',
+          width: '3vw',
           borderRadius: '5px',
           borderBottomLeftRadius: '0px',
           borderBottomRightRadius: '0px',
           // rowGap: '0.5vw',
-          borderBottom: '1px solid white',
+          borderBottom: '1px solid gray',
           paddingBottom: '0.5vw',
           
         }}
@@ -729,9 +729,17 @@ function App() {
           top: '10100px',
           left: '10100px',
           background: 'white',
-          position: 'absolute'
+          position: 'absolute',
+          zIndex: 0
         }}
-        ></div>
+        >
+
+          <img id='img-01'
+          draggable="false"
+          style={{ zIndex: 2, position: 'absolute', top: '0px', left: '0px', width: '200px'}}
+          src="/cat.jpg" alt="the image" />
+
+        </div>
 
 
 <div id="page-1" data-type='page'
@@ -739,10 +747,10 @@ function App() {
           width: "480px",
           height: '800px',
           top: '10100px',
-          left: '10100px',
+          left: '10600px',
           background: 'white',
           position: 'absolute',
-          zIndex: 1
+          zIndex: 0
         }}
         >
       <h1
@@ -751,7 +759,8 @@ function App() {
         position: 'absolute',
         top: '0px',
         left: '0px',
-        width: '300px'
+        width: '300px',
+        zIndex: 0
       }}
       id='titie-inside-page'>Hello I'm Page</h1>
         </div>
@@ -1131,6 +1140,10 @@ function App() {
         <p>Copy <span>ctr + c</span></p>
         <p>Paste <span>ctr + v</span></p>
         <p>Edit <span>ctr + e</span></p>
+        <p
+        onClick={() => console.log(gEBID(seleElement)?.innerHTML)
+        }
+        >HTML <span></span></p>
       </div>}
       
       </div>
