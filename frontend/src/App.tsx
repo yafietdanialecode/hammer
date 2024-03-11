@@ -62,6 +62,11 @@ function App() {
   // dev states
   const [displayDevStates, set_displayDevStates] = useState(false)
   
+  /**
+   * the states below are for tools on the element
+   */
+  const [startResizing, set_startResizing] = useState(false); // start and end of resizing
+  const [ whatToResize, set_whatToResize] = useState('') // the type of resizing
 
 
   /**
@@ -113,6 +118,13 @@ function App() {
   })
 
   window.onmouseup = (e: any) => {
+
+    /**
+     * after user mouse release there will be no resizing
+     */
+
+    set_startResizing(false);
+    set_whatToResize('')
 
     /**
      * the code inside the next if statement is a feature for migrating 
@@ -438,6 +450,15 @@ function App() {
 
 
       onMouseMove={(e: any) => {
+
+      /**
+       * resizing features
+       */
+
+      if(startResizing) {
+
+      }
+
       /**
        * this is the code who set's selected component position
        * both top and left
@@ -880,6 +901,16 @@ function App() {
         </tr>
 
         <tr>
+          <td>startResizing</td>
+          <td>{startResizing ? '🟢' : '🔴'}</td>
+        </tr>
+
+        <tr>
+          <td>whatToResize</td>
+          <td>{whatToResize}</td>
+        </tr>
+
+        <tr>
           <td>seleElement</td>
           <td>{seleElement}</td>
         </tr>
@@ -1001,7 +1032,6 @@ function App() {
         zIndex: 30,
         cursor: 'crosshair',
         borderRadius: '50px',
-
     }}
       />}
 
@@ -1017,6 +1047,11 @@ function App() {
           background: 'rgb(107, 154, 255)',
           cursor: 'ns-resize'
         }}
+        onMouseDown={() => {
+          set_whatToResize('top');
+          set_startResizing(true);
+          
+        }}
         ></div>}
 
         {/* top-left corner resize button */}
@@ -1031,6 +1066,12 @@ function App() {
           background: 'rgb(107, 154, 255)',
           cursor: 'nw-resize'
         }}
+
+        onMouseDown={() => {
+          set_whatToResize('top-left');
+          set_startResizing(true);
+        }}
+        
         ></div>}
 
 
@@ -1046,6 +1087,12 @@ function App() {
           background: 'rgb(107, 154, 255)',
           cursor: 'ew-resize'
         }}
+
+        onMouseDown={() => {
+          set_whatToResize('right');
+          set_startResizing(true);
+        }}
+        
         ></div>}
 
         {/* top-right corner resize button */}
@@ -1060,6 +1107,12 @@ function App() {
           background: 'rgb(107, 154, 255)',
           cursor: 'ne-resize'
         }}
+
+        onMouseDown={() => {
+          set_whatToResize('top-right');
+          set_startResizing(true);
+        }}
+        
         ></div>}
 
         {/* this is the bottom resize feature of element */}
@@ -1074,6 +1127,12 @@ function App() {
           background: 'rgb(107, 154, 255)',
           cursor: 'ns-resize'
         }}
+
+        onMouseDown={() => {
+          set_whatToResize('bottom-resize');
+          set_startResizing(true);
+        }}
+
         ></div>}
 
         {/* bottom-right corner resize button */}
@@ -1088,6 +1147,12 @@ function App() {
           background: 'rgb(107, 154, 255)',
           cursor: 'nw-resize'
         }}
+
+        onMouseDown={() => {
+          set_whatToResize('bottom-right');
+          set_startResizing(true);
+        }}
+
         ></div>}
 
         {/* this is the left resize feature of element */}
@@ -1102,6 +1167,12 @@ function App() {
           background: 'rgb(107, 154, 255)',
           cursor: 'ew-resize'
         }}
+
+        onMouseDown={() => {
+          set_whatToResize('left');
+          set_startResizing(true);
+        }}
+
         ></div>}
 
         {/* bottom-left corner resize button */}
@@ -1116,6 +1187,12 @@ function App() {
           background: 'rgb(107, 154, 255)',
           cursor: 'ne-resize'
         }}
+
+        onMouseDown={() => {
+          set_whatToResize('bottom-left');
+          set_startResizing(true);
+        }}
+
         ></div>}
       </div>}
 
