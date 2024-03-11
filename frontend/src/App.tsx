@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import gEBID from './modules/gEBID';
-import { bottom, height, left, right, top, width } from './modules/getStyle';
-import { px } from './modules/unit';
-import { gScrLeft, gScrlTop } from './modules/scroll';
+import Elem from './modules/Elem';
+import Unit from './modules/unit';
+import Scroll from './modules/scroll';
+import Style from './modules/Style';
 import { getCIArea } from './modules/getCIArea';
 import Logic from './modules/Logic';
-import componentName from './modules/componentName';
+import Component from './modules/Component';
 
 function App() {
 
@@ -76,7 +76,7 @@ function App() {
    */
   useEffect(() => {
     console.log("page initiated");
-    gEBID('canvas')!.scrollTo({
+    Elem.id('canvas')!.scrollTo({
       behavior: 'instant',
       top: 10000,
       left: 10000
@@ -90,8 +90,8 @@ function App() {
    */
   useEffect(() => {
     // updating user's scroll amount 
-    set_scrollTop(gScrlTop('canvas')!);
-    set_scrollLeft(gScrLeft('canvas')!);   
+    set_scrollTop(Scroll.top('canvas')!);
+    set_scrollLeft(Scroll.left('canvas')!);   
 
   })
 
@@ -134,27 +134,27 @@ function App() {
     if(movingFrom !== movingTo && startMovingObject) {
       // moving single component features below
       // if you need multipe next to this block
-      let parent = gEBID(seleElement)!.parentElement!.id
+      let parent = Elem.id(seleElement)!.parentElement!.id
 
       
       if(seleElement && selectedElements.length < 2 && seleElement !== 'selected-elements-wrapper'){
        /* moving single component from canvas > page
       */ 
-        if(movingFrom == 'canvas' && movingTo != 'canvas' && gEBID(seleElement)!.getAttribute('data-type') !== 'page'){
-        let clone:any = gEBID(seleElement)!.cloneNode(true);
-        clone.style.top = px((top(seleElement) - top(movingTo)));
-        clone.style.left = px((left(seleElement) - left(movingTo)));
-        gEBID(seleElement)?.remove();
-        gEBID(movingTo)?.append(clone);
+        if(movingFrom == 'canvas' && movingTo != 'canvas' && Elem.id(seleElement)!.getAttribute('data-type') !== 'page'){
+        let clone:any = Elem.id(seleElement)!.cloneNode(true);
+        clone.style.top = Unit.px(Style.top(seleElement) - Style.top(movingTo));
+        clone.style.left = Unit.px(Style.left(seleElement) - Style.left(movingTo));
+        Elem.id(seleElement)?.remove();
+        Elem.id(movingTo)?.append(clone);
       }
       // moving single component from page > canvas
-      if(movingFrom !== 'canvas' && movingTo == 'canvas' && gEBID(seleElement)!.getAttribute('data-type') !== 'page'){
-        let clone:any = gEBID(seleElement)!.cloneNode(true);
+      if(movingFrom !== 'canvas' && movingTo == 'canvas' && Elem.id(seleElement)!.getAttribute('data-type') !== 'page'){
+        let clone:any = Elem.id(seleElement)!.cloneNode(true);
         
-        clone.style.top = px(((mousePosition.y + scrollTop) - (objectCursorDifference.y - top(parent))) + scrollTop);
-        clone.style.left = px((mousePosition.x + scrollLeft) - (objectCursorDifference.x - left(parent)) + scrollLeft)
-        gEBID(seleElement)?.remove();
-        gEBID('canvas')?.append(clone);
+        clone.style.top = Unit.px((mousePosition.y + scrollTop) - (objectCursorDifference.y - Style.top(parent)) + scrollTop);
+        clone.style.left = Unit.px((mousePosition.x + scrollLeft) - (objectCursorDifference.x - Style.left(parent)) + scrollLeft);
+        Elem.id(seleElement)?.remove();
+        Elem.id('canvas')?.append(clone);
         
       }
       // moving single component from page > page
@@ -162,19 +162,19 @@ function App() {
        &&
         movingTo !== 'canvas'
        && 
-        gEBID(seleElement)!.getAttribute('data-type') !== 'page'
+        Elem.id(seleElement)!.getAttribute('data-type') !== 'page'
        &&
-        gEBID(movingFrom)!.getAttribute('data-type') == 'page'
+        Elem.id(movingFrom)!.getAttribute('data-type') == 'page'
         &&
-        gEBID(movingTo)!.getAttribute('data-type') == 'page'
+        Elem.id(movingTo)!.getAttribute('data-type') == 'page'
       ){
-        let clone:any = gEBID(seleElement)!.cloneNode(true);
+        let clone:any = Elem.id(seleElement)!.cloneNode(true);
 
-        clone.style.top = px(((e.clientY - (objectCursorDifference.y - top(gEBID(seleElement)!.parentElement!.id))) - top(movingTo)) + scrollTop);
-        clone.style.left = px(((e.clientX - (objectCursorDifference.x - left(gEBID(seleElement)!.parentElement!.id))) - left(movingTo)) + scrollLeft);
+        clone.style.top = Unit.px((e.clientY - (objectCursorDifference.y - Style.top(Elem.id(seleElement)!.parentElement!.id)) - Style.top(movingTo)) + scrollTop);
+        clone.style.left = Unit.px((e.clientX - (objectCursorDifference.x - Style.left(Elem.id(seleElement)!.parentElement!.id))) - Style.left(movingTo) + scrollLeft);
 
-        gEBID(seleElement)?.remove();
-        gEBID(movingTo)?.append(clone);
+        Elem.id(seleElement)?.remove();
+        Elem.id(movingTo)?.append(clone);
       }
       }
     }
@@ -199,7 +199,7 @@ function App() {
      */
     if(selectedElements.length > 1 && !startMovingObject){
       // wrapper
-      const wrapper = gEBID('selected-elements-wrapper')!
+      const wrapper = Elem.id('selected-elements-wrapper')!
       /**
        * for each selected elements we will edit and append them to wrapper
        */
@@ -207,16 +207,16 @@ function App() {
         /**
          * we clone them b/c they will be removed from the previous position temporarly
          */
-        let copy: any = gEBID(each)?.cloneNode(true);
+        let copy: any = Elem.id(each)?.cloneNode(true);
 
         /**
          * top and left position of the wrapper and canvas is different
          * that's why we update the elements position and append the new 
          * one to the wrapper
          */
-        copy.style.top = px(((top(each) - multiSelectedElementsWrapperDivStartFrom.y)) + scrollTop);
-        copy.style.left = px((left(each) - multiSelectedElementsWrapperDivStartFrom.x) + scrollLeft);
-        gEBID(each)?.remove()
+        copy.style.top = Unit.px((Style.top(each) - multiSelectedElementsWrapperDivStartFrom.y) + scrollTop);
+        copy.style.left = Unit.px((Style.left(each) - multiSelectedElementsWrapperDivStartFrom.x) + scrollLeft);
+        Elem.id(each)?.remove()
         wrapper.append(copy)
 
       })
@@ -291,7 +291,7 @@ function App() {
         <div id="logo"/>
         <button onClick={() => set_textEditingModeEnabled(!textEditingModeEnabled)}>Text Edit Mode</button>
         <button onClick={() => set_displayDevStates(!displayDevStates)}>states</button>
-        <button onClick={() => gEBID('canvas')!.scrollTo({ top: top('center'), left: left('center')})}>center</button>
+        <button onClick={() => Elem.id('canvas')!.scrollTo({ top: Style.top('center'), left: Style.left('center')})}>center</button>
       </div>
 
       {/* canvas */}
@@ -313,17 +313,17 @@ function App() {
 
         // some checks
         let isCanvas = e.target.id === 'canvas' ? true : false;
-        // let isItsParentCanvas = gEBID(id)!.parentElement!.id === 'canvas' ? true : false;
+        // let isItsParentCanvas = Elem.id(id)!.parentElement!.id === 'canvas' ? true : false;
         /**
          * registor where the selected elements from
          * [ simply the parent of the element by the time they toched by pointer ]
          */
         if(!isCanvas){
         // if this element is not canvas
-        set_movingFrom(gEBID(id)!.parentElement!.id)
-        set_movingTo(gEBID(id)!.parentElement!.id)
+        set_movingFrom(Elem.id(id)!.parentElement!.id)
+        set_movingTo(Elem.id(id)!.parentElement!.id)
         }
-        set_fromWhereAreTheComponent(gEBID(e.target.id)!.parentElement!.id);
+        set_fromWhereAreTheComponent(Elem.id(e.target.id)!.parentElement!.id);
 
         /**
          * the code below must be cleaners
@@ -350,12 +350,12 @@ function App() {
            * 
            */
         selectedElements.map((each: any) => {
-          let copy: any = gEBID(each)?.cloneNode(true);
-          copy.style.top = px(top(each) + scrollTop);
-          copy.style.left = px(left(each) + scrollLeft);
+          let copy: any = Elem.id(each)?.cloneNode(true);
+          copy.style.top = Unit.px(Style.top(each) + scrollTop);
+          copy.style.left = Unit.px(Style.left(each) + scrollLeft);
           set_selectedElements([])
-          gEBID(each)?.remove();
-          gEBID('canvas')!.append(copy);
+          Elem.id(each)?.remove();
+          Elem.id('canvas')!.append(copy);
         })
         }
 
@@ -375,18 +375,18 @@ function App() {
        * this value is the one who helped as to move the element with respect to referencing point in it 
        */
       if(e.target.id !== 'canvas'){ // this if statement will be replaced by modes // modes like text, move, select ...
-        if(gEBID(e.target.id)!.parentElement!.id == 'canvas'){
+        if(Elem.id(e.target.id)!.parentElement!.id == 'canvas'){
           // this is for moving pages, components and anything inside canvas but not page
-          let l: any = left(e.target.id);
-          let t: any = top(e.target.id);
+          let l: any = Style.left(e.target.id);
+          let t: any = Style.top(e.target.id);
           set_objectCursorDifference({
           x: (e.clientX + scrollLeft) - (l + scrollLeft),
           y: (e.clientY + scrollTop) - (t + scrollTop)
         })
         }else {
           // this is for moving components only inside a page not inside canvas 
-          let l: any = left(e.target.id) - left(gEBID(e.target.id)!.parentElement!.id);
-        let t: any = top(e.target.id) - top(gEBID(e.target.id)!.parentElement!.id);
+          let l: any = Style.left(e.target.id) - Style.left(Elem.id(e.target.id)!.parentElement!.id);
+        let t: any = Style.top(e.target.id) - Style.top(Elem.id(e.target.id)!.parentElement!.id);
         set_objectCursorDifference({
           x: ((e.clientX + scrollLeft) - (l)),
           y: (e.clientY + scrollTop) - (t)
@@ -464,28 +464,28 @@ function App() {
        * both top and left
        */
       if(startMovingObject){
-        if(gEBID(seleElement)!.parentElement!.id === 'canvas') {
-          gEBID(seleElement)!.style.top = px((e.clientY + scrollTop) - objectCursorDifference.y);
-          gEBID(seleElement)!.style.left = px((e.clientX + scrollLeft) - objectCursorDifference.x);
+        if(Elem.id(seleElement)!.parentElement!.id === 'canvas') {
+          Elem.id(seleElement)!.style.top = Unit.px((e.clientY + scrollTop) - objectCursorDifference.y);
+          Elem.id(seleElement)!.style.left = Unit.px((e.clientX + scrollLeft) - objectCursorDifference.x);
         }
-        else if(gEBID(seleElement)!.parentElement?.getAttribute('data-type') === 'page') {
-          gEBID(seleElement)!.style.top = px(((e.clientY - scrollTop) - objectCursorDifference.y));
-          gEBID(seleElement)!.style.left = px(((e.clientX - scrollLeft) - objectCursorDifference.x));
+        else if(Elem.id(seleElement)!.parentElement?.getAttribute('data-type') === 'page') {
+          Elem.id(seleElement)!.style.top = Unit.px((e.clientY - scrollTop) - objectCursorDifference.y);
+          Elem.id(seleElement)!.style.left = Unit.px((e.clientX - scrollLeft) - objectCursorDifference.x);
         }
         // this is where elements get appended inside and page and get out from page
         if(seleElement.length > 0 || selectedElements.length > 1){
 
-          let all = gEBID('main')!.querySelectorAll('*');
+          let all = Elem.id('main')!.querySelectorAll('*');
           let results: any = [];
           let x_start = e.clientX + scrollLeft;
           let y_start = e.clientY + scrollTop;
           
           all.forEach((element: any) => {
             if(
-              top(element.id) + scrollTop < y_start && 
-              left(element.id) + scrollLeft < x_start &&
-              right(element.id) + scrollLeft > x_start &&
-              bottom(element.id) + scrollTop > y_start &&
+              Style.top(element.id) + scrollTop < y_start && 
+              Style.left(element.id) + scrollLeft < x_start &&
+              Style.right(element.id) + scrollLeft > x_start &&
+              Style.bottom(element.id) + scrollTop > y_start &&
               (element.id === 'canvas' || element.getAttribute('data-type') === 'page')
               ) {
                 results.push(element.id)
@@ -528,10 +528,10 @@ function App() {
           res.forEach((each: any) => {
             
             // some varialble to clean the code
-            let eTop: any = top(each);
-            let eLeft: any = left(each);
-            let eRight: any = right(each);
-            let eBottom: any = bottom(each);
+            let eTop: any = Style.top(each);
+            let eLeft: any = Style.left(each);
+            let eRight: any = Style.right(each);
+            let eBottom: any = Style.bottom(each);
             
             if(eTop < startFromMax.y){ // the top minimum value of element
               startFromMax.y = eTop;
@@ -578,25 +578,25 @@ function App() {
           
           // for go up
           if(mousePosition.y < 100){
-            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: -10, left: 0})
+            Elem.id('canvas')?.scrollBy({ behavior: 'instant', top: -10, left: 0})
           }
           // for go down
           if(mousePosition.y > window.innerHeight - 50){            
-            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: 10, left: 0})
+            Elem.id('canvas')?.scrollBy({ behavior: 'instant', top: 10, left: 0})
           }
 
           // for go up
           if(mousePosition.x < 100){
-            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: 0, left: -10})
+            Elem.id('canvas')?.scrollBy({ behavior: 'instant', top: 0, left: -10})
           }
           // for go down
           if(mousePosition.x > window.innerWidth - 50){            
-            gEBID('canvas')?.scrollBy({ behavior: 'instant', top: 0, left: 10})
+            Elem.id('canvas')?.scrollBy({ behavior: 'instant', top: 0, left: 10})
           }
 
           if(startMovingObject){
-            gEBID(seleElement)!.style.top = px((mousePosition.y + scrollTop) - objectCursorDifference.y);
-            gEBID(seleElement)!.style.left = px((mousePosition.x + scrollLeft) - objectCursorDifference.x);
+            Elem.id(seleElement)!.style.top = Unit.px((mousePosition.y + scrollTop) - objectCursorDifference.y);
+            Elem.id(seleElement)!.style.left = Unit.px((mousePosition.x + scrollLeft) - objectCursorDifference.x);
           }
           
 
@@ -607,10 +607,10 @@ function App() {
       onWheel={(e: any) => {
 
           // updating user's scroll amount 
-          set_scrollTop(gScrlTop('canvas')!);
-          set_scrollLeft(gScrLeft('canvas')!);
+          set_scrollTop(Scroll.top('canvas')!);
+          set_scrollLeft(Scroll.left('canvas')!);
 
-          gEBID('canvas')!.scrollBy({
+          Elem.id('canvas')!.scrollBy({
             behavior: 'instant',
             top: e.movementY,
             left: e.movementX
@@ -647,20 +647,20 @@ function App() {
           let directionKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
           if(directionKeys.some((key: any) => key == e.key)){
             e.preventDefault();
-            let top_e = parseFloat(gEBID(seleElement)!.style.top);
-            let left_e = parseFloat(gEBID(seleElement)!.style.left);
+            let top_e = parseFloat(Elem.id(seleElement)!.style.top);
+            let left_e = parseFloat(Elem.id(seleElement)!.style.left);
             switch(e.key){
               case 'ArrowUp':
-                gEBID(seleElement)!.style.top = px(top_e - 1);
+                Elem.id(seleElement)!.style.top = Unit.px(top_e - 1);
               break;
               case 'ArrowDown':
-                gEBID(seleElement)!.style.top = px(top_e + 1);
+                Elem.id(seleElement)!.style.top = Unit.px(top_e + 1);
               break;
               case 'ArrowLeft':
-                gEBID(seleElement)!.style.left = px(left_e - 1);
+                Elem.id(seleElement)!.style.left = Unit.px(left_e - 1);
               break;
               case 'ArrowRight':
-                gEBID(seleElement)!.style.left = px(left_e + 1);
+                Elem.id(seleElement)!.style.left = Unit.px(left_e + 1);
               break;
               
             }
@@ -674,8 +674,8 @@ function App() {
          */
         if(e.key == 'Delete'){
           selectedElements.map((each: any) => {
-            if(gEBID(each) && each.length > 0 && logic.CANVA_ELEMENT_EXCEPTION.every((id: any) => id !== each)){
-              gEBID(each)?.remove()
+            if(Elem.id(each) && each.length > 0 && logic.CANVA_ELEMENT_EXCEPTION.every((id: any) => id !== each)){
+              Elem.id(each)?.remove()
             }
           });
           set_seleElement('canvas');
@@ -697,13 +697,13 @@ function App() {
          * move the elemnt forward
          */
         if(e.key == ']'){
-          gEBID(seleElement)!.style.zIndex = gEBID(seleElement)!.style.zIndex + 1 
+          Elem.id(seleElement)!.style.zIndex = Elem.id(seleElement)!.style.zIndex + 1 
         }
         /**
          * move the elment backward
          */
         if(e.key == '['){
-          gEBID(seleElement)!.style.zIndex = `${parseInt(gEBID(seleElement)!.style.zIndex) - 1}` 
+          Elem.id(seleElement)!.style.zIndex = `${parseInt(Elem.id(seleElement)!.style.zIndex) - 1}` 
         }
         }
 
@@ -715,8 +715,8 @@ function App() {
 
         style={{
           position: 'absolute',
-          top: px(window.innerHeight + scrollTop + 200000),
-          left: px(window.innerWidth + scrollLeft + 200000),
+          top: Unit.px(window.innerHeight + scrollTop + 200000),
+          left: Unit.px(window.innerWidth + scrollLeft + 200000),
           width: '10px',
           height: '10px',
           background: 'transparent',
@@ -792,10 +792,10 @@ function App() {
         <div id="select"
         style={{
           position: 'absolute',
-          top: includeSelectingUpto.y > startSelectingFrom.y ? px(startSelectingFrom.y) : px(includeSelectingUpto.y),
-          left: includeSelectingUpto.x > startSelectingFrom.x ? px(startSelectingFrom.x) : px(includeSelectingUpto.x),
-          width: includeSelectingUpto.x > startSelectingFrom.x ? px(includeSelectingUpto.x - startSelectingFrom.x) : px(startSelectingFrom.x - includeSelectingUpto.x),
-          height: includeSelectingUpto.y > startSelectingFrom.y ? px(includeSelectingUpto.y - startSelectingFrom.y) : px(startSelectingFrom.y - includeSelectingUpto.y),
+          top: includeSelectingUpto.y > startSelectingFrom.y ? Unit.px(startSelectingFrom.y) : Unit.px(includeSelectingUpto.y),
+          left: includeSelectingUpto.x > startSelectingFrom.x ? Unit.px(startSelectingFrom.x) : Unit.px(includeSelectingUpto.x),
+          width: includeSelectingUpto.x > startSelectingFrom.x ? Unit.px(includeSelectingUpto.x - startSelectingFrom.x) : Unit.px(startSelectingFrom.x - includeSelectingUpto.x),
+          height: includeSelectingUpto.y > startSelectingFrom.y ? Unit.px(includeSelectingUpto.y - startSelectingFrom.y) : Unit.px(startSelectingFrom.y - includeSelectingUpto.y),
         }}
         ></div>
       }
@@ -803,10 +803,10 @@ function App() {
       {selectedElements.length > 1 && <div id='selected-elements-wrapper'
         style={{
           position: 'absolute',
-          top: px(multiSelectedElementsWrapperDivStartFrom.y),
-          left: px(multiSelectedElementsWrapperDivStartFrom.x),
-          width: px((multiSelectedElementsWrapperDivInclude.x - multiSelectedElementsWrapperDivStartFrom.x)),
-          height: px(multiSelectedElementsWrapperDivInclude.y - multiSelectedElementsWrapperDivStartFrom.y),
+          top: Unit.px(multiSelectedElementsWrapperDivStartFrom.y),
+          left: Unit.px(multiSelectedElementsWrapperDivStartFrom.x),
+          width: Unit.px(multiSelectedElementsWrapperDivInclude.x - multiSelectedElementsWrapperDivStartFrom.x),
+          height: Unit.px(multiSelectedElementsWrapperDivInclude.y - multiSelectedElementsWrapperDivStartFrom.y),
           zIndex: 50000
         }}
         >
@@ -982,19 +982,19 @@ function App() {
           </tr>
           <tr>
             <td>width</td>
-            <td>{width(seleElement)}</td>
+            <td>{Style.width(seleElement)}</td>
           </tr>
           <tr>
             <td>height</td>
-            <td>{height(seleElement)}</td>
+            <td>{Style.height(seleElement)}</td>
           </tr>
           <tr>
             <td>position value</td>
-            <td>l: {left(seleElement)! + scrollLeft}<br/>t: {top(seleElement)! + scrollTop}<br/>r: {right(seleElement)!}<br/>b: {bottom(seleElement)}</td>
+            <td>l: {Style.left(seleElement)! + scrollLeft}<br/>t: {Style.top(seleElement)! + scrollTop}<br/>r: {Style.right(seleElement)!}<br/>b: {Style.bottom(seleElement)}</td>
           </tr>
           <tr>
             <td>zIndex</td>
-            <td>{gEBID(seleElement)?.style.zIndex}</td>
+            <td>{Elem.id(seleElement)?.style.zIndex}</td>
           </tr>
 
           </tbody>
@@ -1004,11 +1004,11 @@ function App() {
       {(document.getElementById(seleElement) && seleElement !== 'canvas') && <div id="decorators">
         
       {/* element descriptor */}
-      {(!startMovingObject && gEBID(seleElement)) && <div 
+      {(!startMovingObject && Elem.id(seleElement)) && <div 
       style={{
         position: 'absolute',
-        top: px(top(seleElement) - 15),
-        left: px(left(seleElement)),
+        top: Unit.px(Style.top(seleElement) - 15),
+        left: Unit.px(Style.left(seleElement)),
         width: '6px',
         height: '6px',
         zIndex: 30,
@@ -1017,15 +1017,15 @@ function App() {
         color: 'rgb(107, 154, 255)',
         fontSize: '12px'
     }}
-      >{componentName(seleElement)}</div>}
+      >{Component.name(seleElement)}</div>}
 
 
       {/* rotate feature */}
-      {(!startMovingObject && gEBID(seleElement)) &&<div 
+      {(!startMovingObject && Elem.id(seleElement)) &&<div 
       style={{
         position: 'absolute',
-        top: px(top(seleElement) - 20),
-        left: px(left(seleElement) + (width(seleElement) / 2)),
+        top: Unit.px(Style.top(seleElement) - 20),
+        left: Unit.px(Style.left(seleElement) + (Style.width(seleElement) / 2)),
         width: '6px',
         height: '6px',
         background: 'rgb(107, 154, 255)',
@@ -1036,12 +1036,12 @@ function App() {
       />}
 
         {/* this is the top resize feature of element */}
-        {(!startMovingObject && gEBID(seleElement)) && <div id="top-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id="top-resize"
         style={{
           position: 'absolute',
-          top: px(top(seleElement) - 1),
-          left: px(left(seleElement)),
-          width: px(width(seleElement)),
+          top: Unit.px(Style.top(seleElement) - 1),
+          left: Unit.px(Style.left(seleElement)),
+          width: Unit.px(Style.width(seleElement)),
           height: '1px',
           zIndex: 30,
           background: 'rgb(107, 154, 255)',
@@ -1050,16 +1050,15 @@ function App() {
         onMouseDown={() => {
           set_whatToResize('top');
           set_startResizing(true);
-          
         }}
         ></div>}
 
         {/* top-left corner resize button */}
-        {(!startMovingObject && gEBID(seleElement)) && <div id="topleft-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id="topleft-resize"
         style={{
           position: 'absolute',
-          top: px(top(seleElement) - 3),
-          left: px(left(seleElement) - 3),
+          top: Unit.px(Style.top(seleElement) - 3),
+          left: Unit.px(Style.left(seleElement) - 3),
           width: '6px',
           height: '6px',
           zIndex: 30,
@@ -1076,13 +1075,13 @@ function App() {
 
 
         {/* this is the right resize feature of element */}
-        {(!startMovingObject && gEBID(seleElement)) && <div id="right-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id="right-resize"
         style={{ 
           position: 'absolute',
-          top: px(top(seleElement)),
-          left: px(right(seleElement)),
+          top: Unit.px(Style.top(seleElement)),
+          left: Unit.px(Style.right(seleElement)),
           width: '1px',
-          height: px(height(seleElement)),
+          height: Unit.px(Style.height(seleElement)),
           zIndex: 30,
           background: 'rgb(107, 154, 255)',
           cursor: 'ew-resize'
@@ -1096,11 +1095,11 @@ function App() {
         ></div>}
 
         {/* top-right corner resize button */}
-        {(!startMovingObject && gEBID(seleElement)) && <div id="topright-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id="topright-resize"
         style={{
           position: 'absolute',
-          top: px(top(seleElement) - 3),
-          left: px(right(seleElement) - 3),
+          top: Unit.px(Style.top(seleElement) - 3),
+          left: Unit.px(Style.right(seleElement) - 3),
           width: '6px',
           height: '6px',
           zIndex: 30,
@@ -1116,12 +1115,12 @@ function App() {
         ></div>}
 
         {/* this is the bottom resize feature of element */}
-        {(!startMovingObject && gEBID(seleElement)) && <div id="bottom-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id="bottom-resize"
         style={{ 
           position: 'absolute',
-          top: px(bottom(seleElement)),
-          left: px(left(seleElement)),
-          width: px(width(seleElement)),
+          top: Unit.px(Style.bottom(seleElement)),
+          left: Unit.px(Style.left(seleElement)),
+          width: Unit.px(Style.width(seleElement)),
           height: '1px',
           zIndex: 30,
           background: 'rgb(107, 154, 255)',
@@ -1136,11 +1135,11 @@ function App() {
         ></div>}
 
         {/* bottom-right corner resize button */}
-        {(!startMovingObject && gEBID(seleElement)) && <div id="bottomright-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id="bottomright-resize"
         style={{
           position: 'absolute',
-          top: px(bottom(seleElement) - 3),
-          left: px(right(seleElement) - 3),
+          top: Unit.px(Style.bottom(seleElement) - 3),
+          left: Unit.px(Style.right(seleElement) - 3),
           width: '6px',
           height: '6px',
           zIndex: 30,
@@ -1156,13 +1155,13 @@ function App() {
         ></div>}
 
         {/* this is the left resize feature of element */}
-        {(!startMovingObject && gEBID(seleElement)) && <div id="left-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id="left-resize"
         style={{ 
           position: 'absolute',
-          top: px(top(seleElement)),
-          left: px(left(seleElement) - 1),
+          top: Unit.px(Style.top(seleElement)),
+          left: Unit.px(Style.left(seleElement) - 1),
           width: '1px',
-          height: px(height(seleElement)),
+          height: Unit.px(Style.height(seleElement)),
           zIndex: 30,
           background: 'rgb(107, 154, 255)',
           cursor: 'ew-resize'
@@ -1176,11 +1175,11 @@ function App() {
         ></div>}
 
         {/* bottom-left corner resize button */}
-        {(!startMovingObject && gEBID(seleElement)) && <div id="bottomleft-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id="bottomleft-resize"
         style={{
           position: 'absolute',
-          top: px(bottom(seleElement) - 3),
-          left: px(left(seleElement) - 3),
+          top: Unit.px(Style.bottom(seleElement) - 3),
+          left: Unit.px(Style.left(seleElement) - 3),
           width: '6px',
           height: '6px',
           zIndex: 30,
@@ -1199,10 +1198,10 @@ function App() {
 
 
       {/* context menu */}
-      {(displayContext && gEBID(seleElement)) && <div id='context-menu'
+      {(displayContext && Elem.id(seleElement)) && <div id='context-menu'
       style={{
-        top: px(contextMenuPosition.y),
-        left: px(contextMenuPosition.x),
+        top: Unit.px(contextMenuPosition.y),
+        left: Unit.px(contextMenuPosition.x),
         zIndex: 50000
       }}
       >
@@ -1210,7 +1209,7 @@ function App() {
         onClick={() => {
           let exception = logic.CANVA_ELEMENT_EXCEPTION.every((each: any) => each !== seleElement);
           if(exception)
-            gEBID(seleElement)?.remove()
+            Elem.id(seleElement)?.remove()
           set_displayContext(false)
         }}
         >Delete <span>del</span></p>
@@ -1218,7 +1217,7 @@ function App() {
         <p>Paste <span>ctr + v</span></p>
         <p>Edit <span>ctr + e</span></p>
         <p
-        onClick={() => console.log(gEBID(seleElement)?.innerHTML)
+        onClick={() => console.log(Elem.id(seleElement)?.innerHTML)
         }
         >HTML <span></span></p>
       </div>}
