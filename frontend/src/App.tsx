@@ -480,13 +480,56 @@ function App() {
           Elem.id(seleElement)!.style.top = Unit.px(e.clientY + scrollTop);
           Elem.id(seleElement)!.style.height = Unit.px(elementBottomPosition.y - (e.clientY))
           }else 
+          // if this is an elment inside a page
           if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
           {
           const parent = Elem.id(seleElement)!.parentElement!.id;
           Elem.id(seleElement)!.style.top = Unit.px(e.clientY - Style.top(parent));
           Elem.id(seleElement)!.style.height = Unit.px((elementBottomPosition.y - Style.top(parent))- (e.clientY - Style.top(parent)))
           }
-        }
+        }else if(whatToResize == 'right'){
+          // if this is an elment inside a canvas
+          if(Elem.id(seleElement)!.parentElement!.id == 'canvas')
+          {
+          Elem.id(seleElement)!.style.left = Unit.px(elementLeftPosition.x + scrollLeft);
+          Elem.id(seleElement)!.style.width = Unit.px(e.clientX - (elementLeftPosition.x))
+          }else 
+          // if this is an elment inside a page
+          if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
+          {
+          const parent = Elem.id(seleElement)!.parentElement!.id;
+          Elem.id(seleElement)!.style.left = Unit.px(elementLeftPosition.x - Style.left(parent));
+          Elem.id(seleElement)!.style.width = Unit.px((e.clientX) - elementLeftPosition.x)
+          }        
+        }else if(whatToResize == 'bottom'){
+            // if this is an elment inside a canvas
+            if(Elem.id(seleElement)!.parentElement!.id == 'canvas')
+            {
+            Elem.id(seleElement)!.style.top = Unit.px(elementTopPosition.y + scrollTop);
+            Elem.id(seleElement)!.style.height = Unit.px(e.clientY - elementTopPosition.y)
+            }else 
+            // if this is an elment inside a page
+            if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
+            {
+            const parent = Elem.id(seleElement)!.parentElement!.id;
+            Elem.id(seleElement)!.style.top = Unit.px(elementTopPosition.y - Style.top(parent));
+            Elem.id(seleElement)!.style.height = Unit.px((e.clientY) - elementTopPosition.y)
+            }        
+          }else if(whatToResize == 'left'){
+            // if this is an elment inside a canvas
+            if(Elem.id(seleElement)!.parentElement!.id == 'canvas')
+            {
+            Elem.id(seleElement)!.style.left = Unit.px(e.clientX + scrollLeft);
+            Elem.id(seleElement)!.style.width = Unit.px(elementRightPosition.x - e.clientX)
+            }else 
+            // if this is an elment inside a page
+            if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
+            {
+            const parent = Elem.id(seleElement)!.parentElement!.id;
+            Elem.id(seleElement)!.style.left = Unit.px(e.clientX - Style.left(parent));
+            Elem.id(seleElement)!.style.width = Unit.px(elementRightPosition.x - e.clientX)
+            }        
+          }
       }
 
       /**
@@ -1100,6 +1143,7 @@ function App() {
             onMouseDown={() => {
               set_whatToResize('right');
               set_startResizing(true);
+              set_elementLeftPosition({ x: Style.left(seleElement), y: 0});
             }}
             
             ></div>}
@@ -1119,8 +1163,9 @@ function App() {
         }}
 
         onMouseDown={() => {
-          set_whatToResize('bottom-resize');
+          set_whatToResize('bottom');
           set_startResizing(true);
+          set_elementTopPosition({ x: 0, y: Style.top(seleElement)});
         }}
 
         ></div>}
@@ -1141,6 +1186,7 @@ function App() {
         onMouseDown={() => {
           set_whatToResize('left');
           set_startResizing(true);
+          set_elementRightPosition({ x: Style.right(seleElement), y: 0})
         }}
 
         ></div>}
