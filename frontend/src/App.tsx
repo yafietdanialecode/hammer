@@ -68,6 +68,14 @@ function App() {
   const [startResizing, set_startResizing] = useState(false); // start and end of resizing
   const [ whatToResize, set_whatToResize] = useState('') // the type of resizing
 
+  /**
+   * those are states of resizing a component
+   */
+  const [elementLeftPosition, set_elementLeftPosition] = useState({ x: 0, y: 0 });
+  const [elementRightPosition, set_elementRightPosition] = useState({ x: 0, y: 0 });
+  const [elementTopPosition, set_elementTopPosition] = useState({ x: 0, y: 0 });
+  const [elementBottomPosition, set_elementBottomPosition] = useState({ x: 0, y: 0 });
+
 
   /**
    * this is the hook that will start when 
@@ -463,6 +471,22 @@ function App() {
          *  2. which type of resize is occuring
          *  3. which point
          */
+
+        // top resize
+        if(whatToResize == 'top'){
+          // if this is an elment inside a canvas
+          if(Elem.id(seleElement)!.parentElement!.id == 'canvas')
+          {
+          Elem.id(seleElement)!.style.top = Unit.px(e.clientY + scrollTop);
+          Elem.id(seleElement)!.style.height = Unit.px(elementBottomPosition.y - (e.clientY))
+          }else 
+          if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
+          {
+          const parent = Elem.id(seleElement)!.parentElement!.id;
+          Elem.id(seleElement)!.style.top = Unit.px(e.clientY - Style.top(parent));
+          Elem.id(seleElement)!.style.height = Unit.px((elementBottomPosition.y - Style.top(parent))- (e.clientY - Style.top(parent)))
+          }
+        }
       }
 
       /**
@@ -1056,7 +1080,69 @@ function App() {
         onMouseDown={() => {
           set_whatToResize('top');
           set_startResizing(true);
+          set_elementBottomPosition({ x: 0, y: Style.bottom(seleElement)});
         }}
+        ></div>}
+
+    {/* this is the right resize feature of element */}
+            {(!startMovingObject && Elem.id(seleElement)) && <div id="right-resize"
+            style={{ 
+              position: 'absolute',
+              top: Unit.px(Style.top(seleElement)),
+              left: Unit.px(Style.right(seleElement)),
+              width: '1px',
+              height: Unit.px(Style.height(seleElement)),
+              zIndex: 30,
+              background: 'rgb(107, 154, 255)',
+              cursor: 'ew-resize'
+            }}
+
+            onMouseDown={() => {
+              set_whatToResize('right');
+              set_startResizing(true);
+            }}
+            
+            ></div>}
+            
+            
+        {/* this is the bottom resize feature of element */}
+        {(!startMovingObject && Elem.id(seleElement)) && <div id="bottom-resize"
+        style={{ 
+          position: 'absolute',
+          top: Unit.px(Style.bottom(seleElement)),
+          left: Unit.px(Style.left(seleElement)),
+          width: Unit.px(Style.width(seleElement)),
+          height: '1px',
+          zIndex: 30,
+          background: 'rgb(107, 154, 255)',
+          cursor: 'ns-resize'
+        }}
+
+        onMouseDown={() => {
+          set_whatToResize('bottom-resize');
+          set_startResizing(true);
+        }}
+
+        ></div>}
+
+      {/* this is the left resize feature of element */}
+        {(!startMovingObject && Elem.id(seleElement)) && <div id="left-resize"
+        style={{ 
+          position: 'absolute',
+          top: Unit.px(Style.top(seleElement)),
+          left: Unit.px(Style.left(seleElement) - 1),
+          width: '1px',
+          height: Unit.px(Style.height(seleElement)),
+          zIndex: 30,
+          background: 'rgb(107, 154, 255)',
+          cursor: 'ew-resize'
+        }}
+
+        onMouseDown={() => {
+          set_whatToResize('left');
+          set_startResizing(true);
+        }}
+
         ></div>}
 
         {/* top-left corner resize button */}
@@ -1074,27 +1160,6 @@ function App() {
 
         onMouseDown={() => {
           set_whatToResize('top-left');
-          set_startResizing(true);
-        }}
-        
-        ></div>}
-
-
-        {/* this is the right resize feature of element */}
-        {(!startMovingObject && Elem.id(seleElement)) && <div id="right-resize"
-        style={{ 
-          position: 'absolute',
-          top: Unit.px(Style.top(seleElement)),
-          left: Unit.px(Style.right(seleElement)),
-          width: '1px',
-          height: Unit.px(Style.height(seleElement)),
-          zIndex: 30,
-          background: 'rgb(107, 154, 255)',
-          cursor: 'ew-resize'
-        }}
-
-        onMouseDown={() => {
-          set_whatToResize('right');
           set_startResizing(true);
         }}
         
@@ -1120,27 +1185,7 @@ function App() {
         
         ></div>}
 
-        {/* this is the bottom resize feature of element */}
-        {(!startMovingObject && Elem.id(seleElement)) && <div id="bottom-resize"
-        style={{ 
-          position: 'absolute',
-          top: Unit.px(Style.bottom(seleElement)),
-          left: Unit.px(Style.left(seleElement)),
-          width: Unit.px(Style.width(seleElement)),
-          height: '1px',
-          zIndex: 30,
-          background: 'rgb(107, 154, 255)',
-          cursor: 'ns-resize'
-        }}
-
-        onMouseDown={() => {
-          set_whatToResize('bottom-resize');
-          set_startResizing(true);
-        }}
-
-        ></div>}
-
-        {/* bottom-right corner resize button */}
+       {/* bottom-right corner resize button */}
         {(!startMovingObject && Elem.id(seleElement)) && <div id="bottomright-resize"
         style={{
           position: 'absolute',
@@ -1155,26 +1200,6 @@ function App() {
 
         onMouseDown={() => {
           set_whatToResize('bottom-right');
-          set_startResizing(true);
-        }}
-
-        ></div>}
-
-        {/* this is the left resize feature of element */}
-        {(!startMovingObject && Elem.id(seleElement)) && <div id="left-resize"
-        style={{ 
-          position: 'absolute',
-          top: Unit.px(Style.top(seleElement)),
-          left: Unit.px(Style.left(seleElement) - 1),
-          width: '1px',
-          height: Unit.px(Style.height(seleElement)),
-          zIndex: 30,
-          background: 'rgb(107, 154, 255)',
-          cursor: 'ew-resize'
-        }}
-
-        onMouseDown={() => {
-          set_whatToResize('left');
           set_startResizing(true);
         }}
 
@@ -1199,6 +1224,7 @@ function App() {
         }}
 
         ></div>}
+
       </div>}
 
 
