@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Context, KeyboardEvent, MouseEvent, WheelEvent, useEffect, useState } from 'react'
 import './App.css'
 import Elem from './modules/Elem';
 import Unit from './modules/unit';
@@ -26,7 +26,7 @@ function App() {
   // tracks where the selection stopped
   const [includeSelectingUpto, set_includeSelectingUpto] = useState({x: 0, y: 0});
   // lists of selected elements in this cordinate
-  const [selectedElements, set_selectedElements]: any = useState([]);
+  const [selectedElements, set_selectedElements] = useState([]);
   // where the selected component comes
   const [fromWhereAreTheComponent, set_fromWhereAreTheComponent] = useState('canvas')
 
@@ -207,7 +207,7 @@ function App() {
         /**
          * we clone them b/c they will be removed from the previous position temporarly
          */
-        let copy: any = Elem.id(each)?.cloneNode(true);
+        const copy: HTMLElement = Elem.id(each)?.cloneNode(true);
 
         /**
          * top and left position of the wrapper and canvas is different
@@ -309,10 +309,10 @@ function App() {
 
       onMouseDown={(e: any) => {
         // some variables
-        let id = e.target.id;
+        const id: string = e.target.id;
 
         // some checks
-        let isCanvas = e.target.id === 'canvas' ? true : false;
+        const isCanvas: boolean = e.target.id === 'canvas' ? true : false;
         // let isItsParentCanvas = Elem.id(id)!.parentElement!.id === 'canvas' ? true : false;
         /**
          * registor where the selected elements from
@@ -349,8 +349,8 @@ function App() {
            * append them to there original place like (canvas & page)
            * 
            */
-        selectedElements.map((each: any) => {
-          let copy: any = Elem.id(each)?.cloneNode(true);
+        selectedElements.map((each: string) => {
+          const copy: HTMLElement = Elem.id(each)!.cloneNode(true);
           copy.style.top = Unit.px(Style.top(each) + scrollTop);
           copy.style.left = Unit.px(Style.left(each) + scrollLeft);
           set_selectedElements([])
@@ -377,16 +377,16 @@ function App() {
       if(e.target.id !== 'canvas'){ // this if statement will be replaced by modes // modes like text, move, select ...
         if(Elem.id(e.target.id)!.parentElement!.id == 'canvas'){
           // this is for moving pages, components and anything inside canvas but not page
-          let l: any = Style.left(e.target.id);
-          let t: any = Style.top(e.target.id);
+          const l: number = Style.left(e.target.id);
+          const t: number = Style.top(e.target.id);
           set_objectCursorDifference({
           x: (e.clientX + scrollLeft) - (l + scrollLeft),
           y: (e.clientY + scrollTop) - (t + scrollTop)
         })
         }else {
           // this is for moving components only inside a page not inside canvas 
-          let l: any = Style.left(e.target.id) - Style.left(Elem.id(e.target.id)!.parentElement!.id);
-        let t: any = Style.top(e.target.id) - Style.top(Elem.id(e.target.id)!.parentElement!.id);
+        const l: number = Style.left(e.target.id) - Style.left(Elem.id(e.target.id)!.parentElement!.id);
+        const t: number = Style.top(e.target.id) - Style.top(Elem.id(e.target.id)!.parentElement!.id);
         set_objectCursorDifference({
           x: ((e.clientX + scrollLeft) - (l)),
           y: (e.clientY + scrollTop) - (t)
@@ -449,14 +449,20 @@ function App() {
       }}
 
 
-      onMouseMove={(e: any) => {
+      onMouseMove={(e: MouseEvent) => {
 
       /**
        * resizing features
        */
 
       if(startResizing) {
-
+        /**
+         * this is the action taker for each type ( specifically 8 types of resizes )
+         * this takes:
+         *  1. whether resize starts
+         *  2. which type of resize is occuring
+         *  3. which point
+         */
       }
 
       /**
@@ -475,12 +481,12 @@ function App() {
         // this is where elements get appended inside and page and get out from page
         if(seleElement.length > 0 || selectedElements.length > 1){
 
-          let all = Elem.id('main')!.querySelectorAll('*');
-          let results: any = [];
-          let x_start = e.clientX + scrollLeft;
-          let y_start = e.clientY + scrollTop;
+          const all: HTMLElement[] = Elem.id('main')!.querySelectorAll('*');
+          const results: string[] = [];
+          const x_start = e.clientX + scrollLeft;
+          const y_start = e.clientY + scrollTop;
           
-          all.forEach((element: any) => {
+          all.forEach((element: HTMLElement) => {
             if(
               Style.top(element.id) + scrollTop < y_start && 
               Style.left(element.id) + scrollLeft < x_start &&
@@ -511,7 +517,7 @@ function App() {
        */
       if(selectionStarted && selectionStarted2){
       
-        let res = getCIArea(startSelectingFrom, includeSelectingUpto)
+        const res = getCIArea(startSelectingFrom, includeSelectingUpto)
         set_selectedElements(res);
         
         // create a wrapper elemnt
@@ -521,17 +527,17 @@ function App() {
         }else if(res.length > 1){
           // this means user selected multiple elements only
           
-          let startFromMax = { x: 20000, y: 2000000 };
-          let includeUpToMax = { x: -20000, y: -200000 };
+          const startFromMax = { x: 20000, y: 2000000 };
+          const includeUpToMax = { x: -20000, y: -200000 };
           
           
-          res.forEach((each: any) => {
+          res.forEach((each: string) => {
             
             // some varialble to clean the code
-            let eTop: any = Style.top(each);
-            let eLeft: any = Style.left(each);
-            let eRight: any = Style.right(each);
-            let eBottom: any = Style.bottom(each);
+            const eTop: number = Style.top(each);
+            const eLeft: number = Style.left(each);
+            const eRight: number = Style.right(each);
+            const eBottom: number = Style.bottom(each);
             
             if(eTop < startFromMax.y){ // the top minimum value of element
               startFromMax.y = eTop;
@@ -604,7 +610,7 @@ function App() {
       }}
 
 
-      onWheel={(e: any) => {
+      onWheel={(e: WheelEvent) => {
 
           // updating user's scroll amount 
           set_scrollTop(Scroll.top('canvas')!);
@@ -625,7 +631,7 @@ function App() {
       }}
       
       
-      onKeyDown={(e: any) => {
+      onKeyDown={(e: KeyboardEvent) => {
 
         /**
          * WARNING:
@@ -644,11 +650,11 @@ function App() {
           /**
            * those are keys will not work as default if users are not editing text
            */
-          let directionKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-          if(directionKeys.some((key: any) => key == e.key)){
+          const DIRECTION_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+          if(DIRECTION_KEYS.some((key: string) => key == e.key)){
             e.preventDefault();
-            let top_e = parseFloat(Elem.id(seleElement)!.style.top);
-            let left_e = parseFloat(Elem.id(seleElement)!.style.left);
+            const top_e = parseFloat(Elem.id(seleElement)!.style.top);
+            const left_e = parseFloat(Elem.id(seleElement)!.style.left);
             switch(e.key){
               case 'ArrowUp':
                 Elem.id(seleElement)!.style.top = Unit.px(top_e - 1);
@@ -673,8 +679,8 @@ function App() {
          * to delete elemnt by pressing del key in laptop
          */
         if(e.key == 'Delete'){
-          selectedElements.map((each: any) => {
-            if(Elem.id(each) && each.length > 0 && logic.CANVA_ELEMENT_EXCEPTION.every((id: any) => id !== each)){
+          selectedElements.map((each: string) => {
+            if(Elem.id(each) && each.length > 0 && logic.CANVA_ELEMENT_EXCEPTION.every((id: string) => id !== each)){
               Elem.id(each)?.remove()
             }
           });
@@ -881,7 +887,7 @@ function App() {
 
         <tr>
           <td>selectedElements</td>
-          <td>{selectedElements.map((each: any) => <p key={each}>{each}</p>)}</td>
+          <td>{selectedElements.map((each: string) => <p key={each}>{each}</p>)}</td>
         </tr>
 
         <tr>
@@ -1207,7 +1213,7 @@ function App() {
       >
         <p
         onClick={() => {
-          let exception = logic.CANVA_ELEMENT_EXCEPTION.every((each: any) => each !== seleElement);
+          const exception:boolean = logic.CANVA_ELEMENT_EXCEPTION.every((each: string) => each !== seleElement);
           if(exception)
             Elem.id(seleElement)?.remove()
           set_displayContext(false)
