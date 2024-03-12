@@ -1,4 +1,4 @@
-import { Context, KeyboardEvent, MouseEvent, WheelEvent, useEffect, useState } from 'react'
+import { KeyboardEvent, MouseEvent, WheelEvent, useEffect, useState } from 'react'
 import './App.css'
 import Elem from './modules/Elem';
 import Unit from './modules/unit';
@@ -207,7 +207,7 @@ function App() {
         /**
          * we clone them b/c they will be removed from the previous position temporarly
          */
-        const copy: HTMLElement = Elem.id(each)?.cloneNode(true);
+        const copy: any = Elem.id(each)!.cloneNode(true);
 
         /**
          * top and left position of the wrapper and canvas is different
@@ -350,7 +350,7 @@ function App() {
            * 
            */
         selectedElements.map((each: string) => {
-          const copy: HTMLElement = Elem.id(each)!.cloneNode(true);
+          const copy: any = Elem.id(each)!.cloneNode(true);
           copy.style.top = Unit.px(Style.top(each) + scrollTop);
           copy.style.left = Unit.px(Style.left(each) + scrollLeft);
           set_selectedElements([])
@@ -481,12 +481,12 @@ function App() {
         // this is where elements get appended inside and page and get out from page
         if(seleElement.length > 0 || selectedElements.length > 1){
 
-          const all: HTMLElement[] = Elem.id('main')!.querySelectorAll('*');
+          const all: any = Elem.id('main')!.querySelectorAll('*');
           const results: string[] = [];
           const x_start = e.clientX + scrollLeft;
           const y_start = e.clientY + scrollTop;
           
-          all.forEach((element: HTMLElement) => {
+          all.forEach((element: any) => {
             if(
               Style.top(element.id) + scrollTop < y_start && 
               Style.left(element.id) + scrollLeft < x_start &&
@@ -685,7 +685,7 @@ function App() {
             }
           });
           set_seleElement('canvas');
-          set_selectedElements(false);
+          set_selectedElements([]);
           set_selectionStarted2(false);
           set_selectedElements([]);
         }else
