@@ -50,4 +50,12 @@ export default class Style {
         return 0;
     }
 
+    static zIndex(id: string): number {
+        if(Elem.id(id)){
+            const element: HTMLElement = Elem.id(id)!;
+            const z: number = parseInt(getComputedStyle(element).zIndex);
+            return z;
+        }
+        return 0;
+    }
 }
