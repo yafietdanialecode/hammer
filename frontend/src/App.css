@@ -155,7 +155,7 @@ body, html, #root, #main {
   pointer-events: none;
 }
 #main #canvas [data-type=page] {
-  overflow: hidden;
+  overflow: scroll;
 }
 #main #states {
   width: -moz-fit-content;

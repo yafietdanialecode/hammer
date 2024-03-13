@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { KeyboardEvent, MouseEvent, WheelEvent, useEffect, useState } from 'react';
+import './config.css'
 import './App.css'
 import Elem from './modules/Elem';
 import Unit from './modules/unit';
@@ -7,6 +9,7 @@ import Style from './modules/Style';
 import { getCIArea } from './modules/getCIArea';
 import Logic from './modules/Logic';
 import Component from './modules/Component';
+import { BOTTOM_RESIZE, CANVAS, DECORATORS, LEFT_RESIZE, LEFT_TOOLS, MAIN, MULTIPLE_ELMENTS_WRAPPER, RIGHT_RESIZE, STATES, TOP_RESIZE } from './id-storage/constants.config';
 
 function App() {
 
@@ -28,7 +31,7 @@ function App() {
   // lists of selected elements in this cordinate
   const [selectedElements, set_selectedElements] = useState([]);
   // where the selected component comes
-  const [fromWhereAreTheComponent, set_fromWhereAreTheComponent] = useState('canvas')
+  const [fromWhereAreTheComponent, set_fromWhereAreTheComponent] = useState(CANVAS)
 
   // show all selected elements wrapper
   const [multiSelectedElementsWrapperDivStartFrom, set_multiSelectedElementsWrapperDivStartFrom] = useState({ x: 0, y: 0});
@@ -43,8 +46,8 @@ function App() {
   // movement
   const [startMovingObject, set_startMovingObject] = useState(false);
   const [objectCursorDifference, set_objectCursorDifference] = useState({x: 0, y: 0})
-  const [movingFrom, set_movingFrom] = useState('canvas');
-  const [movingTo, set_movingTo] = useState('canvas');
+  const [movingFrom, set_movingFrom] = useState(CANVAS);
+  const [movingTo, set_movingTo] = useState(CANVAS);
  
   // editing features
   const [textEditingModeEnabled, set_textEditingModeEnabled] = useState(false);
@@ -84,7 +87,7 @@ function App() {
    */
   useEffect(() => {
     console.log("page initiated");
-    Elem.id('canvas')!.scrollTo({
+    Elem.id(CANVAS)!.scrollTo({
       behavior: 'instant',
       top: 10000,
       left: 10000
@@ -96,13 +99,16 @@ function App() {
    * react updates the ui
    * [ infinite loop might occur so be careful ]
    */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // updating user's scroll amount 
-    set_scrollTop(Scroll.top('canvas')!);
-    set_scrollLeft(Scroll.left('canvas')!);   
+    set_scrollTop(Scroll.top(CANVAS)!);
+    set_scrollLeft(Scroll.left(CANVAS)!);   
+  
   })
 
   // when mouse move in the whole window
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   window.addEventListener('mousemove', (e: any) => {
 
     // update mouse position every time 
@@ -135,7 +141,7 @@ function App() {
 
     /**
      * the code inside the next if statement is a feature for migrating 
-     * a child of page to canvas or to page and a child of canvas to page
+     * a child of page to CANVAS or to page and a child of CANVAS to page
      */
     // when user releases the mouse
     if(movingFrom !== movingTo && startMovingObject) {
@@ -144,10 +150,10 @@ function App() {
       const parent = Elem.id(seleElement)!.parentElement!.id
 
       
-      if(seleElement && selectedElements.length < 2 && seleElement !== 'selected-elements-wrapper'){
-       /* moving single component from canvas > page
+      if(seleElement && selectedElements.length < 2 && seleElement !== MULTIPLE_ELMENTS_WRAPPER){
+       /* moving single component from CANVAS > page
       */ 
-        if(movingFrom == 'canvas' && movingTo != 'canvas' && Elem.id(seleElement)!.getAttribute('data-type') !== 'page'){
+        if(movingFrom == CANVAS && movingTo != CANVAS && Elem.id(seleElement)!.getAttribute('data-type') !== 'page'){
         const clone: any = Elem.id(seleElement)!.cloneNode(true);
         clone.style.top = Unit.px(Style.top(seleElement) - Style.top(movingTo));
         clone.style.left = Unit.px(Style.left(seleElement) - Style.left(movingTo));
@@ -155,19 +161,19 @@ function App() {
         Elem.id(movingTo)?.append(clone);
       }
       // moving single component from page > canvas
-      if(movingFrom !== 'canvas' && movingTo == 'canvas' && Elem.id(seleElement)!.getAttribute('data-type') !== 'page'){
-        let clone:any = Elem.id(seleElement)!.cloneNode(true);
+      if(movingFrom !== CANVAS && movingTo == CANVAS && Elem.id(seleElement)!.getAttribute('data-type') !== 'page'){
+        const clone: any = Elem.id(seleElement)!.cloneNode(true);
         
         clone.style.top = Unit.px((mousePosition.y + scrollTop) - (objectCursorDifference.y - Style.top(parent)) + scrollTop);
         clone.style.left = Unit.px((mousePosition.x + scrollLeft) - (objectCursorDifference.x - Style.left(parent)) + scrollLeft);
         Elem.id(seleElement)?.remove();
-        Elem.id('canvas')?.append(clone);
+        Elem.id(CANVAS)?.append(clone);
         
       }
       // moving single component from page > page
-      if(movingFrom !== 'canvas'
+      if(movingFrom !== CANVAS
        &&
-        movingTo !== 'canvas'
+        movingTo !== CANVAS
        && 
         Elem.id(seleElement)!.getAttribute('data-type') !== 'page'
        &&
@@ -175,7 +181,7 @@ function App() {
         &&
         Elem.id(movingTo)!.getAttribute('data-type') == 'page'
       ){
-        let clone:any = Elem.id(seleElement)!.cloneNode(true);
+        const clone:any = Elem.id(seleElement)!.cloneNode(true);
 
         clone.style.top = Unit.px((e.clientY - (objectCursorDifference.y - Style.top(Elem.id(seleElement)!.parentElement!.id)) - Style.top(movingTo)) + scrollTop);
         clone.style.left = Unit.px((e.clientX - (objectCursorDifference.x - Style.left(Elem.id(seleElement)!.parentElement!.id))) - Style.left(movingTo) + scrollLeft);
@@ -206,7 +212,7 @@ function App() {
      */
     if(selectedElements.length > 1 && !startMovingObject){
       // wrapper
-      const wrapper = Elem.id('selected-elements-wrapper')!
+      const wrapper = Elem.id(MULTIPLE_ELMENTS_WRAPPER)!
       /**
        * for each selected elements we will edit and append them to wrapper
        */
@@ -217,7 +223,7 @@ function App() {
         const copy: any = Elem.id(each)!.cloneNode(true);
 
         /**
-         * top and left position of the wrapper and canvas is different
+         * top and left position of the wrapper and CANVAS is different
          * that's why we update the elements position and append the new 
          * one to the wrapper
          */
@@ -246,12 +252,12 @@ function App() {
   }
 
   // this is the logic class
-  const logic = new Logic('root', { CANAS_ID: 'canvas' })
+  const logic = new Logic('root', { CANAS_ID: CANVAS })
 
 
   return (
     <>
-      <div id="main"
+      <div id={MAIN}
       tabIndex={-1}
       style={{
         cursor: cursorStyle
@@ -259,7 +265,7 @@ function App() {
       >
 
       {/* bottom mode changes */}
-      <div id="left-tools">
+      <div id={LEFT_TOOLS}>
         <div 
         style={{
           background: 'white',
@@ -298,11 +304,11 @@ function App() {
         <div id="logo"/>
         <button onClick={() => set_textEditingModeEnabled(!textEditingModeEnabled)}>Text Edit Mode</button>
         <button onClick={() => set_displayDevStates(!displayDevStates)}>states</button>
-        <button onClick={() => Elem.id('canvas')!.scrollTo({ top: Style.top('center'), left: Style.left('center')})}>center</button>
+        <button onClick={() => Elem.id(CANVAS)!.scrollTo({ top: Style.top('center'), left: Style.left('center')})}>center</button>
       </div>
 
-      {/* canvas */}
-      <div id="canvas"
+      {/* CANVAS */}
+      <div id={CANVAS}
       
       /**
        * tabIndex is assigned to -1 to make it focusable element for 
@@ -319,14 +325,14 @@ function App() {
         const id: string = e.target.id;
 
         // some checks
-        const isCanvas: boolean = e.target.id === 'canvas' ? true : false;
-        // let isItsParentCanvas = Elem.id(id)!.parentElement!.id === 'canvas' ? true : false;
+        const isCanvas: boolean = e.target.id === CANVAS ? true : false;
+        // let isItsParentCanvas = Elem.id(id)!.parentElement!.id === CANVAS ? true : false;
         /**
          * registor where the selected elements from
          * [ simply the parent of the element by the time they toched by pointer ]
          */
         if(!isCanvas){
-        // if this element is not canvas
+        // if this element is not CANVAS
         set_movingFrom(Elem.id(id)!.parentElement!.id)
         set_movingTo(Elem.id(id)!.parentElement!.id)
         }
@@ -348,12 +354,12 @@ function App() {
         *   3. if user doesn't user shiftKey ( because he might be making an elemnt part of selection or removing element from selected ones)
         * 
         */
-        if(selectedElements.length > 1 && e.target.id !== 'selected-elements-wrapper' && !e.shiftKey){
+        if(selectedElements.length > 1 && e.target.id !== MULTIPLE_ELMENTS_WRAPPER && !e.shiftKey){
           // if user selects something before append those to the real dom
 
           /**
            * this makes a clone of elemnts in wrapper and 
-           * append them to there original place like (canvas & page)
+           * append them to there original place like (CANVAS & page)
            * 
            */
         selectedElements.map((each: string) => {
@@ -362,7 +368,7 @@ function App() {
           copy.style.left = Unit.px(Style.left(each) + scrollLeft);
           set_selectedElements([])
           Elem.id(each)?.remove();
-          Elem.id('canvas')!.append(copy);
+          Elem.id(CANVAS)!.append(copy);
         })
         }
 
@@ -381,9 +387,9 @@ function App() {
        * this helps to find the difference with cursor and moving object
        * this value is the one who helped as to move the element with respect to referencing point in it 
        */
-      if(e.target.id !== 'canvas'){ // this if statement will be replaced by modes // modes like text, move, select ...
-        if(Elem.id(e.target.id)!.parentElement!.id == 'canvas'){
-          // this is for moving pages, components and anything inside canvas but not page
+      if(e.target.id !== CANVAS){ // this if statement will be replaced by modes // modes like text, move, select ...
+        if(Elem.id(e.target.id)!.parentElement!.id == CANVAS){
+          // this is for moving pages, components and anything inside CANVAS but not page
           const l: number = Style.left(e.target.id);
           const t: number = Style.top(e.target.id);
           set_objectCursorDifference({
@@ -391,7 +397,7 @@ function App() {
           y: (e.clientY + scrollTop) - (t + scrollTop)
         })
         }else {
-          // this is for moving components only inside a page not inside canvas 
+          // this is for moving components only inside a page not inside CANVAS 
         const l: number = Style.left(e.target.id) - Style.left(Elem.id(e.target.id)!.parentElement!.id);
         const t: number = Style.top(e.target.id) - Style.top(Elem.id(e.target.id)!.parentElement!.id);
         set_objectCursorDifference({
@@ -405,13 +411,13 @@ function App() {
 
       /**
        * this is all about selecting element feature
-       * this works if you put pointer in the canvas
+       * this works if you put pointer in the CANVAS
        */
-      if(e.target.id === 'canvas'){
+      if(e.target.id === CANVAS){
 
-        // if canvas is working
-        set_movingFrom('canvas');
-        set_movingTo('canvas');
+        // if CANVAS is working
+        set_movingFrom(CANVAS);
+        set_movingTo(CANVAS);
 
           /**
            * selection type is important for future features
@@ -473,8 +479,8 @@ function App() {
 
         // top resize
         if(whatToResize == 'top'){
-          // if this is an elment inside a canvas
-          if(Elem.id(seleElement)!.parentElement!.id == 'canvas')
+          // if this is an elment inside a CANVAS
+          if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
           {
           Elem.id(seleElement)!.style.top = Unit.px(e.clientY + scrollTop);
           Elem.id(seleElement)!.style.height = Unit.px(elementBottomPosition.y - (e.clientY))
@@ -487,8 +493,8 @@ function App() {
           Elem.id(seleElement)!.style.height = Unit.px((elementBottomPosition.y - Style.top(parent))- (e.clientY - Style.top(parent)))
           }
         }else if(whatToResize == 'right'){
-          // if this is an elment inside a canvas
-          if(Elem.id(seleElement)!.parentElement!.id == 'canvas')
+          // if this is an elment inside a CANVAS
+          if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
           {
           Elem.id(seleElement)!.style.left = Unit.px(elementLeftPosition.x + scrollLeft);
           Elem.id(seleElement)!.style.width = Unit.px(e.clientX - (elementLeftPosition.x))
@@ -501,8 +507,8 @@ function App() {
           Elem.id(seleElement)!.style.width = Unit.px((e.clientX) - elementLeftPosition.x)
           }        
         }else if(whatToResize == 'bottom'){
-            // if this is an elment inside a canvas
-            if(Elem.id(seleElement)!.parentElement!.id == 'canvas')
+            // if this is an elment inside a CANVAS
+            if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
             {
             Elem.id(seleElement)!.style.top = Unit.px(elementTopPosition.y + scrollTop);
             Elem.id(seleElement)!.style.height = Unit.px(e.clientY - elementTopPosition.y)
@@ -515,8 +521,8 @@ function App() {
             Elem.id(seleElement)!.style.height = Unit.px((e.clientY) - elementTopPosition.y)
             }        
           }else if(whatToResize == 'left'){
-            // if this is an elment inside a canvas
-            if(Elem.id(seleElement)!.parentElement!.id == 'canvas')
+            // if this is an elment inside a CANVAS
+            if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
             {
             Elem.id(seleElement)!.style.left = Unit.px(e.clientX + scrollLeft);
             Elem.id(seleElement)!.style.width = Unit.px(elementRightPosition.x - e.clientX)
@@ -536,7 +542,7 @@ function App() {
        * both top and left
        */
       if(startMovingObject){
-        if(Elem.id(seleElement)!.parentElement!.id === 'canvas') {
+        if(Elem.id(seleElement)!.parentElement!.id === CANVAS) {
           Elem.id(seleElement)!.style.top = Unit.px((e.clientY + scrollTop) - objectCursorDifference.y);
           Elem.id(seleElement)!.style.left = Unit.px((e.clientX + scrollLeft) - objectCursorDifference.x);
         }
@@ -558,7 +564,7 @@ function App() {
               Style.left(element.id) + scrollLeft < x_start &&
               Style.right(element.id) + scrollLeft > x_start &&
               Style.bottom(element.id) + scrollTop > y_start &&
-              (element.id === 'canvas' || element.getAttribute('data-type') === 'page')
+              (element.id === CANVAS || element.getAttribute('data-type') === 'page')
               ) {
                 results.push(element.id)
             }
@@ -629,7 +635,7 @@ function App() {
           includeUpToMax.y += scrollTop; 
           set_multiSelectedElementsWrapperDivStartFrom(startFromMax);
           set_multiSelectedElementsWrapperDivInclude(includeUpToMax)
-          set_seleElement('selected-elements-wrapper');
+          set_seleElement(MULTIPLE_ELMENTS_WRAPPER);
         }
 
       }
@@ -639,31 +645,31 @@ function App() {
        * if user is moving elements only not pages
        * we will actually move components inside the wrapper
        * wrapper in this code means the elements parent
-       * if user's mouse starts grabbing the element from the out side (canvas)
+       * if user's mouse starts grabbing the element from the out side (CANVAS)
        *        - when user enters pages we have to move the elment inside the page
        *
        * if user's mosue starts grabbing the elemtn from the inside (pages)
-       *        - when user move the component to the outside (canvas) move the elemnent to outside
+       *        - when user move the component to the outside (CANVAS) move the elemnent to outside
        */
 
-        if(startMovingObject || (selectionStarted2 && selectionStarted)){
+        if(startMovingObject || (selectionStarted2 && selectionStarted) || startResizing){
           
           // for go up
           if(mousePosition.y < 100){
-            Elem.id('canvas')?.scrollBy({ behavior: 'instant', top: -10, left: 0})
+            Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: -10, left: 0})
           }
           // for go down
           if(mousePosition.y > window.innerHeight - 50){            
-            Elem.id('canvas')?.scrollBy({ behavior: 'instant', top: 10, left: 0})
+            Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: 10, left: 0})
           }
 
           // for go up
           if(mousePosition.x < 100){
-            Elem.id('canvas')?.scrollBy({ behavior: 'instant', top: 0, left: -10})
+            Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: 0, left: -10})
           }
           // for go down
           if(mousePosition.x > window.innerWidth - 50){            
-            Elem.id('canvas')?.scrollBy({ behavior: 'instant', top: 0, left: 10})
+            Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: 0, left: 10})
           }
 
           if(startMovingObject){
@@ -679,10 +685,10 @@ function App() {
       onWheel={(e: WheelEvent) => {
 
           // updating user's scroll amount 
-          set_scrollTop(Scroll.top('canvas')!);
-          set_scrollLeft(Scroll.left('canvas')!);
+          set_scrollTop(Scroll.top(CANVAS)!);
+          set_scrollLeft(Scroll.left(CANVAS)!);
 
-          Elem.id('canvas')!.scrollBy({
+          Elem.id(CANVAS)!.scrollBy({
             behavior: 'instant',
             top: e.movementY,
             left: e.movementX
@@ -707,7 +713,7 @@ function App() {
          * [ simply : if user's editText state enabled those should not work]
          */
 
-        // all key events actions related to canvas element are hear
+        // all key events actions related to CANVAS element are hear
 
 
         // those features work or not work based on users state
@@ -750,7 +756,7 @@ function App() {
               Elem.id(each)?.remove()
             }
           });
-          set_seleElement('canvas');
+          set_seleElement(CANVAS);
           set_selectedElements([]);
           set_selectionStarted2(false);
           set_selectedElements([]);
@@ -884,7 +890,7 @@ function App() {
         ></div>
       }
 
-      {selectedElements.length > 1 && <div id='selected-elements-wrapper'
+      {selectedElements.length > 1 && <div id={MULTIPLE_ELMENTS_WRAPPER}
         style={{
           position: 'absolute',
           top: Unit.px(multiSelectedElementsWrapperDivStartFrom.y),
@@ -905,7 +911,7 @@ function App() {
       those display the value in real time
       */}
       {/* root states */}
-      {displayDevStates && <table id="states">
+      {displayDevStates && <table id={STATES}>
         <tbody>
         <tr>
           <td>movingFrom</td>
@@ -1085,7 +1091,7 @@ function App() {
         </table>}
 
       {/* those are element feature previewers and decorators */}
-      {(document.getElementById(seleElement) && seleElement !== 'canvas') && <div id="decorators">
+      {(document.getElementById(seleElement) && seleElement !== CANVAS) && <div id={DECORATORS}>
         
       {/* element descriptor */}
       {(!startMovingObject && Elem.id(seleElement)) && <div 
@@ -1120,7 +1126,7 @@ function App() {
       />}
 
         {/* this is the top resize feature of element */}
-        {(!startMovingObject && Elem.id(seleElement)) && <div id="top-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id={TOP_RESIZE}
         style={{
           position: 'absolute',
           top: Unit.px(Style.top(seleElement) - 1),
@@ -1139,7 +1145,7 @@ function App() {
         ></div>}
 
     {/* this is the right resize feature of element */}
-            {(!startMovingObject && Elem.id(seleElement)) && <div id="right-resize"
+            {(!startMovingObject && Elem.id(seleElement)) && <div id={RIGHT_RESIZE}
             style={{ 
               position: 'absolute',
               top: Unit.px(Style.top(seleElement)),
@@ -1161,7 +1167,7 @@ function App() {
             
             
         {/* this is the bottom resize feature of element */}
-        {(!startMovingObject && Elem.id(seleElement)) && <div id="bottom-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id={BOTTOM_RESIZE}
         style={{ 
           position: 'absolute',
           top: Unit.px(Style.bottom(seleElement)),
@@ -1182,7 +1188,7 @@ function App() {
         ></div>}
 
       {/* this is the left resize feature of element */}
-        {(!startMovingObject && Elem.id(seleElement)) && <div id="left-resize"
+        {(!startMovingObject && Elem.id(seleElement)) && <div id={LEFT_RESIZE}
         style={{ 
           position: 'absolute',
           top: Unit.px(Style.top(seleElement)),
@@ -1294,14 +1300,27 @@ function App() {
         zIndex: 50000
       }}
       >
-        <p
+        {logic.notInExceptions(seleElement, [ CANVAS ]) && <p
+        className='text-white bg-red'
         onClick={() => {
           const exception:boolean = logic.CANVA_ELEMENT_EXCEPTION.every((each: string) => each !== seleElement);
-          if(exception)
+          if(exception){
+            // for single elment deleting
+            if(selectedElements.length < 2){
             Elem.id(seleElement)?.remove()
+            }else 
+            // for multiple element delete
+            if(seleElement == MULTIPLE_ELMENTS_WRAPPER) {
+              set_selectedElements([]);
+              set_selectionStarted(false);
+              set_selectionStarted2(false);
+            }
+          }
+
+          
           set_displayContext(false)
         }}
-        >Delete <span>del</span></p>
+        >Delete <span className='text-white'>del</span></p>}
         <p>Copy <span>ctr + c</span></p>
         <p>Paste <span>ctr + v</span></p>
         <p>Edit <span>ctr + e</span></p>
