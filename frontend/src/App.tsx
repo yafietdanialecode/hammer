@@ -385,9 +385,6 @@ function App() {
       <div
         id={MAIN}
         tabIndex={-1}
-        style={{
-          cursor: cursorStyle,
-        }}
         onMouseMove={(e: MouseEvent) => {
           /**
            * resizing features
@@ -791,6 +788,9 @@ function App() {
         {/* CANVAS */}
         <div
           id={CANVAS}
+          style={{
+            cursor: cursorStyle,
+          }}
           /**
            * tabIndex is assigned to -1 to make it focusable element for
            * features like keyboard and mouse
