@@ -12,4 +12,12 @@
 
 .bg-red {
   background-color: rgb(255, 44, 44) !important;
+}
+
+.width-full {
+  width: 100%;
+}
+
+.bg-primary {
+  background-color: rgb(48, 48, 255);
 }/*# sourceMappingURL=config.css.map */

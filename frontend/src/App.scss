@@ -140,7 +140,8 @@ body, html, #root, #main {
     z-index: -50000 !important;
     overflow: auto !important;
     touch-action: none;
-
+    transform: translate3d(0, 0, 0);
+    
     * {
       transition: all, 0ms;
     }
@@ -206,9 +207,6 @@ body, html, #root, #main {
       z-index: 40000;
     }
 
-    #top-resize:hover {
-      transform: scaleX(50);
-    }
   }
 }
 

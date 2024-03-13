@@ -128,6 +128,7 @@ body, html, #root, #main {
   z-index: -50000 !important;
   overflow: auto !important;
   touch-action: none;
+  transform: translate3d(0, 0, 0);
   /*
     a div that wraps the selected elements and move them
     under it when you get out from it it will put them where user leaves it
@@ -179,9 +180,6 @@ body, html, #root, #main {
   top: 0px;
   left: 0px;
   z-index: 40000;
-}
-#main #states #decorators #top-resize:hover {
-  transform: scaleX(50);
 }
 
 #context-menu {

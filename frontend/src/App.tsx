@@ -9,7 +9,8 @@ import Style from './modules/Style';
 import { getCIArea } from './modules/getCIArea';
 import Logic from './modules/Logic';
 import Component from './modules/Component';
-import { BOTTOM_RESIZE, CANVAS, DECORATORS, LEFT_RESIZE, LEFT_TOOLS, MAIN, MULTIPLE_ELMENTS_WRAPPER, RIGHT_RESIZE, STATES, TOP_RESIZE } from './id-storage/constants.config';
+import { BOTTOM_RESIZE, CANVAS, DECORATORS, LEFT_RESIZE, LEFT_TOOLS, MAIN, MULTIPLE_ELMENTS_WRAPPER, RIGHT_RESIZE, STATES, TOP_RESIZE, UPPER_TOOLS } from './id-storage/constants.config';
+import screenVisibleElements from './scope/screenVisibleElements';
 
 function App() {
 
@@ -78,7 +79,10 @@ function App() {
   const [elementRightPosition, set_elementRightPosition] = useState({ x: 0, y: 0 });
   const [elementTopPosition, set_elementTopPosition] = useState({ x: 0, y: 0 });
   const [elementBottomPosition, set_elementBottomPosition] = useState({ x: 0, y: 0 });
+  
 
+  // referencing states and alignment
+  const [visibleComponents, set_visibleComponents]: any = useState([]);
 
   /**
    * this is the hook that will start when 
@@ -104,7 +108,8 @@ function App() {
     // updating user's scroll amount 
     set_scrollTop(Scroll.top(CANVAS)!);
     set_scrollLeft(Scroll.left(CANVAS)!);   
-  
+    set_visibleComponents(screenVisibleElements(Style.height(UPPER_TOOLS), 0, window.innerWidth, window.innerHeight))
+    
   })
 
   // when mouse move in the whole window
@@ -262,6 +267,226 @@ function App() {
       style={{
         cursor: cursorStyle
       }}
+
+      onMouseMove={(e: MouseEvent) => {
+
+        /**
+         * resizing features
+         */
+  
+        if(startResizing) {
+          /**
+           * this is the action taker for each type ( specifically 8 types of resizes )
+           * this takes:
+           *  1. whether resize starts
+           *  2. which type of resize is occuring
+           *  3. which point
+           */
+  
+          // top resize
+          if(whatToResize == 'top'){
+            // if this is an elment inside a CANVAS
+            if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
+            {
+            Elem.id(seleElement)!.style.top = Unit.px(e.clientY + scrollTop);
+            Elem.id(seleElement)!.style.height = Unit.px(elementBottomPosition.y - (e.clientY))
+            }else 
+            // if this is an elment inside a page
+            if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
+            {
+            const parent = Elem.id(seleElement)!.parentElement!.id;
+            Elem.id(seleElement)!.style.top = Unit.px(e.clientY - Style.top(parent));
+            Elem.id(seleElement)!.style.height = Unit.px((elementBottomPosition.y - Style.top(parent))- (e.clientY - Style.top(parent)))
+            }
+          }else if(whatToResize == 'right'){
+            // if this is an elment inside a CANVAS
+            if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
+            {
+            Elem.id(seleElement)!.style.left = Unit.px(elementLeftPosition.x + scrollLeft);
+            Elem.id(seleElement)!.style.width = Unit.px(e.clientX - (elementLeftPosition.x))
+            }else 
+            // if this is an elment inside a page
+            if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
+            {
+            const parent = Elem.id(seleElement)!.parentElement!.id;
+            Elem.id(seleElement)!.style.left = Unit.px(elementLeftPosition.x - Style.left(parent));
+            Elem.id(seleElement)!.style.width = Unit.px((e.clientX) - elementLeftPosition.x)
+            }        
+          }else if(whatToResize == 'bottom'){
+              // if this is an elment inside a CANVAS
+              if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
+              {
+              Elem.id(seleElement)!.style.top = Unit.px(elementTopPosition.y + scrollTop);
+              Elem.id(seleElement)!.style.height = Unit.px(e.clientY - elementTopPosition.y)
+              }else 
+              // if this is an elment inside a page
+              if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
+              {
+              const parent = Elem.id(seleElement)!.parentElement!.id;
+              Elem.id(seleElement)!.style.top = Unit.px(elementTopPosition.y - Style.top(parent));
+              Elem.id(seleElement)!.style.height = Unit.px((e.clientY) - elementTopPosition.y)
+              }        
+            }else if(whatToResize == 'left'){
+              // if this is an elment inside a CANVAS
+              if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
+              {
+              Elem.id(seleElement)!.style.left = Unit.px(e.clientX + scrollLeft);
+              Elem.id(seleElement)!.style.width = Unit.px(elementRightPosition.x - e.clientX)
+              }else 
+              // if this is an elment inside a page
+              if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
+              {
+              const parent = Elem.id(seleElement)!.parentElement!.id;
+              Elem.id(seleElement)!.style.left = Unit.px(e.clientX - Style.left(parent));
+              Elem.id(seleElement)!.style.width = Unit.px(elementRightPosition.x - e.clientX)
+              }        
+            }
+        }
+  
+        /**
+         * this is the code who set's selected component position
+         * both top and left
+         */
+        if(startMovingObject){
+          if(Elem.id(seleElement)!.parentElement!.id === CANVAS) {
+            Elem.id(seleElement)!.style.top = Unit.px((e.clientY + scrollTop) - objectCursorDifference.y);
+            Elem.id(seleElement)!.style.left = Unit.px((e.clientX + scrollLeft) - objectCursorDifference.x);
+          }
+          else if(Elem.id(seleElement)!.parentElement?.getAttribute('data-type') === 'page') {
+            Elem.id(seleElement)!.style.top = Unit.px((e.clientY - scrollTop) - objectCursorDifference.y);
+            Elem.id(seleElement)!.style.left = Unit.px((e.clientX - scrollLeft) - objectCursorDifference.x);
+          }
+          // this is where elements get appended inside and page and get out from page
+          if(seleElement.length > 0 || selectedElements.length > 1){
+  
+            const all: any = Elem.id('main')!.querySelectorAll('*');
+            const results: string[] = [];
+            const x_start = e.clientX + scrollLeft;
+            const y_start = e.clientY + scrollTop;
+            
+            all.forEach((element: any) => {
+              if(
+                Style.top(element.id) + scrollTop < y_start && 
+                Style.left(element.id) + scrollLeft < x_start &&
+                Style.right(element.id) + scrollLeft > x_start &&
+                Style.bottom(element.id) + scrollTop > y_start &&
+                (element.id === CANVAS || element.getAttribute('data-type') === 'page')
+                ) {
+                  results.push(element.id)
+              }
+            })
+  
+            if(results.length == 1){
+              set_movingTo(results[0]);
+            }else {
+              set_movingTo(results[1])
+            }
+            
+          }
+  
+        }
+  
+        /**
+         * if selection of elements verifyed by two verifications
+         * know this code will do:
+         *    - identify which elemnts could be selected and regester them
+         *    - and tells the wrapper (for moving elemnts ) the information like
+         *      what is it's position and size
+         */
+        if(selectionStarted && selectionStarted2){
+        
+          const res = getCIArea(startSelectingFrom, includeSelectingUpto)
+          set_selectedElements(res);
+          
+          // create a wrapper elemnt
+          if(res.length == 1){
+            // this means user selected one element only
+            set_seleElement(res[0]);
+          }else if(res.length > 1){
+            // this means user selected multiple elements only
+            
+            const startFromMax = { x: 20000, y: 2000000 };
+            const includeUpToMax = { x: -20000, y: -200000 };
+            
+            
+            res.forEach((each: string) => {
+              
+              // some varialble to clean the code
+              const eTop: number = Style.top(each);
+              const eLeft: number = Style.left(each);
+              const eRight: number = Style.right(each);
+              const eBottom: number = Style.bottom(each);
+              
+              if(eTop < startFromMax.y){ // the top minimum value of element
+                startFromMax.y = eTop;
+                console.log('top: ' + eTop);
+              }
+              if(eLeft < startFromMax.x){ // the left minimum value of element
+                startFromMax.x = eLeft;
+                console.log('left: ' + eLeft)
+              }
+              if(eRight > includeUpToMax.x){ // the right maximum value of element
+                includeUpToMax.x = eRight;
+                console.log('right ' + eRight);
+              }
+              if(eBottom > includeUpToMax.y){ // the bottom maximum value of element
+                includeUpToMax.y = eBottom;
+                console.log('bottom: ' + eBottom); 
+              }
+              
+            })
+            startFromMax.x += scrollLeft;
+            startFromMax.y += scrollTop
+            includeUpToMax.x += scrollLeft;
+            includeUpToMax.y += scrollTop; 
+            set_multiSelectedElementsWrapperDivStartFrom(startFromMax);
+            set_multiSelectedElementsWrapperDivInclude(includeUpToMax)
+            set_seleElement(MULTIPLE_ELMENTS_WRAPPER);
+          }
+  
+        }
+  
+  
+        /**
+         * if user is moving elements only not pages
+         * we will actually move components inside the wrapper
+         * wrapper in this code means the elements parent
+         * if user's mouse starts grabbing the element from the out side (CANVAS)
+         *        - when user enters pages we have to move the elment inside the page
+         *
+         * if user's mosue starts grabbing the elemtn from the inside (pages)
+         *        - when user move the component to the outside (CANVAS) move the elemnent to outside
+         */
+  
+          if(startMovingObject || (selectionStarted2 && selectionStarted) || startResizing){
+            
+            // for go up
+            if(mousePosition.y < 100){
+              Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: -10, left: 0})
+            }
+            // for go down
+            if(mousePosition.y > window.innerHeight - 50){            
+              Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: 10, left: 0})
+            }
+  
+            // for go up
+            if(mousePosition.x < 100){
+              Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: 0, left: -10})
+            }
+            // for go down
+            if(mousePosition.x > window.innerWidth - 50){            
+              Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: 0, left: 10})
+            }
+  
+            if(startMovingObject){
+              Elem.id(seleElement)!.style.top = Unit.px((mousePosition.y + scrollTop) - objectCursorDifference.y);
+              Elem.id(seleElement)!.style.left = Unit.px((mousePosition.x + scrollLeft) - objectCursorDifference.x);
+            }
+            
+  
+          }
+        }}
+
       >
 
       {/* bottom mode changes */}
@@ -462,224 +687,7 @@ function App() {
       }}
 
 
-      onMouseMove={(e: MouseEvent) => {
-
-      /**
-       * resizing features
-       */
-
-      if(startResizing) {
-        /**
-         * this is the action taker for each type ( specifically 8 types of resizes )
-         * this takes:
-         *  1. whether resize starts
-         *  2. which type of resize is occuring
-         *  3. which point
-         */
-
-        // top resize
-        if(whatToResize == 'top'){
-          // if this is an elment inside a CANVAS
-          if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
-          {
-          Elem.id(seleElement)!.style.top = Unit.px(e.clientY + scrollTop);
-          Elem.id(seleElement)!.style.height = Unit.px(elementBottomPosition.y - (e.clientY))
-          }else 
-          // if this is an elment inside a page
-          if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
-          {
-          const parent = Elem.id(seleElement)!.parentElement!.id;
-          Elem.id(seleElement)!.style.top = Unit.px(e.clientY - Style.top(parent));
-          Elem.id(seleElement)!.style.height = Unit.px((elementBottomPosition.y - Style.top(parent))- (e.clientY - Style.top(parent)))
-          }
-        }else if(whatToResize == 'right'){
-          // if this is an elment inside a CANVAS
-          if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
-          {
-          Elem.id(seleElement)!.style.left = Unit.px(elementLeftPosition.x + scrollLeft);
-          Elem.id(seleElement)!.style.width = Unit.px(e.clientX - (elementLeftPosition.x))
-          }else 
-          // if this is an elment inside a page
-          if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
-          {
-          const parent = Elem.id(seleElement)!.parentElement!.id;
-          Elem.id(seleElement)!.style.left = Unit.px(elementLeftPosition.x - Style.left(parent));
-          Elem.id(seleElement)!.style.width = Unit.px((e.clientX) - elementLeftPosition.x)
-          }        
-        }else if(whatToResize == 'bottom'){
-            // if this is an elment inside a CANVAS
-            if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
-            {
-            Elem.id(seleElement)!.style.top = Unit.px(elementTopPosition.y + scrollTop);
-            Elem.id(seleElement)!.style.height = Unit.px(e.clientY - elementTopPosition.y)
-            }else 
-            // if this is an elment inside a page
-            if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
-            {
-            const parent = Elem.id(seleElement)!.parentElement!.id;
-            Elem.id(seleElement)!.style.top = Unit.px(elementTopPosition.y - Style.top(parent));
-            Elem.id(seleElement)!.style.height = Unit.px((e.clientY) - elementTopPosition.y)
-            }        
-          }else if(whatToResize == 'left'){
-            // if this is an elment inside a CANVAS
-            if(Elem.id(seleElement)!.parentElement!.id == CANVAS)
-            {
-            Elem.id(seleElement)!.style.left = Unit.px(e.clientX + scrollLeft);
-            Elem.id(seleElement)!.style.width = Unit.px(elementRightPosition.x - e.clientX)
-            }else 
-            // if this is an elment inside a page
-            if(Elem.id(seleElement)!.parentElement!.getAttribute('data-type') == 'page')
-            {
-            const parent = Elem.id(seleElement)!.parentElement!.id;
-            Elem.id(seleElement)!.style.left = Unit.px(e.clientX - Style.left(parent));
-            Elem.id(seleElement)!.style.width = Unit.px(elementRightPosition.x - e.clientX)
-            }        
-          }
-      }
-
-      /**
-       * this is the code who set's selected component position
-       * both top and left
-       */
-      if(startMovingObject){
-        if(Elem.id(seleElement)!.parentElement!.id === CANVAS) {
-          Elem.id(seleElement)!.style.top = Unit.px((e.clientY + scrollTop) - objectCursorDifference.y);
-          Elem.id(seleElement)!.style.left = Unit.px((e.clientX + scrollLeft) - objectCursorDifference.x);
-        }
-        else if(Elem.id(seleElement)!.parentElement?.getAttribute('data-type') === 'page') {
-          Elem.id(seleElement)!.style.top = Unit.px((e.clientY - scrollTop) - objectCursorDifference.y);
-          Elem.id(seleElement)!.style.left = Unit.px((e.clientX - scrollLeft) - objectCursorDifference.x);
-        }
-        // this is where elements get appended inside and page and get out from page
-        if(seleElement.length > 0 || selectedElements.length > 1){
-
-          const all: any = Elem.id('main')!.querySelectorAll('*');
-          const results: string[] = [];
-          const x_start = e.clientX + scrollLeft;
-          const y_start = e.clientY + scrollTop;
-          
-          all.forEach((element: any) => {
-            if(
-              Style.top(element.id) + scrollTop < y_start && 
-              Style.left(element.id) + scrollLeft < x_start &&
-              Style.right(element.id) + scrollLeft > x_start &&
-              Style.bottom(element.id) + scrollTop > y_start &&
-              (element.id === CANVAS || element.getAttribute('data-type') === 'page')
-              ) {
-                results.push(element.id)
-            }
-          })
-
-          if(results.length == 1){
-            set_movingTo(results[0]);
-          }else {
-            set_movingTo(results[1])
-          }
-          
-        }
-
-      }
-
-      /**
-       * if selection of elements verifyed by two verifications
-       * know this code will do:
-       *    - identify which elemnts could be selected and regester them
-       *    - and tells the wrapper (for moving elemnts ) the information like
-       *      what is it's position and size
-       */
-      if(selectionStarted && selectionStarted2){
       
-        const res = getCIArea(startSelectingFrom, includeSelectingUpto)
-        set_selectedElements(res);
-        
-        // create a wrapper elemnt
-        if(res.length == 1){
-          // this means user selected one element only
-          set_seleElement(res[0]);
-        }else if(res.length > 1){
-          // this means user selected multiple elements only
-          
-          const startFromMax = { x: 20000, y: 2000000 };
-          const includeUpToMax = { x: -20000, y: -200000 };
-          
-          
-          res.forEach((each: string) => {
-            
-            // some varialble to clean the code
-            const eTop: number = Style.top(each);
-            const eLeft: number = Style.left(each);
-            const eRight: number = Style.right(each);
-            const eBottom: number = Style.bottom(each);
-            
-            if(eTop < startFromMax.y){ // the top minimum value of element
-              startFromMax.y = eTop;
-              console.log('top: ' + eTop);
-            }
-            if(eLeft < startFromMax.x){ // the left minimum value of element
-              startFromMax.x = eLeft;
-              console.log('left: ' + eLeft)
-            }
-            if(eRight > includeUpToMax.x){ // the right maximum value of element
-              includeUpToMax.x = eRight;
-              console.log('right ' + eRight);
-            }
-            if(eBottom > includeUpToMax.y){ // the bottom maximum value of element
-              includeUpToMax.y = eBottom;
-              console.log('bottom: ' + eBottom); 
-            }
-            
-          })
-          startFromMax.x += scrollLeft;
-          startFromMax.y += scrollTop
-          includeUpToMax.x += scrollLeft;
-          includeUpToMax.y += scrollTop; 
-          set_multiSelectedElementsWrapperDivStartFrom(startFromMax);
-          set_multiSelectedElementsWrapperDivInclude(includeUpToMax)
-          set_seleElement(MULTIPLE_ELMENTS_WRAPPER);
-        }
-
-      }
-
-
-      /**
-       * if user is moving elements only not pages
-       * we will actually move components inside the wrapper
-       * wrapper in this code means the elements parent
-       * if user's mouse starts grabbing the element from the out side (CANVAS)
-       *        - when user enters pages we have to move the elment inside the page
-       *
-       * if user's mosue starts grabbing the elemtn from the inside (pages)
-       *        - when user move the component to the outside (CANVAS) move the elemnent to outside
-       */
-
-        if(startMovingObject || (selectionStarted2 && selectionStarted) || startResizing){
-          
-          // for go up
-          if(mousePosition.y < 100){
-            Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: -10, left: 0})
-          }
-          // for go down
-          if(mousePosition.y > window.innerHeight - 50){            
-            Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: 10, left: 0})
-          }
-
-          // for go up
-          if(mousePosition.x < 100){
-            Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: 0, left: -10})
-          }
-          // for go down
-          if(mousePosition.x > window.innerWidth - 50){            
-            Elem.id(CANVAS)?.scrollBy({ behavior: 'instant', top: 0, left: 10})
-          }
-
-          if(startMovingObject){
-            Elem.id(seleElement)!.style.top = Unit.px((mousePosition.y + scrollTop) - objectCursorDifference.y);
-            Elem.id(seleElement)!.style.left = Unit.px((mousePosition.x + scrollLeft) - objectCursorDifference.x);
-          }
-          
-
-        }
-      }}
 
 
       onWheel={(e: WheelEvent) => {
@@ -694,17 +702,12 @@ function App() {
             left: e.movementX
           })
 
-          console.table({
-            behavior: 'instant',
-            top: e.movementY,
-            left: e.movementX
-          })
           
       }}
       
       
       onKeyDown={(e: KeyboardEvent) => {
-
+        
         /**
          * WARNING:
          * remember if every thing is stable
@@ -751,15 +754,20 @@ function App() {
          * to delete elemnt by pressing del key in laptop
          */
         if(e.key == 'Delete'){
-          selectedElements.map((each: string) => {
-            if(Elem.id(each) && each.length > 0 && logic.CANVA_ELEMENT_EXCEPTION.every((id: string) => id !== each)){
-              Elem.id(each)?.remove()
-            }
-          });
-          set_seleElement(CANVAS);
-          set_selectedElements([]);
-          set_selectionStarted2(false);
-          set_selectedElements([]);
+          if(selectedElements.length < 2){
+            Elem.id(seleElement)?.remove();
+            set_seleElement(CANVAS)
+          }else {
+            selectedElements.map((each: string) => {
+              if(Elem.id(each) && each.length > 0 && logic.CANVA_ELEMENT_EXCEPTION.every((id: string) => id !== each)){
+                Elem.id(each)?.remove()
+              }
+            });
+            set_seleElement(CANVAS);
+            set_selectedElements([]);
+            set_selectionStarted2(false);
+            set_selectedElements([]);
+          }
         }else
         /**
          * select multiple feature by pressing ctr + a/A is here */ 
@@ -1060,6 +1068,23 @@ function App() {
         </tbody>
       </table>}
 
+      <div
+      id='visible-elments'
+      style={{
+        position: 'fixed',
+        left: '0px',
+        bottom: '0px',
+        background: 'white',
+        width: '100px',
+        height: 'fit-content',
+        minHeight: '200px'
+      }}
+      >
+        {visibleComponents.map((each: any) => {
+          return <button className='width-full bg-primary text-white'>{each}</button>
+        })}
+      </div>
+
         {displayDevStates && <table id="states" style={{ right: '350px', height: 'fit-content'}}>
           <caption>Element State</caption>
           <tbody>
@@ -1134,7 +1159,7 @@ function App() {
           width: Unit.px(Style.width(seleElement)),
           height: '1px',
           zIndex: 30,
-          background: 'rgb(107, 154, 255)',
+          backgroundColor: 'rgb(107, 154, 255)',
           cursor: 'ns-resize'
         }}
         onMouseDown={() => {
