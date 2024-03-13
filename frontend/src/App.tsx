@@ -128,6 +128,8 @@ function App() {
   // referencing states and alignment
   const [visibleComponents, set_visibleComponents]: any = useState([]);
 
+  // adding new element state
+  const [addNewElement, set_addNewElement] = useState(false);
   /**
    * this is the hook that will start when
    * the page loaded and rendered
@@ -755,10 +757,22 @@ function App() {
               <i className="bi bi-arrows-move"></i>
             </button>
           </div>
-          <button title="text">
+          <button title="text"
+          onClick={() => {
+            mode == 'text' ? set_mode('') : set_mode('text');
+            set_cursorStyle('text')
+          }}
+          className={mode == 'text' ? 'tool-selected' : ''}
+          >
             <i className="bi bi-fonts"></i>
           </button>
-          <button title="image">
+          <button title="image"
+          onClick={() => {
+            mode == 'image' ? set_mode('') : set_mode('image');
+            set_cursorStyle('copy')
+          }}
+          className={mode == 'image' ? 'tool-selected' : ''}
+          >
             <i className="bi bi-images"></i>
           </button>
           <button title="page">
@@ -797,6 +811,19 @@ function App() {
             center
           </button>
         </div>
+
+
+        {addNewElement && <div id="add-new-element">
+                <input id="search-components" type="text" placeholder="Search Component" />
+                <p><i className="bi bi-menu-button-wide-fill"></i> Button</p>
+                <p><i className="bi bi-type-h1"></i> Heading 1</p>
+                <p><i className="bi bi-type-h2"></i> Heading 2</p>
+                <p><i className="bi bi-type-h3"></i> Heading 3</p>
+                <p><i className="bi bi-type-h4"></i> Heading 4</p>
+                <p><i className="bi bi-type-h5"></i> Heading 5</p>
+                <p><i className="bi bi-type-h6"></i> Heading 6</p>
+                <p><i className="bi bi-text-paragraph"></i> Paragraph</p>
+        </div>}
 
         {/* CANVAS */}
         <div
@@ -1103,8 +1130,16 @@ function App() {
                   break;
                 case 'm':
                   set_mode('move');
-                  set_cursorStyle('grab')
+                  set_cursorStyle('grab');
                   set_seleElement(CANVAS);
+                  break;
+                case 'i':
+                  set_mode('image');
+                  set_cursorStyle('crosshair');
+                  break;
+                case '/':
+                  set_addNewElement(true);
+                  setTimeout(() => Elem.id('search-components')!.focus({ preventScroll: true }), 100)
                   break;
               }
             }
@@ -1247,6 +1282,7 @@ function App() {
               id="img-04"
             />
           </div>
+
 
           {/* dev components*/}
           {selectionStarted &&
@@ -1451,6 +1487,10 @@ function App() {
                   height: {window.innerHeight} <br />
                   width: {window.innerWidth} <br />
                 </td>
+              </tr>
+              <tr>
+                <td>mode</td>
+                <td>{mode}</td>
               </tr>
             </tbody>
           </table>
