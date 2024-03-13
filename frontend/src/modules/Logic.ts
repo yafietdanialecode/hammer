@@ -15,10 +15,10 @@ class Logic {
         this.ROOT_ID = root;
     }
 
-    selectAll(id: string, exceptions: string[], selectElementsMethod: any){
-        let elements = document.getElementById(id)?.querySelectorAll('*');
+    selectAll(exceptions: string[], selectElementsMethod: any){
+        let elements = document.getElementById('canvas')?.querySelectorAll('*');
         let res: any = [];
-        elements?.forEach((each: any) => {
+        elements!.forEach((each: any) => {
             if(exceptions.every((id: any) => id !== each.id)){
                 res.push(each.id);
             }

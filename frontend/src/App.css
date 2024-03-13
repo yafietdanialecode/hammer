@@ -12,9 +12,9 @@
   background-color: white;
   border-radius: 0px;
   border: none;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
+  -webkit-user-select: none !important;
+     -moz-user-select: none !important;
+          user-select: none !important;
   scrollbar-width: 0px;
 }
 
@@ -69,6 +69,9 @@ body, html, #root, #main {
   background: url("/logo.svg");
   background-size: cover;
   background-position: center;
+  position: fixed;
+  left: 1vw;
+  top: 1vw;
 }
 #main #left-tools {
   width: 3vw;

@@ -1,4 +1,4 @@
-import { KeyboardEvent, MouseEvent, WheelEvent, useEffect, useState } from 'react'
+import { KeyboardEvent, MouseEvent, WheelEvent, useEffect, useState } from 'react';
 import './App.css'
 import Elem from './modules/Elem';
 import Unit from './modules/unit';
@@ -100,7 +100,6 @@ function App() {
     // updating user's scroll amount 
     set_scrollTop(Scroll.top('canvas')!);
     set_scrollLeft(Scroll.left('canvas')!);   
-
   })
 
   // when mouse move in the whole window
@@ -142,14 +141,14 @@ function App() {
     if(movingFrom !== movingTo && startMovingObject) {
       // moving single component features below
       // if you need multipe next to this block
-      let parent = Elem.id(seleElement)!.parentElement!.id
+      const parent = Elem.id(seleElement)!.parentElement!.id
 
       
       if(seleElement && selectedElements.length < 2 && seleElement !== 'selected-elements-wrapper'){
        /* moving single component from canvas > page
       */ 
         if(movingFrom == 'canvas' && movingTo != 'canvas' && Elem.id(seleElement)!.getAttribute('data-type') !== 'page'){
-        let clone:any = Elem.id(seleElement)!.cloneNode(true);
+        const clone: any = Elem.id(seleElement)!.cloneNode(true);
         clone.style.top = Unit.px(Style.top(seleElement) - Style.top(movingTo));
         clone.style.left = Unit.px(Style.left(seleElement) - Style.left(movingTo));
         Elem.id(seleElement)?.remove();
@@ -758,25 +757,25 @@ function App() {
         }else
         /**
          * select multiple feature by pressing ctr + a/A is here */ 
-        if(e.key == 'a' && e.ctrlKey){
+        //  this feature is not supported currently we will add it soon
+        // if(e.key == 'a' && e.ctrlKey){
 
-          logic.selectAll(
-            'canvas',
-            logic.CANVA_ELEMENT_EXCEPTION,
-            set_selectedElements
-            )
-        }
+        //   logic.selectAll(
+        //     logic.CANVA_ELEMENT_EXCEPTION,
+        //     set_selectedElements
+        //     )
+        // }
         /**
          * move the elemnt forward
          */
         if(e.key == ']'){
-          Elem.id(seleElement)!.style.zIndex = Elem.id(seleElement)!.style.zIndex + 1 
+          Elem.id(seleElement)!.style.zIndex = `${Style.zIndex(seleElement) + 1}` 
         }
         /**
          * move the elment backward
          */
         if(e.key == '['){
-          Elem.id(seleElement)!.style.zIndex = `${parseInt(Elem.id(seleElement)!.style.zIndex) - 1}` 
+          Elem.id(seleElement)!.style.zIndex = `${Style.zIndex(seleElement) - 1}` 
         }
         }
 
@@ -827,12 +826,15 @@ function App() {
           zIndex: 0
         }}
         >
-
           <img id='img-01'
           draggable="false"
           style={{ zIndex: 2, position: 'absolute', top: '0px', left: '0px', width: '200px'}}
           src="/cat.jpg" alt="the image" />
-
+          <img
+          style={{ zIndex: 3, position: 'absolute', top: '0px', left: '0px', width: '200px'}}
+          draggable="false"
+          src="/mobile (1).gif" alt="logo" id="img-02" />
+        
         </div>
 
 
@@ -857,6 +859,15 @@ function App() {
         zIndex: 0
       }}
       id='titie-inside-page'>Hello I'm Page</h1>
+                <img id='img-03'
+          draggable="false"
+          style={{ zIndex: 2, position: 'absolute', top: '0px', left: '0px', width: '200px'}}
+          src="/logo.svg" alt="the image" />
+          <img
+          style={{ zIndex: 3, position: 'absolute', top: '0px', left: '0px', width: '200px'}}
+          draggable="false"
+          src="/add-button.png" alt="logo" id="img-04" />
+
         </div>
 
         {/* dev components*/}
@@ -1067,7 +1078,7 @@ function App() {
           </tr>
           <tr>
             <td>zIndex</td>
-            <td>{Elem.id(seleElement)?.style.zIndex}</td>
+            <td>{Style.zIndex(seleElement)}</td>
           </tr>
 
           </tbody>
