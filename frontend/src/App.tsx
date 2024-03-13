@@ -107,9 +107,7 @@ function App() {
   useEffect(() => {
     // updating user's scroll amount 
     set_scrollTop(Scroll.top(CANVAS)!);
-    set_scrollLeft(Scroll.left(CANVAS)!);   
-    set_visibleComponents(screenVisibleElements(Style.height(UPPER_TOOLS), 0, window.innerWidth, window.innerHeight))
-    
+    set_scrollLeft(Scroll.left(CANVAS)!);       
   })
 
   // when mouse move in the whole window
@@ -546,6 +544,9 @@ function App() {
       draggable={false}
 
       onMouseDown={(e: any) => {
+        // this reference maker should update when user clicks something
+        set_visibleComponents(screenVisibleElements(Style.height(UPPER_TOOLS), 0, window.innerWidth, window.innerHeight))
+
         // some variables
         const id: string = e.target.id;
 
