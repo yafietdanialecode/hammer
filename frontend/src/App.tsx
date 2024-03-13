@@ -174,6 +174,12 @@ function App() {
   });
 
   window.onmouseup = (e: any) => {
+
+    // some ui changing
+    if(cursorStyle == 'grabbing'){
+      set_cursorStyle('grab')
+    }
+
     // if user have been resizing component
     if (startResizing) {
       /**
@@ -807,7 +813,11 @@ function App() {
            * draggable is bad for images for dev environment not production
            */
           draggable={false}
+
           onMouseDown={(e: any) => {
+            // ui effect on cursor
+            cursorStyle == 'grab' ? set_cursorStyle('grabbing') : set_cursorStyle('default');
+            
             // some variables
             const id: string = e.target.id;
 
@@ -1085,12 +1095,15 @@ function App() {
               switch(e.key){
                 case 't':
                   set_mode('text');
+                  set_cursorStyle('text')
                   break;
                 case 'v':
                   set_mode('select');
+                  set_cursorStyle('default')
                   break;
                 case 'm':
                   set_mode('move');
+                  set_cursorStyle('grab')
                   set_seleElement(CANVAS);
                   break;
               }
