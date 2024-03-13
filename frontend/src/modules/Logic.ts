@@ -26,6 +26,11 @@ class Logic {
         selectElementsMethod(res);
     }
 
+    notInExceptions(id: string, exceptions: string[] | []) {
+        const checking: boolean = exceptions.every((each: string) => each !== id);
+        return checking;
+    }
+
 
 }
 
