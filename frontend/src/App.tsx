@@ -730,13 +730,20 @@ function App() {
             }}
           >
             <button title="Select"
-            onClick={() => mode == 'select' ? set_mode('') : set_mode('select')}
+            
+            onClick={() => {
+              mode == 'select' ? set_mode('') : set_mode('select');
+              set_cursorStyle('default')
+            }}
             className={mode == 'select' ? 'tool-selected' : ''}
             >
               <i className="bi bi-cursor"></i>
             </button>
             <button title="Move"
-            onClick={() => mode == 'move' ? set_mode('') : set_mode('move')}
+            onClick={() => {
+              mode == 'move' ? set_mode('') : set_mode('move');
+              set_cursorStyle('grab')
+            }}
             className={mode == 'move' ? 'tool-selected' : ''}
             >
               <i className="bi bi-arrows-move"></i>
@@ -1366,7 +1373,6 @@ function App() {
                   Y: {multiSelectedElementsWrapperDivInclude.y}
                 </td>
               </tr>
-
               <tr>
                 <td>startResizing</td>
                 <td>{startResizing ? "🟢" : "🔴"}</td>
@@ -1488,6 +1494,7 @@ function App() {
                   r: {Style.right(seleElement)!}
                   <br />
                   b: {Style.bottom(seleElement)}
+                  {elemPosition.t}
                 </td>
               </tr>
               <tr>
