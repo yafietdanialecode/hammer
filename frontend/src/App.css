@@ -105,10 +105,10 @@ body, html, #root, #main {
 #main #left-tools button:hover {
   background: rgb(228, 228, 228);
 }
-#main #left-tools button:focus {
+#main #left-tools button.tool-selected {
   background: rgb(0, 0, 0);
 }
-#main #left-tools button:focus i {
+#main #left-tools button.tool-selected i {
   color: white;
 }
 #main #left-tools div button {
@@ -149,7 +149,7 @@ body, html, #root, #main {
 }
 #main #canvas #selected-elements-wrapper {
   border: none;
-  background-color: rgba(131, 170, 255, 0.349);
+  background-color: transparent;
   position: absolute !important;
 }
 #main #canvas #selected-elements-wrapper * {
