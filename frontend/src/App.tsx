@@ -1027,7 +1027,7 @@ function App() {
                * to delete elemnt by pressing del key in laptop
                */
               if (e.key == "Delete") {
-                if (selectedElements.length < 2) {
+                if (selectedElements.length < 2 && seleElement !== CANVAS) {
                   Elem.id(seleElement)?.remove();
                   set_seleElement(CANVAS);
                 } else {
