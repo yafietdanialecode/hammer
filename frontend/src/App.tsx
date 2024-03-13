@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { KeyboardEvent, MouseEvent, WheelEvent, useEffect, useState } from 'react';
 import './config.css'
 import './App.css'
@@ -98,6 +99,7 @@ function App() {
    * react updates the ui
    * [ infinite loop might occur so be careful ]
    */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // updating user's scroll amount 
     set_scrollTop(Scroll.top(CANVAS)!);
@@ -106,6 +108,7 @@ function App() {
   })
 
   // when mouse move in the whole window
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   window.addEventListener('mousemove', (e: any) => {
 
     // update mouse position every time 
@@ -178,7 +181,7 @@ function App() {
         &&
         Elem.id(movingTo)!.getAttribute('data-type') == 'page'
       ){
-        let clone:any = Elem.id(seleElement)!.cloneNode(true);
+        const clone:any = Elem.id(seleElement)!.cloneNode(true);
 
         clone.style.top = Unit.px((e.clientY - (objectCursorDifference.y - Style.top(Elem.id(seleElement)!.parentElement!.id)) - Style.top(movingTo)) + scrollTop);
         clone.style.left = Unit.px((e.clientX - (objectCursorDifference.x - Style.left(Elem.id(seleElement)!.parentElement!.id))) - Style.left(movingTo) + scrollLeft);
