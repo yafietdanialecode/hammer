@@ -654,10 +654,10 @@ function App() {
                     e.clientY - elementTopPosition.y
                 );
                 Elem.id(seleElement)!.style.left = Unit.px(
-                  elementTopPosition.x - Style.left(parent)
+                  e.clientX - Style.left(parent)
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                 (e.clientX - elementTopPosition.x)
+                 (elementTopPosition.x - e.clientX)
                 );
               }
             }
@@ -1712,6 +1712,14 @@ function App() {
                     zIndex: 30,
                     cursor: "crosshair",
                     borderRadius: "50px",
+                  }}
+                  onMouseDown={() => {
+                    set_whatToResize("topleft-rotate");
+                    set_startResizing(true);
+                    set_elementBottomPosition({
+                      x: 0,
+                      y: Style.bottom(seleElement),
+                    });
                   }}
                 />
               )}
