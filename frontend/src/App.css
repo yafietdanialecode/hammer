@@ -63,6 +63,9 @@ body, html, #root, #main {
   align-items: center;
   justify-content: space-around;
 }
+#main #upper-tools button {
+  font-size: 1.4vw;
+}
 #main #upper-tools #logo {
   width: 2.1vw;
   height: 2.1vw;
@@ -74,28 +77,30 @@ body, html, #root, #main {
   top: 1vw;
 }
 #main #left-tools {
-  width: 3vw;
-  max-height: 83vh;
+  width: 4vw;
   background-color: white;
   position: fixed;
-  top: 15vh;
+  top: 17vh;
   left: 1vw;
-  border-radius: 5px;
+  border-radius: 0.2vw;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   overflow: scroll;
-  padding-bottom: 1vw;
+  padding-bottom: 0vw;
   padding-top: 6vw;
 }
 #main #left-tools button {
-  width: 3vw;
-  height: 3vw;
+  width: 4vw;
+  height: 4vw;
   background-color: transparent;
   color: rgb(0, 0, 0);
   margin-top: 0vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 #main #left-tools button i {
   font-size: 1.5vw;
@@ -113,10 +118,8 @@ body, html, #root, #main {
 }
 #main #left-tools div button {
   margin-top: 0vh;
-}
-#main #left-tools div button:first-child {
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  width: 4vw;
+  height: 4vw;
 }
 #main #canvas {
   width: 100vw !important;

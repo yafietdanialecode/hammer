@@ -21,6 +21,7 @@ import {
   DECORATORS,
   LEFT_RESIZE,
   LEFT_TOOLS,
+  LOGO,
   MAIN,
   MULTIPLE_ELMENTS_WRAPPER,
   PAGES_DATATYPE,
@@ -546,6 +547,45 @@ function App() {
                   elementBottomPosition.x - e.clientX
                 );
               }
+            }// top left resize
+            else if (whatToResize == "top-right") {
+              // if this is an elment inside a CANVAS
+              if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
+                Elem.id(seleElement)!.style.top = Unit.px(
+                  e.clientY + scrollTop
+                );
+                Elem.id(seleElement)!.style.height = Unit.px(
+                  elementBottomPosition.y - e.clientY
+                );
+                Elem.id(seleElement)!.style.left = Unit.px(
+                  elementBottomPosition.x + scrollLeft
+                );
+                Elem.id(seleElement)!.style.width = Unit.px(
+                  e.clientX - elementBottomPosition.x
+                );
+              }
+              // if this is an elment inside a page
+              else if (
+                Elem.id(seleElement)!.parentElement!.getAttribute(
+                  "data-type"
+                ) == "page"
+              ) {
+                const parent = Elem.id(seleElement)!.parentElement!.id;
+                Elem.id(seleElement)!.style.top = Unit.px(
+                  e.clientY - Style.top(parent)
+                );
+                Elem.id(seleElement)!.style.height = Unit.px(
+                  elementBottomPosition.y -
+                    Style.top(parent) -
+                    (e.clientY - Style.top(parent))
+                );
+                Elem.id(seleElement)!.style.left = Unit.px(
+                  elementBottomPosition.x - Style.left(parent)
+                );
+                Elem.id(seleElement)!.style.width = Unit.px(
+                 e.clientX - elementBottomPosition.x
+                );
+              }
             }
           }
 
@@ -728,12 +768,12 @@ function App() {
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              width: "3vw",
-              borderRadius: "5px",
+              width: "4vw",
+              borderRadius: "0px",
               borderBottomLeftRadius: "0px",
               borderBottomRightRadius: "0px",
               // rowGap: '0.5vw',
-              borderBottom: "1px solid gray",
+              borderBottom: "0.2vh solid gray",
               paddingBottom: "0.5vw",
             }}
           >
@@ -790,8 +830,8 @@ function App() {
         {/*
          * currently it holds the logo
          */}
-        <div id="upper-tools">
-          <div id="logo" />
+        <div id={UPPER_TOOLS}>
+          <div id={LOGO} />
           <button
             onClick={() => set_textEditingModeEnabled(!textEditingModeEnabled)}
           >
@@ -1496,7 +1536,7 @@ function App() {
           </table>
         )}
 
-        <div
+        {/* <div
           id="visible-elments"
           style={{
             position: "fixed",
@@ -1515,7 +1555,7 @@ function App() {
               </button>
             );
           })}
-        </div>
+        </div> */}
 
         {displayDevStates && (
           <table id="states" style={{ right: "350px", height: "fit-content" }}>
@@ -1741,6 +1781,7 @@ function App() {
                   onMouseDown={() => {
                     set_whatToResize("top-right");
                     set_startResizing(true);
+                    set_elementBottomPosition({ x: Style.left(seleElement), y: Style.bottom(seleElement)})
                   }}
                 ></div>
               )}

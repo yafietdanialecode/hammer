@@ -56,6 +56,10 @@ body, html, #root, #main {
     align-items: center;
     justify-content: space-around;
 
+    button {
+      font-size: 1.4vw;
+    }
+
     #logo {
       width: 2.1vw;
       height: 2.1vw;
@@ -66,35 +70,38 @@ body, html, #root, #main {
       left: 1vw;
       top: 1vw;
     }
+
   }
 
   // bottom tools
   #left-tools {
-    width: 3vw;
-    max-height: 83vh;
+    width: 4vw;
     // max-height: 70vh;
     background-color: white;
     position: fixed;
-    top: 15vh;
+    top: 17vh;
     left: 1vw;
-    border-radius: 5px;
+    border-radius: 0.2vw;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     // row-gap: 1vw;
     overflow: scroll;
-    padding-bottom: 1vw;
+    padding-bottom: 0vw;
     padding-top: 6vw;
 
     button {
-      width: 3vw;
-      height: 3vw;
+      width: 4vw;
+      height: 4vw;
       background-color: transparent;
       color: rgb(0, 0, 0);
       // border-radius: 5px;
       margin-top: 0vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       i {
         font-size: 1.5vw;
         background-color: transparent;
@@ -116,10 +123,12 @@ body, html, #root, #main {
 
       button {
         margin-top: 0vh;
+        width: 4vw;
+        height: 4vw;
       }
       button:first-child {
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+        // border-top-left-radius: 5px;
+        // border-top-right-radius: 5px;
       }
     }
   }
