@@ -1536,7 +1536,7 @@ function App() {
           </table>
         )}
 
-        {/* <div
+        {9 < 5 && <div
           id="visible-elments"
           style={{
             position: "fixed",
@@ -1555,7 +1555,7 @@ function App() {
               </button>
             );
           })}
-        </div> */}
+        </div>}
 
         {displayDevStates && (
           <table id="states" style={{ right: "350px", height: "fit-content" }}>
