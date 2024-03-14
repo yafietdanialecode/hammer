@@ -623,6 +623,43 @@ function App() {
                  (e.clientX - elementTopPosition.x)
                 );
               }
+            }// bottom right resize
+            else if (whatToResize == "bottom-left") {
+              // if this is an elment inside a CANVAS
+              if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
+                Elem.id(seleElement)!.style.top = Unit.px(
+                  elementTopPosition.y + scrollTop
+                );
+                Elem.id(seleElement)!.style.height = Unit.px(
+                  e.clientY - elementTopPosition.y
+                );
+                Elem.id(seleElement)!.style.left = Unit.px(
+                  e.clientX + scrollLeft
+                );
+                Elem.id(seleElement)!.style.width = Unit.px(
+                  elementTopPosition.x - e.clientX
+                );
+              }
+              // if this is an elment inside a page
+              else if (
+                Elem.id(seleElement)!.parentElement!.getAttribute(
+                  "data-type"
+                ) == "page"
+              ) {
+                const parent = Elem.id(seleElement)!.parentElement!.id;
+                Elem.id(seleElement)!.style.top = Unit.px(
+                  elementTopPosition.y - Style.top(parent)
+                );
+                Elem.id(seleElement)!.style.height = Unit.px(
+                    e.clientY - elementTopPosition.y
+                );
+                Elem.id(seleElement)!.style.left = Unit.px(
+                  elementTopPosition.x - Style.left(parent)
+                );
+                Elem.id(seleElement)!.style.width = Unit.px(
+                 (e.clientX - elementTopPosition.x)
+                );
+              }
             }
           }
 
