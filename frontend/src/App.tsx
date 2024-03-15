@@ -157,15 +157,6 @@ function App() {
     set_scrollTop(Scroll.top(CANVAS)!);
     set_scrollLeft(Scroll.left(CANVAS)!);
 
-    Elem.id(CANVAS)!.querySelectorAll("*").forEach((element: any) => {
-      if(element.id === seleElement){
-        element.style.outline = '1px solid rgb(107, 154, 255)';
-        element.style.cursor = 'move';
-      }else {
-        element.style.outline = 'none';
-        element.style.cursor = 'unset';
-      }
-    })
   });
 
   // when mouse move in the whole window
@@ -1137,7 +1128,6 @@ function App() {
 
             // update the position of element state below
             State.update(seleElement, set_elemPosition);
-            Elem.id(seleElement)!.style.outline = '1px solid rgb(107, 154, 255)';
           }}
           onWheel={(e: WheelEvent) => {
             // updating user's scroll amount
@@ -1943,6 +1933,55 @@ function App() {
                   }}
                 ></div>
               )}
+
+
+              {/* top position of the element indicator */}
+              <div
+              style={{
+                position: 'absolute',
+                background: "rgb(107, 154, 255)",
+                width: Unit.px(Style.width(seleElement)),
+                top: Unit.px(Style.top(seleElement)),
+                height: '1px',
+                left: Unit.px(Style.left(seleElement))
+              }}
+              />
+
+              {/* left position of the element indicator */}
+              <div
+              style={{
+                position: 'absolute',
+                background: "rgb(107, 154, 255)",
+                width: '1px',
+                top: Unit.px(Style.top(seleElement)),
+                height: Unit.px(Style.height(seleElement)),
+                left: Unit.px(Style.left(seleElement))
+              }}
+              />
+
+              {/* bottom position of the element indicator */}
+              <div
+              style={{
+                position: 'absolute',
+                background: "rgb(107, 154, 255)",
+                width: Unit.px(Style.width(seleElement)),
+                top: Unit.px(Style.top(seleElement) + Style.height(seleElement) - 1),
+                height: '1px',
+                left: Unit.px(Style.left(seleElement))
+              }}
+              />
+
+              {/* right position of the element indicator */}
+              <div
+              style={{
+                position: 'absolute',
+                background: "rgb(107, 154, 255)",
+                width: '1px',
+                top: Unit.px(Style.top(seleElement)),
+                height: Unit.px(Style.height(seleElement)),
+                left: Unit.px(Style.left(seleElement) + Style.width(seleElement))
+              }}
+              />
 
             
             </div>
