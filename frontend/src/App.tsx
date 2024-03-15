@@ -156,6 +156,16 @@ function App() {
     // updating user's scroll amount
     set_scrollTop(Scroll.top(CANVAS)!);
     set_scrollLeft(Scroll.left(CANVAS)!);
+
+    Elem.id(CANVAS)!.querySelectorAll("*").forEach((element: any) => {
+      if(element.id === seleElement){
+        element.style.outline = '1px solid rgb(107, 154, 255)';
+        element.style.cursor = 'move';
+      }else {
+        element.style.outline = 'none';
+        element.style.cursor = 'unset';
+      }
+    })
   });
 
   // when mouse move in the whole window
@@ -179,6 +189,7 @@ function App() {
 
   window.onmouseup = (e: any) => {
 
+    
     // some ui changing
     if(cursorStyle == 'grabbing'){
       set_cursorStyle('grab')
@@ -371,6 +382,7 @@ function App() {
         wrapper.append(copy);
       });
     }
+
   };
 
   /**
@@ -875,7 +887,8 @@ function App() {
           <button title="text"
           onClick={() => {
             mode == 'text' ? set_mode('') : set_mode('text');
-            set_cursorStyle('text')
+            set_cursorStyle('text');
+            set_seleElement('')
           }}
           className={mode == 'text' ? 'tool-selected' : ''}
           >
@@ -1124,6 +1137,7 @@ function App() {
 
             // update the position of element state below
             State.update(seleElement, set_elemPosition);
+            Elem.id(seleElement)!.style.outline = '1px solid rgb(107, 154, 255)';
           }}
           onWheel={(e: WheelEvent) => {
             // updating user's scroll amount
@@ -1192,10 +1206,11 @@ function App() {
                * to delete elemnt by pressing del key in laptop
                */
               if (e.key == "Delete") {
-                if (selectedElements.length < 2 && seleElement !== CANVAS) {
-                  Elem.id(seleElement)?.remove();
+                if (selectedElements.length < 2 && logic.notInExceptions(seleElement, [ CANVAS, MULTIPLE_ELMENTS_WRAPPER ])) {
+                  Elem.id(seleElement)!.remove();
                   set_seleElement(CANVAS);
-                } else {
+                  Elem.id(CANVAS)!.focus({ preventScroll: true });
+                } else if(selectedElements.length > 1) {
                   selectedElements.map((each: string) => {
                     if (
                       Elem.id(each) &&
@@ -1210,7 +1225,7 @@ function App() {
                   set_seleElement(CANVAS);
                   set_selectedElements([]);
                   set_selectionStarted2(false);
-                  set_selectedElements([]);
+                  set_selectionStarted(false);
                 }
               }
               /**
@@ -1239,11 +1254,12 @@ function App() {
                   Style.zIndex(seleElement) - 1
                 }`;
               }
-              // mode switchs
+              // mode switch
               switch(e.key){
                 case 't':
                   set_mode('text');
-                  set_cursorStyle('text')
+                  set_cursorStyle('text');
+                  set_seleElement('');
                   break;
                 case 'v':
                   set_mode('select');
@@ -1691,7 +1707,7 @@ function App() {
                     position: "absolute",
                     top: Unit.px(Style.top(seleElement) - 15),
                     left: Unit.px(Style.left(seleElement)),
-                    width: "6px",
+                    width: "100px",
                     height: "6px",
                     zIndex: 30,
                     borderRadius: "50px",
@@ -1742,8 +1758,9 @@ function App() {
                     width: Unit.px(Style.width(seleElement)),
                     height: "1px",
                     zIndex: 30,
-                    backgroundColor: "rgb(107, 154, 255)",
+                    background: 'transparent',
                     cursor: "ns-resize",
+                    transform: 'scaleY(20)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("top");
@@ -1767,8 +1784,9 @@ function App() {
                     width: "1px",
                     height: Unit.px(Style.height(seleElement)),
                     zIndex: 30,
-                    background: "rgb(107, 154, 255)",
+                    background: 'transparent',
                     cursor: "ew-resize",
+                    transform: 'scaleX(20)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("right");
@@ -1792,8 +1810,9 @@ function App() {
                     width: Unit.px(Style.width(seleElement)),
                     height: "1px",
                     zIndex: 30,
-                    background: "rgb(107, 154, 255)",
+                    background: 'transparent',
                     cursor: "ns-resize",
+                    transform: 'scaleY(20)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("bottom");
@@ -1814,8 +1833,9 @@ function App() {
                     width: "1px",
                     height: Unit.px(Style.height(seleElement)),
                     zIndex: 30,
-                    background: "rgb(107, 154, 255)",
+                    background: 'transparent',
                     cursor: "ew-resize",
+                    transform: 'scaleX(20)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("left");
@@ -1839,8 +1859,9 @@ function App() {
                     width: "6px",
                     height: "6px",
                     zIndex: 30,
-                    background: "rgb(107, 154, 255)",
+                    background: 'transparent',
                     cursor: "nw-resize",
+                    transform: 'scale(5)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("top-left");
@@ -1864,8 +1885,9 @@ function App() {
                     width: "6px",
                     height: "6px",
                     zIndex: 30,
-                    background: "rgb(107, 154, 255)",
+                    background: 'transparent',
                     cursor: "ne-resize",
+                    transform: 'scale(5)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("top-right");
@@ -1886,8 +1908,9 @@ function App() {
                     width: "6px",
                     height: "6px",
                     zIndex: 30,
-                    background: "rgb(107, 154, 255)",
+                    background: 'transparent',
                     cursor: "nw-resize",
+                    transform: 'scale(5)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("bottom-right");
@@ -1908,8 +1931,10 @@ function App() {
                     width: "6px",
                     height: "6px",
                     zIndex: 30,
-                    background: "rgb(107, 154, 255)",
+                    // background: "rgb(107, 154, 255)",
+                    background: 'transparent',
                     cursor: "ne-resize",
+                    transform: 'scale(5)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("bottom-left");
@@ -1918,6 +1943,8 @@ function App() {
                   }}
                 ></div>
               )}
+
+            
             </div>
           )}
 

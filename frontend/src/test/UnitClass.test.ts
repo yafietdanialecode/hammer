@@ -1,5 +1,5 @@
 import Unit from "../modules/unit";
-import Test from "./Test";
+import Test from "./Test.test";
 
 
 export default class UnitClassTest extends Test {

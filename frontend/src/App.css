@@ -139,6 +139,7 @@ body, html, #root, #main {
 }
 #main #canvas * {
   transition: all, 0ms;
+  cursor: move;
 }
 #main #canvas #select, #main #canvas #selected-elements-wrapper {
   width: 0px;

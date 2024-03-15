@@ -12,10 +12,10 @@ export default class Component {
             // let isText = false;
             switch(tagName.toLowerCase()){
                 case "h1":
-                    return "Title"
+                    return "Main Title"
                     break;
                 case 'h2':
-                    return "Article"
+                    return "Subtitle"
                     break;
                 case 'h3':
                 case 'h4':
