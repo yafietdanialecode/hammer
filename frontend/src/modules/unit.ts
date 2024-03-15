@@ -1,7 +1,7 @@
 
 /**
  * 
- * All Unit Convertions are in this class
+ * All Unit Conversion are in this class
  */
 export default class Unit {
 
