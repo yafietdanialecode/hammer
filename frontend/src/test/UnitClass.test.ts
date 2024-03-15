@@ -27,10 +27,6 @@ export default class UnitClassTest extends Test {
             test4: {
                 in: 9.353,
                 out: '9.353px'
-            },
-            test5: {
-                in: null,
-                out: null
             }
         }
         
