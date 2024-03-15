@@ -6,11 +6,8 @@
 export default class Unit {
 
     // int > int + px
-    static px(value: number): string | null {
-        if(typeof value == 'number'){
+    static px(value: number): string {
         return value + 'px';
-        }
-        return null;
     }
     
     // int > int + vw
