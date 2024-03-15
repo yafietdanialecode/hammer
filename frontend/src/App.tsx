@@ -33,6 +33,7 @@ import {
 import screenVisibleElements from "./scope/screenVisibleElements";
 import State from "./modules/State";
 import focusOn from "./modules/Focus";
+import UnitClassTest from "./test/UnitClass.test";
 
 function App() {
   
@@ -906,6 +907,12 @@ function App() {
          */}
         <div id={UPPER_TOOLS}>
           <div id={LOGO} />
+          <button
+          onClick={() => {
+            const UTest = new UnitClassTest();
+            UTest.test_px();
+          }}
+          >Test</button>
           <button
             onClick={() => set_textEditingModeEnabled(!textEditingModeEnabled)}
           >
