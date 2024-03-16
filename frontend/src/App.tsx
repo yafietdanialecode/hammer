@@ -132,6 +132,9 @@ function App() {
 
   // adding new element state
   const [addNewElement, set_addNewElement] = useState(false);
+
+  // moving the screen by moving feature
+  const [startMovingFeature, set_startMovingFeature] = useState(false);
   /**
    * this is the hook that will start when
    * the page loaded and rendered
@@ -180,6 +183,11 @@ function App() {
 
   window.onmouseup = (e: any) => {
 
+    // if user was moving the canvas
+    if(mode === 'move'){
+      // moving the canvas feature
+      set_startMovingFeature(false);
+    }
     
     // some ui changing
     if(cursorStyle == 'grabbing'){
@@ -399,6 +407,11 @@ function App() {
         id={MAIN}
         tabIndex={-1}
         onMouseMove={(e: MouseEvent) => {
+
+
+          if(mode === 'move' && startMovingFeature){
+            Elem.id(CANVAS)!.scrollBy({ left: -e.movementX, top: -e.movementY, behavior: 'instant' })
+          }
           /**
            * resizing features
            */
@@ -966,7 +979,27 @@ function App() {
            */
           draggable={false}
 
+          // this is for indicating elment existence
+          onMouseOver={(e: any) => {
+            if(e.target.id !== seleElement && mode === 'select'){
+              Elem.id(e.target.id)!.style.outline = '1px solid rgb(107, 154, 255)';
+            }
+          }}
+
+          onMouseOut={(e: any) => {
+            if(mode == 'select'){
+              Elem.id(e.target.id)!.style.outline = 'none';
+            }
+          }}
+
           onMouseDown={(e: any) => {
+
+            if(mode === 'move'){
+              // moving the canvas feature
+            set_startMovingFeature(true);
+            }
+
+
             // ui effect on cursor
             cursorStyle == 'grab' ? set_cursorStyle('grabbing') : set_cursorStyle('default');
             
