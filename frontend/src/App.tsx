@@ -398,8 +398,145 @@ function App() {
     });
   };
 
+
+  /**
+   * key events are now added to windows to make user job simplified
+   */
+
+  window.onkeydown = (e: any) => {
+    /**
+     * WARNING:
+     * remember if every thing is stable
+     * make those functionalities dependent on not user's text editing event
+     * is enabled
+     * [ simply : if user's editText state enabled those should not work]
+     */
+
+    // all key events actions related to CANVAS element are hear
+
+    // those features work or not work based on users state
+    if (!textEditingModeEnabled) {
+      /**
+       * those are keys will not work as default if users are not editing text
+       */
+      const DIRECTION_KEYS = [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+      ];
+      if (DIRECTION_KEYS.some((key: string) => key == e.key)) {
+        e.preventDefault();
+        const top_e = parseInt(Elem.id(seleElement)!.style.top);
+        const left_e = parseInt(Elem.id(seleElement)!.style.left);
+        let amount = 1;
+        if(e.ctrlKey){
+          amount = 3;
+        }
+        switch (e.key) {
+          case "ArrowUp":
+            Elem.id(seleElement)!.style.top = Unit.px(top_e - amount);
+            break;
+          case "ArrowDown":
+            Elem.id(seleElement)!.style.top = Unit.px(top_e + amount);
+            break;
+          case "ArrowLeft":
+            Elem.id(seleElement)!.style.left = Unit.px(left_e - amount);
+            break;
+          case "ArrowRight":
+            Elem.id(seleElement)!.style.left = Unit.px(left_e + amount);
+            break;
+        }
+        // update the position of element state below
+        State.update(seleElement, set_elemPosition);
+      }
+      /**
+       * those are keys which work if user is not editing text
+       */
+
+      /**
+       * to delete elemnt by pressing del key in laptop
+       */
+      if (e.key == "Delete") {
+        if (selectedElements.length < 2 && logic.notInExceptions(seleElement, [ CANVAS, MULTIPLE_ELMENTS_WRAPPER ])) {
+          Elem.id(seleElement)!.remove();
+          set_seleElement(CANVAS);
+          Elem.id(CANVAS)!.focus({ preventScroll: true });
+        } else if(selectedElements.length > 1) {
+          selectedElements.map((each: string) => {
+            if (
+              Elem.id(each) &&
+              each.length > 0 &&
+              logic.CANVA_ELEMENT_EXCEPTION.every(
+                (id: string) => id !== each
+              )
+            ) {
+              Elem.id(each)?.remove();
+            }
+          });
+          set_seleElement(CANVAS);
+          set_selectedElements([]);
+          set_selectionStarted2(false);
+          set_selectionStarted(false);
+        }
+      }
+      /**
+       * select multiple feature by pressing ctr + a/A is here */
+      //  this feature is not supported currently we will add it soon
+      // if(e.key == 'a' && e.ctrlKey){
+
+      //   logic.selectAll(
+      //     logic.CANVA_ELEMENT_EXCEPTION,
+      //     set_selectedElements
+      //     )
+      // }
+      /**
+       * move the elemnt forward
+       */
+      else if (e.key == "]") {
+        Elem.id(seleElement)!.style.zIndex = `${
+          Style.zIndex(seleElement) + 1
+        }`;
+      }
+      /**
+       * move the elment backward
+       */
+      if (e.key == "[") {
+        Elem.id(seleElement)!.style.zIndex = `${
+          Style.zIndex(seleElement) - 1
+        }`;
+      }
+      // mode switch
+      switch(e.key){
+        case 't':
+          set_mode('text');
+          set_cursorStyle('text');
+          set_seleElement('');
+          break;
+        case 'v':
+          set_mode('select');
+          set_cursorStyle('default')
+          break;
+        case 'm':
+          set_mode('move');
+          set_cursorStyle('grab');
+          set_seleElement(CANVAS);
+          break;
+        case 'i':
+          set_mode('image');
+          set_cursorStyle('crosshair');
+          break;
+        case '/':
+          set_addNewElement(true);
+          set_textEditingModeEnabled(true);
+          setTimeout(() => Elem.id('search-components')!.focus({ preventScroll: true }), 100)
+          break;
+      }
+    }
+  }
+
   // this is the logic class
-  const logic = new Logic("root", { CANAS_ID: CANVAS });
+  const logic = new Logic("root", { CANVAS_ID: CANVAS });
 
   return (
     <>
@@ -410,7 +547,7 @@ function App() {
 
 
           if(mode === 'move' && startMovingFeature){
-            Elem.id(CANVAS)!.scrollBy({ left: -e.movementX, top: -e.movementY, behavior: 'instant' })
+            Elem.id(CANVAS)!.scrollBy({ left: -e.movementX * 1.1, top: -e.movementY * 1.1, behavior: 'instant' })
           }
           /**
            * resizing features
@@ -731,6 +868,19 @@ function App() {
             }
           }
 
+
+          /**
+           * this is realtime alignment feature relative to other components
+           */
+
+          // if(startMovingObject){
+          //   // element center horizontal based on parent indicator
+          //   const PARENT = Elem.id(seleElement)!.parentElement!.id;
+          //   const PARENT_LEFT = Style.left(PARENT);
+          //   const ELEMENT_LEFT = Style.left(seleElement)! + scrollLeft;
+
+          // }
+
           /**
            * if selection of elements verifyed by two verifications
            * know this code will do:
@@ -803,10 +953,10 @@ function App() {
 
           if (startMovingObject || (selectionStarted2 && selectionStarted)) {
             // for go up
-            if (mousePosition.y < 100) {
+            if (mousePosition.y < 50) {
               Elem.id(CANVAS)?.scrollBy({
                 behavior: "instant",
-                top: -10,
+                top: -15,
                 left: 0,
               });
             }
@@ -814,17 +964,17 @@ function App() {
             if (mousePosition.y > window.innerHeight - 50) {
               Elem.id(CANVAS)?.scrollBy({
                 behavior: "instant",
-                top: 10,
+                top: 15,
                 left: 0,
               });
             }
 
             // for go up
-            if (mousePosition.x < 100) {
+            if (mousePosition.x < 50) {
               Elem.id(CANVAS)?.scrollBy({
                 behavior: "instant",
                 top: 0,
-                left: -10,
+                left: -15,
               });
             }
             // for go down
@@ -832,7 +982,7 @@ function App() {
               Elem.id(CANVAS)?.scrollBy({
                 behavior: "instant",
                 top: 0,
-                left: 10,
+                left: 15,
               });
             }
 
@@ -967,7 +1117,7 @@ function App() {
         <div
           id={CANVAS}
           style={{
-            cursor: cursorStyle,
+            cursor: cursorStyle + ' !important',
           }}
           /**
            * tabIndex is assigned to -1 to make it focusable element for
@@ -1174,136 +1324,7 @@ function App() {
             });
             State.update(seleElement, set_elemPosition)
           }}
-          onKeyDown={(e: KeyboardEvent) => {
-            /**
-             * WARNING:
-             * remember if every thing is stable
-             * make those functionalities dependent on not user's text editing event
-             * is enabled
-             * [ simply : if user's editText state enabled those should not work]
-             */
-
-            // all key events actions related to CANVAS element are hear
-
-            // those features work or not work based on users state
-            if (!textEditingModeEnabled) {
-              /**
-               * those are keys will not work as default if users are not editing text
-               */
-              const DIRECTION_KEYS = [
-                "ArrowUp",
-                "ArrowDown",
-                "ArrowLeft",
-                "ArrowRight",
-              ];
-              if (DIRECTION_KEYS.some((key: string) => key == e.key)) {
-                e.preventDefault();
-                const top_e = parseInt(Elem.id(seleElement)!.style.top);
-                const left_e = parseInt(Elem.id(seleElement)!.style.left);
-                let amount = 1;
-                if(e.ctrlKey){
-                  amount = 3;
-                }
-                switch (e.key) {
-                  case "ArrowUp":
-                    Elem.id(seleElement)!.style.top = Unit.px(top_e - amount);
-                    break;
-                  case "ArrowDown":
-                    Elem.id(seleElement)!.style.top = Unit.px(top_e + amount);
-                    break;
-                  case "ArrowLeft":
-                    Elem.id(seleElement)!.style.left = Unit.px(left_e - amount);
-                    break;
-                  case "ArrowRight":
-                    Elem.id(seleElement)!.style.left = Unit.px(left_e + amount);
-                    break;
-                }
-                // update the position of element state below
-                State.update(seleElement, set_elemPosition);
-              }
-              /**
-               * those are keys which work if user is not editing text
-               */
-
-              /**
-               * to delete elemnt by pressing del key in laptop
-               */
-              if (e.key == "Delete") {
-                if (selectedElements.length < 2 && logic.notInExceptions(seleElement, [ CANVAS, MULTIPLE_ELMENTS_WRAPPER ])) {
-                  Elem.id(seleElement)!.remove();
-                  set_seleElement(CANVAS);
-                  Elem.id(CANVAS)!.focus({ preventScroll: true });
-                } else if(selectedElements.length > 1) {
-                  selectedElements.map((each: string) => {
-                    if (
-                      Elem.id(each) &&
-                      each.length > 0 &&
-                      logic.CANVA_ELEMENT_EXCEPTION.every(
-                        (id: string) => id !== each
-                      )
-                    ) {
-                      Elem.id(each)?.remove();
-                    }
-                  });
-                  set_seleElement(CANVAS);
-                  set_selectedElements([]);
-                  set_selectionStarted2(false);
-                  set_selectionStarted(false);
-                }
-              }
-              /**
-               * select multiple feature by pressing ctr + a/A is here */
-              //  this feature is not supported currently we will add it soon
-              // if(e.key == 'a' && e.ctrlKey){
-
-              //   logic.selectAll(
-              //     logic.CANVA_ELEMENT_EXCEPTION,
-              //     set_selectedElements
-              //     )
-              // }
-              /**
-               * move the elemnt forward
-               */
-              else if (e.key == "]") {
-                Elem.id(seleElement)!.style.zIndex = `${
-                  Style.zIndex(seleElement) + 1
-                }`;
-              }
-              /**
-               * move the elment backward
-               */
-              if (e.key == "[") {
-                Elem.id(seleElement)!.style.zIndex = `${
-                  Style.zIndex(seleElement) - 1
-                }`;
-              }
-              // mode switch
-              switch(e.key){
-                case 't':
-                  set_mode('text');
-                  set_cursorStyle('text');
-                  set_seleElement('');
-                  break;
-                case 'v':
-                  set_mode('select');
-                  set_cursorStyle('default')
-                  break;
-                case 'm':
-                  set_mode('move');
-                  set_cursorStyle('grab');
-                  set_seleElement(CANVAS);
-                  break;
-                case 'i':
-                  set_mode('image');
-                  set_cursorStyle('crosshair');
-                  break;
-                case '/':
-                  set_addNewElement(true);
-                  setTimeout(() => Elem.id('search-components')!.focus({ preventScroll: true }), 100)
-                  break;
-              }
-            }
-          }}
+          
         >
           {/* this makes the scrolling feature possible */}
           <div
