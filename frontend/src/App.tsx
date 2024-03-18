@@ -528,6 +528,11 @@ function App() {
           set_selectionStarted(false);
         }
       }
+
+      // this is for preventing unexpected scroll by space bar
+      if(e.key == ' '){
+        e.preventDefault();
+      }
       /**
        * select multiple feature by pressing ctr + a/A is here */
       //  this feature is not supported currently we will add it soon
@@ -1490,14 +1495,13 @@ function App() {
             data-type="video"
             style={{
               position: 'absolute',
-              width: 'fit-content',
-              height: 'fit-content',
+              width: '160px',
+              height: '100px',
               top: '10px',
               left: '10px'
             }}
             >
-            <iframe id="frame" width="560" height="315" src="https://www.youtube.com/embed/GKw3_nrjL9U?si=GP5VQ28ysfJP9W1s" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
-            </div>
+<iframe src="https://www.youtube.com/embed/IKqV7DB8Iwg?si=ArWkFG2GkR_U06Dw" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>            </div>
 
             <h1
               style={{
