@@ -1486,7 +1486,18 @@ function App() {
             }}
           >
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/GKw3_nrjL9U?si=GP5VQ28ysfJP9W1s" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+            <div id="video"
+            data-type="video"
+            style={{
+              position: 'absolute',
+              width: 'fit-content',
+              height: 'fit-content',
+              top: '10px',
+              left: '10px'
+            }}
+            >
+            <iframe id="frame" width="560" height="315" src="https://www.youtube.com/embed/GKw3_nrjL9U?si=GP5VQ28ysfJP9W1s" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+            </div>
 
             <h1
               style={{

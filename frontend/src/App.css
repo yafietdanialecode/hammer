@@ -141,6 +141,15 @@ body, html, #root, #main {
   transition: all, 0ms;
   cursor: default;
 }
+#main #canvas [data-type=video] {
+  overflow: hidden;
+  border-radius: 10px;
+}
+#main #canvas [data-type=video] * {
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
 #main #canvas #select, #main #canvas #selected-elements-wrapper {
   width: 0px;
   height: 400px;

@@ -156,6 +156,17 @@ body, html, #root, #main {
       cursor: default;
     }
 
+    [data-type="video"] {
+
+      overflow: hidden;
+      border-radius: 10px;
+
+      * {
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+      }
+    }
     
     
   // dev components
