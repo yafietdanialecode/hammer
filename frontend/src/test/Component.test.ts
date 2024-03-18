@@ -91,7 +91,7 @@ export default class ComponentClassTest extends Test {
         // checks amount
         const currentChecksAmount = 13;
         
-        const correctAmount = Object.keys(testing).length == currentChecksAmount
+        const correctAmount = Object.keys(tests).length == currentChecksAmount
 
         if(correctAmount){
             this.test(Component.name, tests);
