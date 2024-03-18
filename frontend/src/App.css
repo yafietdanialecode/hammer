@@ -63,6 +63,9 @@ body, html, #root, #main {
   align-items: center;
   justify-content: space-around;
 }
+#main #upper-tools button {
+  font-size: 1.4vw;
+}
 #main #upper-tools #logo {
   width: 2.1vw;
   height: 2.1vw;
@@ -74,28 +77,30 @@ body, html, #root, #main {
   top: 1vw;
 }
 #main #left-tools {
-  width: 3vw;
-  max-height: 83vh;
+  width: 4vw;
   background-color: white;
   position: fixed;
-  top: 15vh;
+  top: 17vh;
   left: 1vw;
-  border-radius: 5px;
+  border-radius: 0.2vw;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   overflow: scroll;
-  padding-bottom: 1vw;
+  padding-bottom: 0vw;
   padding-top: 6vw;
 }
 #main #left-tools button {
-  width: 3vw;
-  height: 3vw;
+  width: 4vw;
+  height: 4vw;
   background-color: transparent;
   color: rgb(0, 0, 0);
   margin-top: 0vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 #main #left-tools button i {
   font-size: 1.5vw;
@@ -105,18 +110,16 @@ body, html, #root, #main {
 #main #left-tools button:hover {
   background: rgb(228, 228, 228);
 }
-#main #left-tools button:focus {
+#main #left-tools button.tool-selected {
   background: rgb(0, 0, 0);
 }
-#main #left-tools button:focus i {
+#main #left-tools button.tool-selected i {
   color: white;
 }
 #main #left-tools div button {
   margin-top: 0vh;
-}
-#main #left-tools div button:first-child {
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  width: 4vw;
+  height: 4vw;
 }
 #main #canvas {
   width: 100vw !important;
@@ -128,6 +131,7 @@ body, html, #root, #main {
   z-index: -50000 !important;
   overflow: auto !important;
   touch-action: none;
+  transform: translate3d(0, 0, 0);
   /*
     a div that wraps the selected elements and move them
     under it when you get out from it it will put them where user leaves it
@@ -135,6 +139,16 @@ body, html, #root, #main {
 }
 #main #canvas * {
   transition: all, 0ms;
+  cursor: default;
+}
+#main #canvas [data-type=video] {
+  overflow: hidden;
+  border-radius: 10px;
+}
+#main #canvas [data-type=video] * {
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
 }
 #main #canvas #select, #main #canvas #selected-elements-wrapper {
   width: 0px;
@@ -148,7 +162,7 @@ body, html, #root, #main {
 }
 #main #canvas #selected-elements-wrapper {
   border: none;
-  background-color: rgba(131, 170, 255, 0.349);
+  background-color: transparent;
   position: absolute !important;
 }
 #main #canvas #selected-elements-wrapper * {
@@ -156,6 +170,56 @@ body, html, #root, #main {
 }
 #main #canvas [data-type=page] {
   overflow: scroll;
+}
+#main #add-new-element {
+  width: 15vw;
+  min-height: 9vh;
+  position: fixed;
+  top: 30vh;
+  left: 40vw;
+  background-color: white;
+  overflow: hidden;
+  border-radius: 1vw;
+}
+#main #add-new-element #search-components {
+  width: 100%;
+  height: 5vh;
+  background-color: rgb(255, 255, 255);
+  color: rgb(65, 65, 65);
+  padding: 0.5px;
+  padding-left: 1vw;
+  font-size: 1.1vw;
+  outline: none;
+  display: flex;
+  align-items: center;
+}
+#main #add-new-element p {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding: 0.5vw;
+  padding-left: 1vw;
+  -moz-column-gap: 0.5vw;
+       column-gap: 0.5vw;
+  font-size: 1.1vw;
+}
+#main #add-new-element p i {
+  width: 1.8vw;
+  height: 1.8vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  font-size: 1.1vw;
+  color: rgb(0, 0, 0);
+}
+#main #add-new-element p:hover {
+  background: black;
+  color: white;
+}
+#main #add-new-element p:hover i {
+  background-color: black;
+  color: rgb(255, 255, 255);
 }
 #main #states {
   width: -moz-fit-content;
@@ -179,9 +243,6 @@ body, html, #root, #main {
   top: 0px;
   left: 0px;
   z-index: 40000;
-}
-#main #states #decorators #top-resize:hover {
-  transform: scaleX(50);
 }
 
 #context-menu {

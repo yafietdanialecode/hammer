@@ -1,3 +1,4 @@
+import { CANVAS } from "../id-storage/constants.config";
 import Elem from "./Elem";
 import Style from "./Style";
 import Scroll from "./scroll";
@@ -85,6 +86,7 @@ export function getCIArea(
         if(
             each !== 'select' && 
             each !== 'selected-elements-wrapper' &&
+            Elem.id(each)!.parentElement!.id === CANVAS && 
             Elem.id(each)?.getAttribute('data-type') !== 'page'
             ){ // b/c select element is inside canvas we have to escape it
             let x_lt: any = Style.left(each) + Scroll.left('canvas'); // left position of element
