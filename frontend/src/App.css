@@ -169,7 +169,7 @@ body, html, #root, #main {
   pointer-events: none;
 }
 #main #canvas [data-type=page] {
-  overflow: scroll;
+  overflow: hidden;
 }
 #main #add-new-element {
   width: 15vw;

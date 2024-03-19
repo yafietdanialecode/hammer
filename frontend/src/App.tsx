@@ -562,10 +562,17 @@ function App() {
       // mode switch
       switch(e.key){
         case 't':
-          set_mode('text');
-          set_cursorStyle('text');
+          if(mode == 'text'){
+            set_mode('');
+            set_cursorStyle('default');
+            set_textEditingModeEnabled(false);
+          }else {
+            set_mode('text');
+            set_cursorStyle('text');
+            set_textEditingModeEnabled(true);
+          }
           set_seleElement('');
-          break;
+        break;
         case 'v':
           set_mode('select');
           set_cursorStyle('default')
@@ -584,6 +591,14 @@ function App() {
           set_textEditingModeEnabled(true);
           setTimeout(() => Elem.id('search-components')!.focus({ preventScroll: true }), 100)
           break;
+      }
+    }
+
+    // if user is editing text
+    if(textEditingModeEnabled){
+      if(e.key == 'Enter'){
+        e.preventDefault();
+
       }
     }
   }
@@ -883,6 +898,7 @@ function App() {
                 e.clientX + scrollLeft - objectCursorDifference.x
               );
             } else if (
+              // if we are moving an element inside a page
               Elem.id(seleElement)!.parentElement?.getAttribute("data-type") ===
               "page"
             ) {
@@ -1093,9 +1109,11 @@ function App() {
           </div>
           <button title="text"
           onClick={() => {
-            mode == 'text' ? set_mode('') : set_mode('text');
-            set_cursorStyle('text');
-            set_seleElement('')
+            const isText = mode == 'text';
+            isText ? set_mode('') : set_mode('text');
+            isText ? set_cursorStyle('default') : set_cursorStyle('text');
+            isText ? set_textEditingModeEnabled(false) : set_textEditingModeEnabled(true);
+            set_seleElement('');
           }}
           className={mode == 'text' ? 'tool-selected' : ''}
           >
@@ -1181,7 +1199,7 @@ function App() {
            * draggable is bad for images for dev environment not production
            */
           draggable={false}
-
+          
           // this is for indicating elment existence
           onMouseOver={(e: any) => {
             if(e.target.id !== seleElement && mode === 'select'){
@@ -1195,6 +1213,7 @@ function App() {
             }
           }}
 
+          
           onMouseDown={(e: any) => {
 
             if(mode === 'move'){
@@ -1202,6 +1221,33 @@ function App() {
             set_startMovingFeature(true);
             }
 
+            if(
+              logic.notInExceptions(e.target.id, [ CANVAS, MULTIPLE_ELMENTS_WRAPPER ]) 
+              && 
+              Elem.id(e.target.id)!.getAttribute('data-type') !== PAGES_DATATYPE){
+              // if user needs to edit text
+            if(mode == 'text'){
+              Elem.id(e.target.id)!.setAttribute('contenteditable', 'true')
+              set_textEditingModeEnabled(true);
+            }else {
+              Elem.id(e.target.id)!.setAttribute('contenteditable', 'false')
+              set_textEditingModeEnabled(false);
+            }
+            }else {
+              if(mode == 'text'){
+                Elem.id(seleElement)!.setAttribute('contenteditable', 'false');
+                Elem.id(e.target.id)!.setAttribute('contenteditable', 'false');
+                set_mode('select');
+                set_textEditingModeEnabled(false);
+              }
+            }
+
+            // // selected element is canvas or page
+            // if(e.target.id == CANVAS || Elem.id(e.target.id)?.getAttribute('data-type') == PAGES_DATATYPE){
+            //   set_mode('select');
+            //   set_textEditingModeEnabled(false);
+            //   set_cursorStyle('default')
+            // }
 
             // ui effect on cursor
             cursorStyle == 'grab' ? set_cursorStyle('grabbing') : set_cursorStyle('default');
@@ -1393,6 +1439,8 @@ function App() {
           ></div>
 
           <button
+          tabIndex={-1}
+                 
             id="btn"
             style={{
               position: "absolute",
