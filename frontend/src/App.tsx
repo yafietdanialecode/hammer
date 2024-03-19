@@ -599,6 +599,8 @@ function App() {
       if(e.key == 'Enter'){
         e.preventDefault();
 
+      }else if(e.key == ' '){
+        e.preventDefault();
       }
     }
   }
@@ -1224,7 +1226,10 @@ function App() {
             if(
               logic.notInExceptions(e.target.id, [ CANVAS, MULTIPLE_ELMENTS_WRAPPER ]) 
               && 
-              Elem.id(e.target.id)!.getAttribute('data-type') !== PAGES_DATATYPE){
+              Elem.id(e.target.id)!.getAttribute('data-type') !== PAGES_DATATYPE
+              &&
+              Component.name(Elem.id(e.target.id)!) !== 'Button'
+              ){
               // if user needs to edit text
             if(mode == 'text'){
               Elem.id(e.target.id)!.setAttribute('contenteditable', 'true')
