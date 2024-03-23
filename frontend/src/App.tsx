@@ -1299,6 +1299,8 @@ function App() {
               && 
               Elem.id(id)!.getAttribute('data-type') !== PAGES_DATATYPE
               &&
+              mode !== 'move'
+              &&
               Component.name(Elem.id(id)!) !== 'Button'
               &&
               Component.name(Elem.id(id)!) !== 'Video'
