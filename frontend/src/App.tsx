@@ -150,6 +150,13 @@ function App() {
   const [links, set_links] = useState([ { id: '', name: '', type: '', uri: '' } ])
   const [scripts, set_scripts] = useState([ { id: '', name: '', type: '', uri: '' } ] );
 
+  // clipboard
+  const [clipboard, set_clipboard] = useState({
+    node: null,
+    text: null,
+    url: null,
+    origin: CANVAS
+  })
   
   /**
    * this is the hook that will start when
@@ -513,6 +520,45 @@ function App() {
         }
       }
 
+      /**
+       * to copy an element
+       */
+      if(e.key == 'c' && e.ctrlKey && logic.notInExceptions(seleElement, [ CANVAS, MULTIPLE_ELEMENTS_WRAPPER ])){
+        const new_clipboard: any = {
+          node: Elem.id(seleElement)!.cloneNode(true),
+          text: clipboard.text,
+          url: clipboard.url,
+          origin: Elem.id(seleElement)!.parentElement!.id
+        }
+        set_clipboard(new_clipboard);
+        console.log('copied', Elem.id(seleElement)!.cloneNode(true));
+      }
+
+      /**
+       * to paste an elmement
+       */
+      if(e.key == 'v' && e.ctrlKey){
+        console.log('paste');
+        
+        if(clipboard.origin == CANVAS){
+          const new_id = 'ID' + Date.now();
+          const element: any = clipboard.node;
+          element.id = new_id;
+          Elem.id(clipboard.origin)!.append(element);
+          Elem.id(seleElement)!.style.outline = 'none';
+          focusOn(new_id);
+          set_seleElement(new_id);
+        }else if(Elem.id(clipboard.origin)!.getAttribute('data-type') === PAGES_DATATYPE){
+          const new_id = 'ID' + Date.now();
+          const element: any = clipboard.node;
+          element.id = new_id;
+          Elem.id(clipboard.origin)!.append(element);
+          Elem.id(seleElement)!.style.outline = 'none';
+          focusOn(new_id);
+          set_seleElement(new_id);
+        }
+      }
+
       // this is for preventing unexpected scroll by space bar
       if(e.key == ' '){
         e.preventDefault();
@@ -619,7 +665,7 @@ function App() {
                   e.clientY + scrollTop
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                  elementBottomPosition.y - e.clientY
+                  elementBottomPosition.y - (e.clientY + scrollTop)
                 );
               }
               // if this is an element inside a page
@@ -633,19 +679,19 @@ function App() {
                   e.clientY - Style.top(parent)
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                  elementBottomPosition.y -
+                  (elementBottomPosition.y -
                     Style.top(parent) -
-                    (e.clientY - Style.top(parent))
+                    (e.clientY - Style.top(parent))) - scrollTop
                 );
               }
             } else if (whatToResize == "right") {
               // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.left = Unit.px(
-                  elementLeftPosition.x + scrollLeft
+                  elementLeftPosition.x
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                  e.clientX - elementLeftPosition.x
+                  (e.clientX + scrollLeft) - elementLeftPosition.x
                 );
               }
               // if this is an element inside a page
@@ -656,20 +702,20 @@ function App() {
               ) {
                 const parent = Elem.id(seleElement)!.parentElement!.id;
                 Elem.id(seleElement)!.style.left = Unit.px(
-                  elementLeftPosition.x - Style.left(parent)
+                  elementLeftPosition.x - (Style.left(parent) + scrollLeft)
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                  e.clientX - elementLeftPosition.x
+                  (e.clientX + scrollLeft) - elementLeftPosition.x
                 );
               }
             } else if (whatToResize == "bottom") {
               // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.top = Unit.px(
-                  elementTopPosition.y + scrollTop
+                  elementTopPosition.y
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                  e.clientY - elementTopPosition.y
+                 (e.clientY + scrollTop) - elementTopPosition.y
                 );
               }
               // if this is an element inside a page
@@ -680,10 +726,10 @@ function App() {
               ) {
                 const parent = Elem.id(seleElement)!.parentElement!.id;
                 Elem.id(seleElement)!.style.top = Unit.px(
-                  elementTopPosition.y - Style.top(parent)
+                  elementTopPosition.y - (Style.top(parent) + scrollTop)
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                  e.clientY - elementTopPosition.y
+                  (e.clientY + scrollTop) - elementTopPosition.y
                 );
               }
             } else if (whatToResize == "left") {
@@ -693,7 +739,7 @@ function App() {
                   e.clientX + scrollLeft
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                  elementRightPosition.x - e.clientX
+                  elementRightPosition.x - (e.clientX + scrollLeft)
                 );
               }
               // if this is an element inside a page
@@ -707,7 +753,7 @@ function App() {
                   e.clientX - Style.left(parent)
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                  elementRightPosition.x - e.clientX
+                  elementRightPosition.x - (e.clientX + scrollLeft)
                 );
               }
             }
@@ -719,13 +765,13 @@ function App() {
                   e.clientY + scrollTop
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                  elementBottomPosition.y - e.clientY
+                  elementBottomPosition.y - (e.clientY + scrollTop)
                 );
                 Elem.id(seleElement)!.style.left = Unit.px(
                   e.clientX + scrollLeft
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                  elementBottomPosition.x - e.clientX
+                  elementBottomPosition.x - (e.clientX + scrollLeft)
                 );
               }
               // if this is an element inside a page
@@ -739,15 +785,15 @@ function App() {
                   e.clientY - Style.top(parent)
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                  elementBottomPosition.y -
+                  (elementBottomPosition.y -
                     Style.top(parent) -
-                    (e.clientY - Style.top(parent))
+                    (e.clientY - Style.top(parent))) - scrollTop
                 );
                 Elem.id(seleElement)!.style.left = Unit.px(
                   e.clientX - Style.left(parent)
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                  elementBottomPosition.x - e.clientX
+                  elementBottomPosition.x - (e.clientX + scrollLeft)
                 );
               }
             }// top right resize
@@ -758,13 +804,13 @@ function App() {
                   e.clientY + scrollTop
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                  elementBottomPosition.y - e.clientY
+                  elementBottomPosition.y - (e.clientY + scrollTop)
                 );
                 Elem.id(seleElement)!.style.left = Unit.px(
-                  elementBottomPosition.x + scrollLeft
+                  elementBottomPosition.x
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                  e.clientX - elementBottomPosition.x
+                  (e.clientX + scrollLeft) - elementBottomPosition.x
                 );
               }
               // if this is an element inside a page
@@ -778,15 +824,15 @@ function App() {
                   e.clientY - Style.top(parent)
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                  elementBottomPosition.y -
+                  (elementBottomPosition.y -
                     Style.top(parent) -
-                    (e.clientY - Style.top(parent))
+                    (e.clientY - Style.top(parent))) - scrollTop
                 );
                 Elem.id(seleElement)!.style.left = Unit.px(
-                  elementBottomPosition.x - Style.left(parent)
+                  elementBottomPosition.x - (Style.left(parent) + scrollLeft)
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                 e.clientX - elementBottomPosition.x
+                 (scrollLeft + e.clientX) - elementBottomPosition.x
                 );
               }
             }// bottom right resize
@@ -794,16 +840,16 @@ function App() {
               // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.top = Unit.px(
-                  elementTopPosition.y + scrollTop
+                  elementTopPosition.y
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                  e.clientY - elementTopPosition.y
+                  (e.clientY + scrollTop) - elementTopPosition.y
                 );
                 Elem.id(seleElement)!.style.left = Unit.px(
-                  elementTopPosition.x + scrollLeft
+                  elementTopPosition.x
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                  e.clientX - elementTopPosition.x
+                  (e.clientX + scrollLeft) - elementTopPosition.x
                 );
               }
               // if this is an element inside a page
@@ -814,16 +860,16 @@ function App() {
               ) {
                 const parent = Elem.id(seleElement)!.parentElement!.id;
                 Elem.id(seleElement)!.style.top = Unit.px(
-                  elementTopPosition.y - Style.top(parent)
+                  elementTopPosition.y - (Style.top(parent) + scrollTop)
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                    e.clientY - elementTopPosition.y
+                    (e.clientY + scrollTop) - elementTopPosition.y
                 );
                 Elem.id(seleElement)!.style.left = Unit.px(
-                  elementTopPosition.x - Style.left(parent)
+                  elementTopPosition.x - (Style.left(parent) + scrollLeft)
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                 (e.clientX - elementTopPosition.x)
+                 (e.clientX + scrollLeft) - elementTopPosition.x
                 );
               }
             }// bottom right resize
@@ -831,16 +877,16 @@ function App() {
               // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.top = Unit.px(
-                  elementTopPosition.y + scrollTop
+                  elementTopPosition.y
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                  e.clientY - elementTopPosition.y
+                  (e.clientY + scrollTop) - elementTopPosition.y
                 );
                 Elem.id(seleElement)!.style.left = Unit.px(
                   e.clientX + scrollLeft
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                  elementTopPosition.x - e.clientX
+                  elementTopPosition.x - (e.clientX + scrollLeft)
                 );
               }
               // if this is an element inside a page
@@ -851,16 +897,16 @@ function App() {
               ) {
                 const parent = Elem.id(seleElement)!.parentElement!.id;
                 Elem.id(seleElement)!.style.top = Unit.px(
-                  elementTopPosition.y - Style.top(parent)
+                  elementTopPosition.y - (Style.top(parent) + scrollTop)
                 );
                 Elem.id(seleElement)!.style.height = Unit.px(
-                    e.clientY - elementTopPosition.y
+                    (e.clientY + scrollTop) - elementTopPosition.y
                 );
                 Elem.id(seleElement)!.style.left = Unit.px(
                   e.clientX - Style.left(parent)
                 );
                 Elem.id(seleElement)!.style.width = Unit.px(
-                 (elementTopPosition.x - e.clientX)
+                 (elementTopPosition.x - (e.clientX + scrollLeft))
                 );
               }
             }
@@ -1002,7 +1048,7 @@ function App() {
            *        - when user move the component to the outside (CANVAS) move the element to outside
            */
 
-          if (startMovingObject || (selectionStarted2 && selectionStarted)) {
+          if (startMovingObject || (selectionStarted2 && selectionStarted) || startResizing) {
             // for go up
             if (mousePosition.y < 50) {
               Elem.id(CANVAS)?.scrollBy({
@@ -1282,7 +1328,7 @@ function App() {
             }
             
             // outline element
-            if(Elem.id(id)!.parentElement!.id == CANVAS){
+            if(Elem.id(id)!.parentElement!.id == CANVAS && mode == 'select'){
               Elem.id(id)!.style.outline = '1px solid rgb(107, 154, 255)';
             }
             if(id !== seleElement){
@@ -1305,7 +1351,15 @@ function App() {
               Elem.id(id)!.setAttribute('contenteditable', 'true')
               set_textEditingModeEnabled(true);
             }else {
-              if(mode == 'text' && !textEditingModeEnabled){
+              if(
+                mode == 'text' 
+                && 
+                !textEditingModeEnabled
+                &&
+                Component.name(Elem.id(id)!) !== 'Button'
+                &&
+                Component.name(Elem.id(id)!) !== 'Video'  
+                ){
                 Elem.id(seleElement)!.setAttribute('contenteditable', 'false');
                 Elem.id(id)!.setAttribute('contenteditable', 'false');
                 set_mode('select');
@@ -1338,6 +1392,7 @@ function App() {
               }else {
               Elem.id(id)!.setAttribute('contenteditable', 'false');  
               set_textEditingModeEnabled(false);
+              set_mode('select')
             }
             }
 
@@ -1530,7 +1585,6 @@ function App() {
 
           <button
           tabIndex={-1}
-                 
             id="btn"
             style={{
               position: "absolute",
@@ -1937,8 +1991,10 @@ function App() {
 
         {/* those are element feature previewers and decorators */}
         {
-          document.getElementById(seleElement) &&
-          seleElement !== CANVAS && (
+          (document.getElementById(seleElement) &&
+          seleElement !== CANVAS &&
+          !startMovingObject
+          ) && (
             <div id={DECORATORS}>
               {/* element descriptor */}
               {Elem.id(seleElement) && (
@@ -2007,7 +2063,7 @@ function App() {
                     set_startResizing(true);
                     set_elementBottomPosition({
                       x: 0,
-                      y: Style.bottom(seleElement),
+                      y: Style.bottom(seleElement) + scrollTop,
                     });
                   }}
                 ></div>
@@ -2032,7 +2088,7 @@ function App() {
                     set_whatToResize("right");
                     set_startResizing(true);
                     set_elementLeftPosition({
-                      x: Style.left(seleElement),
+                      x: Style.left(seleElement) + scrollLeft,
                       y: 0,
                     });
                   }}
@@ -2057,7 +2113,7 @@ function App() {
                   onMouseDown={() => {
                     set_whatToResize("bottom");
                     set_startResizing(true);
-                    set_elementTopPosition({ x: 0, y: Style.top(seleElement) });
+                    set_elementTopPosition({ x: 0, y: Style.top(seleElement) + scrollTop });
                   }}
                 ></div>
               )}
@@ -2081,7 +2137,7 @@ function App() {
                     set_whatToResize("left");
                     set_startResizing(true);
                     set_elementRightPosition({
-                      x: Style.right(seleElement),
+                      x: Style.right(seleElement) + scrollLeft,
                       y: 0,
                     });
                   }}
@@ -2107,8 +2163,8 @@ function App() {
                     set_whatToResize("top-left");
                     set_startResizing(true);
                     set_elementBottomPosition({
-                      x: Style.right(seleElement),
-                      y: Style.bottom(seleElement),
+                      x: Style.right(seleElement) + scrollLeft,
+                      y: Style.bottom(seleElement) + scrollTop,
                     });
                   }}
                 ></div>
@@ -2132,7 +2188,7 @@ function App() {
                   onMouseDown={() => {
                     set_whatToResize("top-right");
                     set_startResizing(true);
-                    set_elementBottomPosition({ x: Style.left(seleElement), y: Style.bottom(seleElement)})
+                    set_elementBottomPosition({ x: Style.left(seleElement) + scrollLeft, y: Style.bottom(seleElement) + scrollTop })
                   }}
                 ></div>
               )}
@@ -2155,7 +2211,7 @@ function App() {
                   onMouseDown={() => {
                     set_whatToResize("bottom-right");
                     set_startResizing(true);
-                    set_elementTopPosition({ x: Style.left(seleElement), y: Style.top(seleElement)})
+                    set_elementTopPosition({ x: Style.left(seleElement) + scrollLeft, y: Style.top(seleElement) + scrollTop })
                   }}
                 ></div>
               )}
@@ -2179,7 +2235,7 @@ function App() {
                   onMouseDown={() => {
                     set_whatToResize("bottom-left");
                     set_startResizing(true);
-                    set_elementTopPosition({ x: Style.right(seleElement), y: Style.top(seleElement)})
+                    set_elementTopPosition({ x: Style.right(seleElement) + scrollLeft, y: Style.top(seleElement) + scrollTop })
                   }}
                 ></div>
               )}
