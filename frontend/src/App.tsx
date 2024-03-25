@@ -22,7 +22,7 @@ import {
   LEFT_TOOLS,
   LOGO,
   MAIN,
-  MULTIPLE_ELMENTS_WRAPPER,
+  MULTIPLE_ELEMENTS_WRAPPER,
   PAGES_DATATYPE,
   RIGHT_RESIZE,
   STATES,
@@ -33,10 +33,14 @@ import screenVisibleElements from "./scope/screenVisibleElements";
 import State from "./modules/State";
 import focusOn from "./modules/Focus";
 import UnitClassTest from "./test/UnitClass.test";
+import { componentsData } from "./lib/components-data";
+
+
+
 
 function App() {
   
-  const [mode, set_mode] = useState('read')
+  const [mode, set_mode] = useState('select')
   
   // indicates how much user scrolled
   const [scrollTop, set_scrollTop] = useState(0);
@@ -56,7 +60,7 @@ function App() {
     x: 0,
     y: 0,
   });
-  // lists of selected elements in this cordinate
+  // lists of selected elements in this coordinate
   const [selectedElements, set_selectedElements] = useState([]);
   // where the selected component comes
   const [fromWhereAreTheComponent, set_fromWhereAreTheComponent] =
@@ -131,9 +135,22 @@ function App() {
 
   // adding new element state
   const [addNewElement, set_addNewElement] = useState(false);
+  const [newElement, set_newElement] = useState('');
 
   // moving the screen by moving feature
   const [startMovingFeature, set_startMovingFeature] = useState(false);
+  
+  // right-menu states
+  const [displayRightMenu, set_displayRightMenu] = useState(false);
+  const [title, set_title] = useState('');
+  const [page_id, set_page_id] = useState('');
+  const [endpoint, set_endpoint] = useState('');
+  const [description, set_description] = useState('');
+  const [tags, set_tags] = useState(['']);
+  const [links, set_links] = useState([ { id: '', name: '', type: '', uri: '' } ])
+  const [scripts, set_scripts] = useState([ { id: '', name: '', type: '', uri: '' } ] );
+
+  
   /**
    * this is the hook that will start when
    * the page loaded and rendered
@@ -147,54 +164,14 @@ function App() {
       left: 10000,
     });
 
-
-    // setTimeout(() => {
-
-    //   // 2. This code loads the IFrame Player API code asynchronously.
-    //   var tag = document.createElement('script');
-
-    //   tag.src = "https://www.youtube.com/embed/GKw3_nrjL9U?si=3S0NFpi6bLpwZK0f";
-    //   var firstScriptTag = document.getElementsByTagName('script')[0];
-    //   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    //   // 3. This function creates an <iframe> (and YouTube player)
-    //   //    after the API code downloads.
-    //   var player;
-    //   function onYouTubeIframeAPIReady() {
-    //     player = new YT.Player('player', {
-    //       height: '390',
-    //       width: '640',
-    //       videoId: 'M7lc1UVf-VE',
-    //       playerVars: {
-    //         'playsinline': 1
-    //       },
-    //       events: {
-    //         'onReady': onPlayerReady,
-    //         'onStateChange': onPlayerStateChange
-    //       }
-    //     });
-    //   }
-
-    //   // 4. The API will call this function when the video player is ready.
-    //   function onPlayerReady(event) {
-    //     event.target.playVideo();
-    //   }
-
-    //   // 5. The API calls this function when the player's state changes.
-    //   //    The function indicates that when playing a video (state=1),
-    //   //    the player should play for six seconds and then stop.
-    //   var done = false;
-    //   function onPlayerStateChange(event) {
-    //     if (event.data == YT.PlayerState.PLAYING && !done) {
-    //       setTimeout(stopVideo, 6000);
-    //       done = true;
-    //     }
-    //   }
-    //   function stopVideo() {
-    //     player.stopVideo();
-    //   }
-
-    // }, 2000)
+    set_tags([ 'amazing', 'good' ]);
+    set_links([
+      { id: '0', name: 'bootstrap icons', type: 'stylesheet', uri: 'http://hellobootstrap.com/fkjdfklsjfdjs'}
+    ])
+    set_page_id('PAGE-090583458049850934850984309-USESR')
+    set_scripts([
+      { id: '1', name: 'jquery', type: 'javascript', uri: 'http://jqueryonthego.com/download'}
+    ])
   }, []);
 
   /**
@@ -207,7 +184,6 @@ function App() {
     // updating user's scroll amount
     set_scrollTop(Scroll.top(CANVAS)!);
     set_scrollLeft(Scroll.left(CANVAS)!);
-
   });
 
   // when mouse move in the whole window
@@ -218,7 +194,7 @@ function App() {
 
     /**
      * when user selects in component mode
-     * this descides how inclusive the selected range or zone will be
+     * this decides how inclusive the selected range or zone will be
      */
     if (selectionStarted && !startMovingObject) {
       set_selectionStarted2(true);
@@ -266,7 +242,7 @@ function App() {
       if (
         seleElement &&
         selectedElements.length < 2 &&
-        seleElement !== MULTIPLE_ELMENTS_WRAPPER
+        seleElement !== MULTIPLE_ELEMENTS_WRAPPER
       ) {
         /* moving single component from CANVAS > page
          */
@@ -274,7 +250,7 @@ function App() {
           movingFrom == CANVAS &&
           movingTo != CANVAS &&
           Elem.id(seleElement)!.getAttribute("data-type") !== "page"
-          && seleElement !== MULTIPLE_ELMENTS_WRAPPER
+          && seleElement !== MULTIPLE_ELEMENTS_WRAPPER
         ) {
           const clone: any = Elem.id(seleElement)!.cloneNode(true);
           clone.style.top = Unit.px(
@@ -291,7 +267,7 @@ function App() {
           movingFrom !== CANVAS &&
           movingTo == CANVAS &&
           Elem.id(seleElement)!.getAttribute("data-type") !== "page"
-          && seleElement !== MULTIPLE_ELMENTS_WRAPPER
+          && seleElement !== MULTIPLE_ELEMENTS_WRAPPER
         ) {
           const clone: any = Elem.id(seleElement)!.cloneNode(true);
 
@@ -317,7 +293,7 @@ function App() {
           Elem.id(seleElement)!.getAttribute("data-type") !== "page" &&
           Elem.id(movingFrom)!.getAttribute("data-type") == "page" &&
           Elem.id(movingTo)!.getAttribute("data-type") == "page" &&
-          seleElement !== MULTIPLE_ELMENTS_WRAPPER
+          seleElement !== MULTIPLE_ELEMENTS_WRAPPER
         ) {
           const clone: any = Elem.id(seleElement)!.cloneNode(true);
 
@@ -344,7 +320,7 @@ function App() {
 
       if (
         selectedElements.length > 1 &&
-        seleElement === MULTIPLE_ELMENTS_WRAPPER
+        seleElement === MULTIPLE_ELEMENTS_WRAPPER
       ) {
         /* moving single component from CANVAS > page
          */
@@ -359,7 +335,7 @@ function App() {
 
       selectedElements.map((each: string) => {
         /**
-         * we clone them b/c they will be removed from the previous position temporarly
+         * we clone them b/c they will be removed from the previous position temporarily
          */
         const copy: any = Elem.id(each)!.cloneNode(true);
         /**
@@ -400,13 +376,13 @@ function App() {
      */
     if (selectedElements.length > 1 && !startMovingObject && movingTo == CANVAS) {
       // wrapper
-      const wrapper = Elem.id(MULTIPLE_ELMENTS_WRAPPER)!;
+      const wrapper = Elem.id(MULTIPLE_ELEMENTS_WRAPPER)!;
       /**
        * for each selected elements we will edit and append them to wrapper
        */
       selectedElements.map((each: string) => {
         /**
-         * we clone them b/c they will be removed from the previous position temporarly
+         * we clone them b/c they will be removed from the previous position temporarily
          */
         const copy: any = Elem.id(each)!.cloneNode(true);
 
@@ -503,10 +479,10 @@ function App() {
        */
 
       /**
-       * to delete elemnt by pressing del key in laptop
+       * to delete element by pressing del key in laptop
        */
       if (e.key == "Delete") {
-        if (selectedElements.length < 2 && logic.notInExceptions(seleElement, [ CANVAS, MULTIPLE_ELMENTS_WRAPPER ])) {
+        if (selectedElements.length < 2 && logic.notInExceptions(seleElement, [ CANVAS, MULTIPLE_ELEMENTS_WRAPPER ])) {
           Elem.id(seleElement)!.remove();
           set_seleElement(CANVAS);
           Elem.id(CANVAS)!.focus({ preventScroll: true });
@@ -544,7 +520,7 @@ function App() {
       //     )
       // }
       /**
-       * move the elemnt forward
+       * move the element forward
        */
       else if (e.key == "]") {
         Elem.id(seleElement)!.style.zIndex = `${
@@ -552,7 +528,7 @@ function App() {
         }`;
       }
       /**
-       * move the elment backward
+       * move the element backward
        */
       if (e.key == "[") {
         Elem.id(seleElement)!.style.zIndex = `${
@@ -562,15 +538,8 @@ function App() {
       // mode switch
       switch(e.key){
         case 't':
-          if(mode == 'text'){
-            set_mode('');
-            set_cursorStyle('default');
-            set_textEditingModeEnabled(false);
-          }else {
             set_mode('text');
             set_cursorStyle('text');
-            set_textEditingModeEnabled(true);
-          }
           set_seleElement('');
         break;
         case 'v':
@@ -580,6 +549,7 @@ function App() {
         case 'm':
           set_mode('move');
           set_cursorStyle('grab');
+          set_seleElement('');
           set_seleElement(CANVAS);
           break;
         case 'i':
@@ -588,8 +558,12 @@ function App() {
           break;
         case '/':
           set_addNewElement(true);
-          set_textEditingModeEnabled(true);
-          setTimeout(() => Elem.id('search-components')!.focus({ preventScroll: true }), 100)
+          set_textEditingModeEnabled(true); // tells the program we are typing
+          set_newElement(''); // to remove the previous element
+          set_seleElement(''); // this takes the focus in selected component out of it
+          setTimeout(() => {
+            Elem.id('search-components')!.focus({ preventScroll: true });
+          }, 100)          
           break;
       }
     }
@@ -597,8 +571,7 @@ function App() {
     // if user is editing text
     if(textEditingModeEnabled){
       if(e.key == 'Enter'){
-        e.preventDefault();
-
+        // e.preventDefault();
       }
     }
   }
@@ -626,13 +599,13 @@ function App() {
              * this is the action taker for each type ( specifically 8 types of resizes )
              * this takes:
              *  1. whether resize starts
-             *  2. which type of resize is occuring
+             *  2. which type of resize is occurring
              *  3. which point
              */
 
             // top resize
             if (whatToResize == "top") {
-              // if this is an elment inside a CANVAS
+              // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.top = Unit.px(
                   e.clientY + scrollTop
@@ -641,7 +614,7 @@ function App() {
                   elementBottomPosition.y - e.clientY
                 );
               }
-              // if this is an elment inside a page
+              // if this is an element inside a page
               else if (
                 Elem.id(seleElement)!.parentElement!.getAttribute(
                   "data-type"
@@ -658,7 +631,7 @@ function App() {
                 );
               }
             } else if (whatToResize == "right") {
-              // if this is an elment inside a CANVAS
+              // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.left = Unit.px(
                   elementLeftPosition.x + scrollLeft
@@ -667,7 +640,7 @@ function App() {
                   e.clientX - elementLeftPosition.x
                 );
               }
-              // if this is an elment inside a page
+              // if this is an element inside a page
               else if (
                 Elem.id(seleElement)!.parentElement!.getAttribute(
                   "data-type"
@@ -682,7 +655,7 @@ function App() {
                 );
               }
             } else if (whatToResize == "bottom") {
-              // if this is an elment inside a CANVAS
+              // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.top = Unit.px(
                   elementTopPosition.y + scrollTop
@@ -691,7 +664,7 @@ function App() {
                   e.clientY - elementTopPosition.y
                 );
               }
-              // if this is an elment inside a page
+              // if this is an element inside a page
               else if (
                 Elem.id(seleElement)!.parentElement!.getAttribute(
                   "data-type"
@@ -706,7 +679,7 @@ function App() {
                 );
               }
             } else if (whatToResize == "left") {
-              // if this is an elment inside a CANVAS
+              // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.left = Unit.px(
                   e.clientX + scrollLeft
@@ -715,7 +688,7 @@ function App() {
                   elementRightPosition.x - e.clientX
                 );
               }
-              // if this is an elment inside a page
+              // if this is an element inside a page
               else if (
                 Elem.id(seleElement)!.parentElement!.getAttribute(
                   "data-type"
@@ -732,7 +705,7 @@ function App() {
             }
             // top left resize
             else if (whatToResize == "top-left") {
-              // if this is an elment inside a CANVAS
+              // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.top = Unit.px(
                   e.clientY + scrollTop
@@ -747,7 +720,7 @@ function App() {
                   elementBottomPosition.x - e.clientX
                 );
               }
-              // if this is an elment inside a page
+              // if this is an element inside a page
               else if (
                 Elem.id(seleElement)!.parentElement!.getAttribute(
                   "data-type"
@@ -771,7 +744,7 @@ function App() {
               }
             }// top right resize
             else if (whatToResize == "top-right") {
-              // if this is an elment inside a CANVAS
+              // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.top = Unit.px(
                   e.clientY + scrollTop
@@ -786,7 +759,7 @@ function App() {
                   e.clientX - elementBottomPosition.x
                 );
               }
-              // if this is an elment inside a page
+              // if this is an element inside a page
               else if (
                 Elem.id(seleElement)!.parentElement!.getAttribute(
                   "data-type"
@@ -810,7 +783,7 @@ function App() {
               }
             }// bottom right resize
             else if (whatToResize == "bottom-right") {
-              // if this is an elment inside a CANVAS
+              // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.top = Unit.px(
                   elementTopPosition.y + scrollTop
@@ -825,7 +798,7 @@ function App() {
                   e.clientX - elementTopPosition.x
                 );
               }
-              // if this is an elment inside a page
+              // if this is an element inside a page
               else if (
                 Elem.id(seleElement)!.parentElement!.getAttribute(
                   "data-type"
@@ -847,7 +820,7 @@ function App() {
               }
             }// bottom right resize
             else if (whatToResize == "bottom-left") {
-              // if this is an elment inside a CANVAS
+              // if this is an element inside a CANVAS
               if (Elem.id(seleElement)!.parentElement!.id == CANVAS) {
                 Elem.id(seleElement)!.style.top = Unit.px(
                   elementTopPosition.y + scrollTop
@@ -862,7 +835,7 @@ function App() {
                   elementTopPosition.x - e.clientX
                 );
               }
-              // if this is an elment inside a page
+              // if this is an element inside a page
               else if (
                 Elem.id(seleElement)!.parentElement!.getAttribute(
                   "data-type"
@@ -951,17 +924,17 @@ function App() {
           // }
 
           /**
-           * if selection of elements verifyed by two verifications
+           * if selection of elements verified by two verifications
            * know this code will do:
-           *    - identify which elemnts could be selected and regester them
-           *    - and tells the wrapper (for moving elemnts ) the information like
+           *    - identify which elements could be selected and register them
+           *    - and tells the wrapper (for moving elements ) the information like
            *      what is it's position and size
            */
           if (selectionStarted && selectionStarted2) {
             const res = getCIArea(startSelectingFrom, includeSelectingUpto);
             set_selectedElements(res);
 
-            // create a wrapper elemnt
+            // create a wrapper element
             if (res.length == 1) {
               // this means user selected one element only
               set_seleElement(res[0]);
@@ -972,7 +945,7 @@ function App() {
               const includeUpToMax = { x: -20000, y: -200000 };
 
               res.forEach((each: string) => {
-                // some varialble to clean the code
+                // some variable to clean the code
                 const eTop: number = Style.top(each);
                 const eLeft: number = Style.left(each);
                 const eRight: number = Style.right(each);
@@ -1005,7 +978,7 @@ function App() {
               includeUpToMax.y += scrollTop;
               set_multiSelectedElementsWrapperDivStartFrom(startFromMax);
               set_multiSelectedElementsWrapperDivInclude(includeUpToMax);
-              set_seleElement(MULTIPLE_ELMENTS_WRAPPER);
+              set_seleElement(MULTIPLE_ELEMENTS_WRAPPER);
             }
           }
 
@@ -1014,10 +987,10 @@ function App() {
            * we will actually move components inside the wrapper
            * wrapper in this code means the elements parent
            * if user's mouse starts grabbing the element from the out side (CANVAS)
-           *        - when user enters pages we have to move the elment inside the page
+           *        - when user enters pages we have to move the element inside the page
            *
-           * if user's mosue starts grabbing the elemtn from the inside (pages)
-           *        - when user move the component to the outside (CANVAS) move the elemnent to outside
+           * if user's mouse starts grabbing the element from the inside (pages)
+           *        - when user move the component to the outside (CANVAS) move the element to outside
            */
 
           if (startMovingObject || (selectionStarted2 && selectionStarted)) {
@@ -1101,6 +1074,7 @@ function App() {
             onClick={() => {
               mode == 'move' ? set_mode('') : set_mode('move');
               set_cursorStyle('grab')
+              set_seleElement('');
             }}
             className={mode == 'move' ? 'tool-selected' : ''}
             >
@@ -1171,17 +1145,106 @@ function App() {
           </button>
         </div>
 
-
+        {/* add new element */}
         {addNewElement && <div id="add-new-element">
-                <input id="search-components" type="text" placeholder="Search Component" />
-                <p><i className="bi bi-menu-button-wide-fill"></i> Button</p>
-                <p><i className="bi bi-type-h1"></i> Heading 1</p>
-                <p><i className="bi bi-type-h2"></i> Heading 2</p>
-                <p><i className="bi bi-type-h3"></i> Heading 3</p>
-                <p><i className="bi bi-type-h4"></i> Heading 4</p>
-                <p><i className="bi bi-type-h5"></i> Heading 5</p>
-                <p><i className="bi bi-type-h6"></i> Heading 6</p>
-                <p><i className="bi bi-text-paragraph"></i> Paragraph</p>
+                <input id="search-components" type="text" placeholder="Search Component"
+                onChange={(e: any) => set_newElement(e.target.value)}
+                value={newElement}
+                onKeyDown={(e: any) => {
+                  if(e.key == 'Enter'){
+                    // set_addNewElement(false);
+                    // set_newElement('');
+                    set_textEditingModeEnabled(false);
+                    for(let i = 0; i < componentsData.length; i++){
+                      if(componentsData[i].tags.some((tag: any) => RegExp('^' + newElement).test(tag))){
+                        set_newElement(componentsData[i].text)
+                        break;
+                      }
+                    }
+                    set_addNewElement(false);
+                  }
+                }}
+                />
+
+                {/* show all elements there is no searching */}
+                {newElement.length == 0 && componentsData.map((each: any) => {
+                  return <p
+                  onClick={() => set_newElement(each.text)}
+                  ><i className={each.className}></i> {each.text}</p>
+                })}
+
+                {/* filter elements */}
+                {newElement.length > 0 && <> {componentsData.map((each: any) => {
+                  const found = each.tags.some((tag: any) => RegExp('^' + newElement).test(tag));
+                  if(found){
+                  return <p
+                  className="selected"
+                    key={each.id}
+                  onClick={() => set_newElement(each.text)}
+                  ><i className={each.className}></i> {each.text}</p>
+                  }
+            })}
+                </> 
+                }
+
+        </div>}
+
+
+        {/* right-menu */}
+
+        {(displayRightMenu && Elem.id(seleElement)! && Elem.id(seleElement)!.getAttribute('data-type') == PAGES_DATATYPE) && <div id="right-menu">
+
+        {/* page configuration editing */}
+        <h1>{Elem.id(seleElement)!.getAttribute('data-name')} <sup className="page">page</sup></h1>
+        <p>ID: <input disabled value={page_id} type="text"/></p>
+        <p>Title: <input type="text"
+        value={title} placeholder={'ex: Home | AMCE'}
+        onChange={(e: any) => {
+          set_title(e.target.value) 
+          Elem.setAttribute(seleElement, 'title', e.target.value)
+        }}
+        onFocus={() => set_textEditingModeEnabled(true)}
+        /></p>
+        <p>End Point: <input placeholder="ex: /home" type="text"
+        onFocus={() => set_textEditingModeEnabled(true)}
+        value={endpoint}
+        onChange={(e: any) => {
+          set_endpoint(e.target.value);
+          Elem.id(seleElement)!.setAttribute('end-point', e.target.value);
+        }}
+        /></p>
+        <p>Description: <textarea placeholder="Description"
+        value={description}
+        onFocus={() => set_textEditingModeEnabled(true)}
+        onChange={(e: any) => {
+          set_description(e.target.value)
+          Elem.id(seleElement)!.setAttribute('end-point', e.target.value)
+        }}
+        /></p>
+        <p>#Tags: <input placeholder="#topic" type="text" /></p>
+        <div>{tags.map((each: any) => <span key={each}>{each}</span>)}</div>
+        <p>Links: <input placeholder="links" type="text" /></p>
+        <table>
+          <tr><th>name</th><th>type</th><th>uri</th></tr>
+          {links.map((each: any) => {
+            return <tr key={each.id}><td>{each.name}</td><td>{each.type}</td><td>{each.uri}</td></tr>
+          })}
+        </table>
+        <p>Scripts: <input placeholder="scripts" type="text" /></p>
+        <table>
+          <tr><th>name</th><th>type</th><th>uri</th></tr>
+          {scripts.map((each: any) => {
+            return <tr key={each.id}><td>{each.name}</td><td>{each.type}</td><td>{each.uri}</td></tr>
+          })}
+        </table>
+        <button
+        > Save</button>
+        <button
+        onClick={() => {
+          set_displayRightMenu(false);
+        }}
+        className="close"
+        style={{ right: '6vw'}}>Close</button>
         </div>}
 
         {/* CANVAS */}
@@ -1200,10 +1263,10 @@ function App() {
            */
           draggable={false}
           
-          // this is for indicating elment existence
+          // this is for indicating element existence
           onMouseOver={(e: any) => {
             if(e.target.id !== seleElement && mode === 'select'){
-              Elem.id(e.target.id)!.style.outline = '1px solid rgb(107, 154, 255)';
+              // Elem.id(e.target.id)!.style.outline = '1px solid rgb(107, 154, 255)';
             }
           }}
 
@@ -1216,51 +1279,73 @@ function App() {
           
           onMouseDown={(e: any) => {
 
+            const id = e.target.id == '' ? e.target.parentElement.id : e.target.id;
+
             if(mode === 'move'){
               // moving the canvas feature
             set_startMovingFeature(true);
             }
-
+            
+            // text editing mode
             if(
-              logic.notInExceptions(e.target.id, [ CANVAS, MULTIPLE_ELMENTS_WRAPPER ]) 
+              logic.notInExceptions(id, [ CANVAS, MULTIPLE_ELEMENTS_WRAPPER ]) 
               && 
-              Elem.id(e.target.id)!.getAttribute('data-type') !== PAGES_DATATYPE){
+              Elem.id(id)!.getAttribute('data-type') !== PAGES_DATATYPE
+              &&
+              mode !== 'move'
+              &&
+              Component.name(Elem.id(id)!) !== 'Button'
+              &&
+              Component.name(Elem.id(id)!) !== 'Video'
+              ){
               // if user needs to edit text
             if(mode == 'text'){
-              Elem.id(e.target.id)!.setAttribute('contenteditable', 'true')
+              Elem.id(id)!.setAttribute('contenteditable', 'true')
               set_textEditingModeEnabled(true);
             }else {
-              Elem.id(e.target.id)!.setAttribute('contenteditable', 'false')
+              Elem.id(id)!.setAttribute('contenteditable', 'false');
+              Elem.id(seleElement)!.setAttribute('contenteditable', 'false');
+              set_mode('select')
               set_textEditingModeEnabled(false);
             }
             }else {
               if(mode == 'text'){
                 Elem.id(seleElement)!.setAttribute('contenteditable', 'false');
-                Elem.id(e.target.id)!.setAttribute('contenteditable', 'false');
+                Elem.id(id)!.setAttribute('contenteditable', 'false');
                 set_mode('select');
                 set_textEditingModeEnabled(false);
+                // creating a text element on selected path
+                const element = document.createElement('p');
+                const new_id = 'p' + Date.now();
+                element.style.position = 'absolute';
+                element.style.width = 'fit-content';
+                element.style.background = 'none';
+
+                if(id === CANVAS){
+                  element.style.top = Unit.px(e.clientY + scrollTop);
+                  element.style.left = Unit.px(e.clientX + scrollLeft);
+                }else if(Elem.isPage(id)){
+                  element.style.top = Unit.px(e.clientY - Style.top(id));
+                  element.style.left = Unit.px(e.clientX - Style.left(id));
+                }
+                element.id = new_id;
+                Elem.id(id)!.append(element);
+                set_seleElement(new_id);
+                element.setAttribute('contenteditable', 'true')
+                setTimeout(() => focusOn(new_id), 100)
+                set_textEditingModeEnabled(true)
               }
             }
 
-            // // selected element is canvas or page
-            // if(e.target.id == CANVAS || Elem.id(e.target.id)?.getAttribute('data-type') == PAGES_DATATYPE){
-            //   set_mode('select');
-            //   set_textEditingModeEnabled(false);
-            //   set_cursorStyle('default')
-            // }
-
             // ui effect on cursor
             cursorStyle == 'grab' ? set_cursorStyle('grabbing') : set_cursorStyle('default');
-            
-            // some variables
-            const id: string = e.target.id;
 
             // some checks
-            const isCanvas: boolean = e.target.id === CANVAS ? true : false;
+            const isCanvas: boolean = id === CANVAS ? true : false;
             // let isItsParentCanvas = Elem.id(id)!.parentElement!.id === CANVAS ? true : false;
             /**
-             * registor where the selected elements from
-             * [ simply the parent of the element by the time they toched by pointer ]
+             * register where the selected elements from
+             * [ simply the parent of the element by the time they touched by pointer ]
              */
             if (!isCanvas) {
               // if this element is not CANVAS
@@ -1274,7 +1359,7 @@ function App() {
             /**
              * the code below must be cleaners
              * cleaners are codes who reset opened things if we user needs to close them easily
-             * simpliy they reset states
+             * simply they reset states
              */
             set_displayContext(false);
 
@@ -1284,18 +1369,18 @@ function App() {
              * we identify that by
              *   1. if there are selected elements
              *   2. if selected element is not the wrapper (the selection box)
-             *   3. if user doesn't user shiftKey ( because he might be making an elemnt part of selection or removing element from selected ones)
+             *   3. if user doesn't user shiftKey ( because he might be making an element part of selection or removing element from selected ones)
              *
              */
             if (
               selectedElements.length > 1 &&
-              e.target.id !== MULTIPLE_ELMENTS_WRAPPER &&
+              id !== MULTIPLE_ELEMENTS_WRAPPER &&
               !e.shiftKey && movingTo === CANVAS
             ) {
               // if user selects something before append those to the real dom
 
               /**
-               * this makes a clone of elemnts in wrapper and
+               * this makes a clone of elements in wrapper and
                * append them to there original place like (CANVAS & page)
                *
                */
@@ -1310,11 +1395,11 @@ function App() {
             }
 
             /**
-             * this is the component who register the element selected if the elemnt is not the exception
+             * this is the component who register the element selected if the element is not the exception
              * select is the blue box who follows you when you are selecting the elements in the ui
              */
-            if (e.target.id !== "select" && mode == 'select') {
-              set_seleElement(e.target.id);
+            if (id !== "select" && mode == 'select') {
+              set_seleElement(id);
             }
 
             /**
@@ -1322,12 +1407,12 @@ function App() {
              * this helps to find the difference with cursor and moving object
              * this value is the one who helped as to move the element with respect to referencing point in it
              */
-            if (e.target.id !== CANVAS) {
+            if (id !== CANVAS) {
               // this if statement will be replaced by modes // modes like text, move, select ...
-              if (Elem.id(e.target.id)!.parentElement!.id == CANVAS) {
+              if (Elem.id(id)!.parentElement!.id == CANVAS) {
                 // this is for moving pages, components and anything inside CANVAS but not page
-                const l: number = Style.left(e.target.id);
-                const t: number = Style.top(e.target.id);
+                const l: number = Style.left(id);
+                const t: number = Style.top(id);
                 set_objectCursorDifference({
                   x: e.clientX + scrollLeft - (l + scrollLeft),
                   y: e.clientY + scrollTop - (t + scrollTop),
@@ -1335,11 +1420,11 @@ function App() {
               } else {
                 // this is for moving components only inside a page not inside CANVAS
                 const l: number =
-                  Style.left(e.target.id) -
-                  Style.left(Elem.id(e.target.id)!.parentElement!.id);
+                  Style.left(id) -
+                  Style.left(Elem.id(id)!.parentElement!.id);
                 const t: number =
-                  Style.top(e.target.id) -
-                  Style.top(Elem.id(e.target.id)!.parentElement!.id);
+                  Style.top(id) -
+                  Style.top(Elem.id(id)!.parentElement!.id);
                 set_objectCursorDifference({
                   x: e.clientX + scrollLeft - l,
                   y: e.clientY + scrollTop - t,
@@ -1367,7 +1452,7 @@ function App() {
               set_selectionType("components");
               /**
                * set_startSelectingFrom
-               * identifyes where user needs to start selecting from
+               * identifies where user needs to start selecting from
                */
               set_startSelectingFrom({
                 x: e.clientX + scrollLeft,
@@ -1377,7 +1462,7 @@ function App() {
               /**
                * set_includeSelectingUpto
                * identifies how far selecting includes
-               * or the end of selectiion
+               * or the end of selection
                */
               set_includeSelectingUpto({
                 x: e.clientX + scrollLeft,
@@ -1393,7 +1478,7 @@ function App() {
               set_selectionStarted(true);
               /**
                * this clears the selected components
-               * user's action tells us he needs to ungroup those components
+               * user's action tells us he needs to ungrouped those components
                */
               set_selectedElements([]);
             }
@@ -1407,7 +1492,8 @@ function App() {
                 window.innerHeight
               )
             );
-
+            console.log(visibleComponents)
+            
             // update the position of element state below
             State.update(seleElement, set_elemPosition);
           }}
@@ -1455,20 +1541,6 @@ function App() {
           >
             Click Here
           </button>
-          <h1
-            id="title-1"
-            style={{
-              width: "250px",
-              position: "absolute",
-              top: "10100px",
-              left: "10100px",
-              background: "none",
-              fontSize: "32px",
-              zIndex: 2,
-            }}
-          >
-            I'm The Title Sir
-          </h1>
 
           <div
             id="page-0"
@@ -1494,21 +1566,9 @@ function App() {
                 left: "0px",
                 width: "200px",
               }}
-              src="/cat.jpg"
+              src="https://t4.ftcdn.net/jpg/00/97/58/97/360_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg"
               alt="the image"
             />
-            <div
-            style={{
-              width: '200px',
-              height: '100px',
-              position: 'absolute',
-              top: '10px',
-              left: '10px'
-            }}
-            id="player"
-            >
-
-            </div>
             <img
               style={{
                 zIndex: 3,
@@ -1560,7 +1620,7 @@ function App() {
                 width: "300px",
                 zIndex: 0,
               }}
-              id="titie-inside-page"
+              id="title-inside-page"
             >
               Hello I'm Page
             </h1>
@@ -1592,7 +1652,6 @@ function App() {
             />
           </div>
 
-
           {/* dev components*/}
           {selectionStarted &&
             selectionStarted2 &&
@@ -1623,7 +1682,7 @@ function App() {
 
           {selectedElements.length > 1 && (
             <div
-              id={MULTIPLE_ELMENTS_WRAPPER}
+              id={MULTIPLE_ELEMENTS_WRAPPER}
               style={{
                 position: "absolute",
                 top: Unit.px(multiSelectedElementsWrapperDivStartFrom.y),
@@ -1641,6 +1700,7 @@ function App() {
             ></div>
           )}
         </div>
+
 
         {/* 
       states are a key value pairs of useState hooks list 
@@ -1700,7 +1760,7 @@ function App() {
               </tr>
 
               <tr>
-                <td>includesSeletingUpto</td>
+                <td>includesSelectingUpto</td>
                 <td>
                   X:{includeSelectingUpto.x} <br />
                   Y:{includeSelectingUpto.y}
@@ -1805,8 +1865,12 @@ function App() {
           </table>
         )}
 
+        <div id="components">
+
+        </div>
+
         {9 < 5 && <div
-          id="visible-elments"
+          id="visible-elements"
           style={{
             position: "fixed",
             left: "0px",
@@ -1868,12 +1932,12 @@ function App() {
         )}
 
         {/* those are element feature previewers and decorators */}
-        {!startResizing &&
+        {
           document.getElementById(seleElement) &&
           seleElement !== CANVAS && (
             <div id={DECORATORS}>
               {/* element descriptor */}
-              {!startMovingObject && Elem.id(seleElement) && (
+              {Elem.id(seleElement) && (
                 <div
                   style={{
                     position: "absolute",
@@ -2193,7 +2257,7 @@ function App() {
                       Elem.id(seleElement)?.remove();
                     }
                     // for multiple element delete
-                    else if (seleElement == MULTIPLE_ELMENTS_WRAPPER) {
+                    else if (seleElement == MULTIPLE_ELEMENTS_WRAPPER) {
                       set_selectedElements([]);
                       set_selectionStarted(false);
                       set_selectionStarted2(false);
@@ -2217,6 +2281,15 @@ function App() {
             </p>
             <p onClick={() => console.log(Elem.id(seleElement)?.innerHTML)}>
               HTML <span></span>
+            </p>
+            <p onClick={() => {
+              set_displayRightMenu(!displayRightMenu)
+              set_displayContext(false);
+              }}>
+              Page
+            </p>
+            <p>
+              Prototype
             </p>
           </div>
         )}

@@ -7,7 +7,7 @@
  * @param bottom = scrollTop + window.innerHeight - (other components height such as upper tools)
  */
 
-import { CANVAS, MULTIPLE_ELMENTS_WRAPPER, SELECT } from "../id-storage/constants.config";
+import { CANVAS, MULTIPLE_ELEMENTS_WRAPPER, SELECT } from "../id-storage/constants.config";
 import Elem from "../modules/Elem";
 import Logic from "../modules/Logic";
 import Style from "../modules/Style";
@@ -37,7 +37,7 @@ export default function screenVisibleElements (top: number, left: number, right:
         /**
          * if element exists and it is not one of exceptions this will execute
          */
-        if(Elem.id(id) && id.length > 0 && logic.notInExceptions(id, [ CANVAS, MULTIPLE_ELMENTS_WRAPPER, SELECT ])){
+        if(Elem.id(id) && id.length > 0 && logic.notInExceptions(id, [ CANVAS, MULTIPLE_ELEMENTS_WRAPPER, SELECT ])){
             
             // four positions of elment
             const T = Style.top(id);

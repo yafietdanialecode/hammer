@@ -91,6 +91,7 @@ body, html, #root, #main {
     overflow: scroll;
     padding-bottom: 0vw;
     padding-top: 6vw;
+    z-index: 50000;
 
     button {
       width: 4vw;
@@ -126,10 +127,6 @@ body, html, #root, #main {
         width: 4vw;
         height: 4vw;
       }
-      button:first-child {
-        // border-top-left-radius: 5px;
-        // border-top-right-radius: 5px;
-      }
     }
   }
 
@@ -150,21 +147,23 @@ body, html, #root, #main {
     overflow: auto !important;
     touch-action: none;
     transform: translate3d(0, 0, 0);
-    
+
     * {
-      transition: all, 0ms;
-      cursor: default;
+      background-color: transparent;
+      outline: none;
     }
+
 
     [data-type="video"] {
 
-      overflow: hidden;
+      overflow: auto;
       border-radius: 10px;
 
       * {
         pointer-events: none;
         width: 100%;
         height: 100%;
+        transition: all, 0ms;
       }
     }
     
@@ -180,6 +179,7 @@ body, html, #root, #main {
   top: 0;
   left: 0;
   z-index: 50000;
+  transition: 0;
 }
 
 /*
@@ -244,14 +244,120 @@ body, html, #root, #main {
       }
      }
      p:hover {
-      background: black;
+      background-color: rgb(243, 243, 243);
+      color: black;
+      i {
+        background-color: transparent;
+        color: black;
+      }
+     }
+     p.selected:first-of-type {
+      background-color: black;
       color: white;
       i {
-        background-color: black;
-        color: rgb(255, 255, 255);
+        color: white;
+        background: black;
       }
      }
 
+  }
+
+  #preview {
+    width: 400px;
+    height: 700px;
+    background-color: white;
+    position: absolute;
+    top: 12vh;
+    left: 6vw;
+    overflow: scroll;
+    overflow-x: hidden;
+  }
+
+
+  #right-menu {
+    position: fixed;
+    width: 25vw;
+    height: 80vh;
+    top: 12vh;
+    right: 1vw;
+    border-radius: 1vw;
+    background-color: white;
+    overflow: auto;
+    z-index: 50000;
+    padding: 1vw;
+
+    h1 {
+      font-size: 2vw;
+      // border-bottom: 1px solid silver;
+      padding: 1%;
+
+      sup.page {
+      font-size: 0.7vw;
+      padding: 0.3vw 0.6vw;
+      background: rgb(121, 121, 121);
+      color: white;
+      border-radius: 2vw;
+    }
+    }
+    
+    p {
+      padding: 2%;
+      font-size: 1vw;
+      display: flex;
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      width: 100%;
+      
+      input, textarea {
+        color: rgb(0, 0, 0);
+        border-bottom: 1px solid gray;
+        padding: 0.3vw;
+        font-size: 1vw;
+        width: 13vw;
+      }
+      textarea {
+        resize: vertical;
+      }
+    }
+
+    button {
+      font-size: 1vw;
+      background: rgb(0, 0, 0);
+      color: white;
+      padding: 0.5vw 1vw;
+      border-radius: 0.2vw;
+      margin: 1vw;
+      position: absolute;
+      bottom: 0vw;
+      right: 0vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: -moz-fit-content;
+      width: fit-content;
+      column-gap: 0.1vw;
+    }
+
+    button.saved {
+      background-color: rgb(78, 78, 78);
+      color: white;
+      * {
+        background-color: transparent;
+        color: white;
+        margin: 0px;
+        padding: 0px;
+      }
+    }
+
+    button.close {
+      background-color: white;
+      color: black;
+      * {
+        background-color: transparent;
+        color: black;
+      }
+    }
   }
 
   /*
@@ -321,7 +427,7 @@ body, html, #root, #main {
     }
   }
   p:hover {
-    background-color: rgba(226, 226, 226, 0.329);
+    background-color: rgb(243, 243, 243);
   }
   p:active {
     background-color: rgba(255, 255, 255, 0.329);

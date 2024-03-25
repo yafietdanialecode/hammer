@@ -1,4 +1,4 @@
-export const MULTIPLE_ELMENTS_WRAPPER = 'selected-elements-wrapper';
+export const MULTIPLE_ELEMENTS_WRAPPER = 'selected-elements-wrapper';
 export const CANVAS = 'canvas';
 export const SELECT = 'select';
 export const TOP_RESIZE = 'top-resize';

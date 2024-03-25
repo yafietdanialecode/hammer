@@ -50,6 +50,10 @@ export default class Component {
             // if page
             if(isPage)
                 return "Page"
+            // if video
+            if(Elem.id(id)!.getAttribute('data-type') == 'video'){
+                return 'Video'
+            }
 
         // if none of them handle this component
         return tagName.toLocaleUpperCase();

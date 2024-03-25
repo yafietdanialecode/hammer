@@ -91,6 +91,7 @@ body, html, #root, #main {
   overflow: scroll;
   padding-bottom: 0vw;
   padding-top: 6vw;
+  z-index: 50000;
 }
 #main #left-tools button {
   width: 4vw;
@@ -138,17 +139,18 @@ body, html, #root, #main {
   */
 }
 #main #canvas * {
-  transition: all, 0ms;
-  cursor: default;
+  background-color: transparent;
+  outline: none;
 }
 #main #canvas [data-type=video] {
-  overflow: hidden;
+  overflow: auto;
   border-radius: 10px;
 }
 #main #canvas [data-type=video] * {
   pointer-events: none;
   width: 100%;
   height: 100%;
+  transition: all, 0ms;
 }
 #main #canvas #select, #main #canvas #selected-elements-wrapper {
   width: 0px;
@@ -159,6 +161,7 @@ body, html, #root, #main {
   top: 0;
   left: 0;
   z-index: 50000;
+  transition: 0;
 }
 #main #canvas #selected-elements-wrapper {
   border: none;
@@ -214,12 +217,108 @@ body, html, #root, #main {
   color: rgb(0, 0, 0);
 }
 #main #add-new-element p:hover {
-  background: black;
-  color: white;
+  background-color: rgb(243, 243, 243);
+  color: black;
 }
 #main #add-new-element p:hover i {
+  background-color: transparent;
+  color: black;
+}
+#main #add-new-element p.selected:first-of-type {
   background-color: black;
-  color: rgb(255, 255, 255);
+  color: white;
+}
+#main #add-new-element p.selected:first-of-type i {
+  color: white;
+  background: black;
+}
+#main #preview {
+  width: 400px;
+  height: 700px;
+  background-color: white;
+  position: absolute;
+  top: 12vh;
+  left: 6vw;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+#main #right-menu {
+  position: fixed;
+  width: 25vw;
+  height: 80vh;
+  top: 12vh;
+  right: 1vw;
+  border-radius: 1vw;
+  background-color: white;
+  overflow: auto;
+  z-index: 50000;
+  padding: 1vw;
+}
+#main #right-menu h1 {
+  font-size: 2vw;
+  padding: 1%;
+}
+#main #right-menu h1 sup.page {
+  font-size: 0.7vw;
+  padding: 0.3vw 0.6vw;
+  background: rgb(121, 121, 121);
+  color: white;
+  border-radius: 2vw;
+}
+#main #right-menu p {
+  padding: 2%;
+  font-size: 1vw;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+}
+#main #right-menu p input, #main #right-menu p textarea {
+  color: rgb(0, 0, 0);
+  border-bottom: 1px solid gray;
+  padding: 0.3vw;
+  font-size: 1vw;
+  width: 13vw;
+}
+#main #right-menu p textarea {
+  resize: vertical;
+}
+#main #right-menu button {
+  font-size: 1vw;
+  background: rgb(0, 0, 0);
+  color: white;
+  padding: 0.5vw 1vw;
+  border-radius: 0.2vw;
+  margin: 1vw;
+  position: absolute;
+  bottom: 0vw;
+  right: 0vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: -moz-fit-content;
+  width: fit-content;
+  -moz-column-gap: 0.1vw;
+       column-gap: 0.1vw;
+}
+#main #right-menu button.saved {
+  background-color: rgb(78, 78, 78);
+  color: white;
+}
+#main #right-menu button.saved * {
+  background-color: transparent;
+  color: white;
+  margin: 0px;
+  padding: 0px;
+}
+#main #right-menu button.close {
+  background-color: white;
+  color: black;
+}
+#main #right-menu button.close * {
+  background-color: transparent;
+  color: black;
 }
 #main #states {
   width: -moz-fit-content;
@@ -269,7 +368,7 @@ body, html, #root, #main {
   color: rgb(116, 116, 116);
 }
 #context-menu p:hover {
-  background-color: rgba(226, 226, 226, 0.329);
+  background-color: rgb(243, 243, 243);
 }
 #context-menu p:active {
   background-color: rgba(255, 255, 255, 0.329);
