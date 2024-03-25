@@ -1391,7 +1391,7 @@ function App() {
                 element.setAttribute('contenteditable', 'true')
                 setTimeout(() => focusOn(new_id), 100)
                 set_textEditingModeEnabled(true)
-              }else {
+              }else if(mode == 'text') {
               Elem.id(id)!.setAttribute('contenteditable', 'false');  
               set_textEditingModeEnabled(false);
               set_mode('select')
