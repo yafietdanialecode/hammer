@@ -14,6 +14,7 @@ import Style from "./modules/Style";
 import { getCIArea } from "./modules/getCIArea";
 import Logic from "./modules/Logic";
 import Component from "./modules/Component";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import {
   BOTTOM_RESIZE,
   CANVAS,
@@ -635,6 +636,7 @@ function App() {
 
   return (
     <>
+    <SpeedInsights />
       <div
         id={MAIN}
         tabIndex={-1}
@@ -2356,7 +2358,7 @@ function App() {
             </p>
           </div>
         )}
-      </div>
+      </div>  
     </>
   );
 }
