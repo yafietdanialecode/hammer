@@ -1,8 +1,11 @@
+'use strict';
+
 import express, { Express } from 'express';
 import MainTest from './main.test';
 import cors from 'cors';
 import { env } from 'process';
 import dotenv from 'dotenv';
+console.clear();
 // initialization
 dotenv.config(); // dot env config before every thing
 const app: Express = express(); // express app instance
@@ -12,7 +15,7 @@ const { DEV_PROTOCOL,
         PRO_PROTOCOL,
         PRO_PORT,
         PRO_HOST 
-      } = env; // our environment variables
+      }: any = env; // our environment variables
 const ENVIRONMENT = process.argv[2] ? process.argv[2] : 'UNKNOWN';
 
 // checking for every test validations
@@ -39,3 +42,12 @@ if(ENVIRONMENT !== "PRO" && ENVIRONMENT !== "DEV"){
 
 
 // If environment checks passed codes below run
+if(ENVIRONMENT === 'PRO')
+{
+    console.log('running the server for production environment')
+    app.listen(PRO_PORT, PRO_HOST, () => console.log(`🚀 server listening on: ${PRO_PROTOCOL}://${PRO_HOST}:${PRO_PORT}`))
+}else if(ENVIRONMENT === 'DEV')
+{
+    console.log('running the server for development environment')
+    app.listen(DEV_PORT, DEV_HOST, () => console.log(`🚀 server listening on: ${DEV_PROTOCOL}://${DEV_HOST}:${DEV_PORT}`))    
+}

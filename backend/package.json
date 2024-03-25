@@ -5,8 +5,8 @@
   "main": "./src/main.ts",
   "scripts": {
     "test": "jest",
-    "dev": "nodemon ./bin/main.js",
-    "start": "tsc & node ./bin/main.js"
+    "dev": "concurrently \"tsc\" \"tsc -w\" \"nodemon ./bin/main.js\"",
+    "start": "tsx ./src/main.ts"
   },
   "keywords": [],
   "type": "module",

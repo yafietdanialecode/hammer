@@ -202,10 +202,16 @@ function App() {
         x: e.clientX + scrollLeft,
         y: e.clientY + scrollTop,
       });
+      Elem.id(seleElement)!.style.outline = 'none';
     }
   });
 
   window.onmouseup = (e: any) => {
+
+    // outline cleaner
+    if(Elem.id(seleElement)!.parentElement!.id !== CANVAS){
+      Elem.id(seleElement)!.style.outline = 'none';
+    }
 
     // if user was moving the canvas
     if(mode === 'move'){
@@ -238,6 +244,7 @@ function App() {
       // moving single component features below
       
       const parent = Elem.id(seleElement)!.parentElement!.id;
+      Elem.id(seleElement)!.style.outline = "1px solid rgb(107, 154, 255)";
 
       if (
         seleElement &&
@@ -252,6 +259,7 @@ function App() {
           Elem.id(seleElement)!.getAttribute("data-type") !== "page"
           && seleElement !== MULTIPLE_ELEMENTS_WRAPPER
         ) {
+          Elem.id(seleElement)!.style.outline = 'none';
           const clone: any = Elem.id(seleElement)!.cloneNode(true);
           clone.style.top = Unit.px(
             Style.top(seleElement) - Style.top(movingTo)
@@ -938,6 +946,7 @@ function App() {
             if (res.length == 1) {
               // this means user selected one element only
               set_seleElement(res[0]);
+              Elem.id(res[0])!.style.outline = '1px solid rgb(107, 154, 255)';
             } else if (res.length > 1) {
               // this means user selected multiple elements only
 
@@ -1263,20 +1272,6 @@ function App() {
            */
           draggable={false}
           
-          // this is for indicating element existence
-          onMouseOver={(e: any) => {
-            if(e.target.id !== seleElement && mode === 'select'){
-              // Elem.id(e.target.id)!.style.outline = '1px solid rgb(107, 154, 255)';
-            }
-          }}
-
-          onMouseOut={(e: any) => {
-            if(mode == 'select'){
-              Elem.id(e.target.id)!.style.outline = 'none';
-            }
-          }}
-
-          
           onMouseDown={(e: any) => {
 
             const id = e.target.id == '' ? e.target.parentElement.id : e.target.id;
@@ -1286,30 +1281,31 @@ function App() {
             set_startMovingFeature(true);
             }
             
+            // outline element
+            if(Elem.id(id)!.parentElement!.id == CANVAS){
+              Elem.id(id)!.style.outline = '1px solid rgb(107, 154, 255)';
+            }
+            if(id !== seleElement){
+              Elem.id(seleElement)!.style.outline = 'none';
+            }
+            
             // text editing mode
             if(
               logic.notInExceptions(id, [ CANVAS, MULTIPLE_ELEMENTS_WRAPPER ]) 
               && 
               Elem.id(id)!.getAttribute('data-type') !== PAGES_DATATYPE
               &&
-              mode !== 'move'
+              mode == 'text'
               &&
               Component.name(Elem.id(id)!) !== 'Button'
               &&
               Component.name(Elem.id(id)!) !== 'Video'
               ){
               // if user needs to edit text
-            if(mode == 'text'){
               Elem.id(id)!.setAttribute('contenteditable', 'true')
               set_textEditingModeEnabled(true);
             }else {
-              Elem.id(id)!.setAttribute('contenteditable', 'false');
-              Elem.id(seleElement)!.setAttribute('contenteditable', 'false');
-              set_mode('select')
-              set_textEditingModeEnabled(false);
-            }
-            }else {
-              if(mode == 'text'){
+              if(mode == 'text' && !textEditingModeEnabled){
                 Elem.id(seleElement)!.setAttribute('contenteditable', 'false');
                 Elem.id(id)!.setAttribute('contenteditable', 'false');
                 set_mode('select');
@@ -1319,7 +1315,12 @@ function App() {
                 const new_id = 'p' + Date.now();
                 element.style.position = 'absolute';
                 element.style.width = 'fit-content';
+                element.style.height = 'fit-content';
+                element.style.overflow = 'auto';
+                element.style.lineBreak = 'no-break';
                 element.style.background = 'none';
+                element.style.outline = '1px solid rgb(107, 154, 255)'
+
 
                 if(id === CANVAS){
                   element.style.top = Unit.px(e.clientY + scrollTop);
@@ -1334,7 +1335,10 @@ function App() {
                 element.setAttribute('contenteditable', 'true')
                 setTimeout(() => focusOn(new_id), 100)
                 set_textEditingModeEnabled(true)
-              }
+              }else {
+              Elem.id(id)!.setAttribute('contenteditable', 'false');  
+              set_textEditingModeEnabled(false);
+            }
             }
 
             // ui effect on cursor
@@ -1996,7 +2000,7 @@ function App() {
                     zIndex: 30,
                     background: 'transparent',
                     cursor: "ns-resize",
-                    transform: 'scaleY(20)'
+                    transform: 'scaleY(5)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("top");
@@ -2022,7 +2026,7 @@ function App() {
                     zIndex: 30,
                     background: 'transparent',
                     cursor: "ew-resize",
-                    transform: 'scaleX(20)'
+                    transform: 'scaleX(5)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("right");
@@ -2048,7 +2052,7 @@ function App() {
                     zIndex: 30,
                     background: 'transparent',
                     cursor: "ns-resize",
-                    transform: 'scaleY(20)'
+                    transform: 'scaleY(5)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("bottom");
@@ -2071,7 +2075,7 @@ function App() {
                     zIndex: 30,
                     background: 'transparent',
                     cursor: "ew-resize",
-                    transform: 'scaleX(20)'
+                    transform: 'scaleX(5)'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("left");
@@ -2181,8 +2185,11 @@ function App() {
               )}
 
 
-              {/* top position of the element indicator */}
-              <div
+              {/* position indicators will be shown if element is inside the page */}
+
+              {Elem.id(seleElement)!.parentElement!.id !== CANVAS && <>
+                            {/* top position of the element indicator */}
+                            <div
               style={{
                 position: 'absolute',
                 background: "rgb(107, 154, 255)",
@@ -2228,8 +2235,8 @@ function App() {
                 left: Unit.px(Style.left(seleElement) + Style.width(seleElement))
               }}
               />
+              </>}
 
-            
             </div>
           )}
 

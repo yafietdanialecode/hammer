@@ -153,7 +153,6 @@ body, html, #root, #main {
       outline: none;
     }
 
-
     [data-type="video"] {
 
       overflow: auto;
@@ -188,12 +187,13 @@ body, html, #root, #main {
 */
 #selected-elements-wrapper {
   border: none;
-  // background-color: rgba(131, 170, 255, 0.349);
+  outline: 1px solid rgb(107, 154, 255) !important;
   background-color: transparent;
   position: absolute !important;
 
    * {
     pointer-events: none;
+    outline: 1px solid rgb(107, 154, 255) !important;
    }
 }
 

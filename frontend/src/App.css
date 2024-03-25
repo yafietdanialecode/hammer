@@ -165,11 +165,13 @@ body, html, #root, #main {
 }
 #main #canvas #selected-elements-wrapper {
   border: none;
+  outline: 1px solid rgb(107, 154, 255) !important;
   background-color: transparent;
   position: absolute !important;
 }
 #main #canvas #selected-elements-wrapper * {
   pointer-events: none;
+  outline: 1px solid rgb(107, 154, 255) !important;
 }
 #main #canvas [data-type=page] {
   overflow: hidden;
