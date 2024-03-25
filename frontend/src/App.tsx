@@ -538,15 +538,8 @@ function App() {
       // mode switch
       switch(e.key){
         case 't':
-          if(mode == 'text'){
-            set_mode('');
-            set_cursorStyle('default');
-            set_textEditingModeEnabled(false);
-          }else {
             set_mode('text');
             set_cursorStyle('text');
-            set_textEditingModeEnabled(true);
-          }
           set_seleElement('');
         break;
         case 'v':
