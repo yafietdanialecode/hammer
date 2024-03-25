@@ -14,7 +14,7 @@ import Style from "./modules/Style";
 import { getCIArea } from "./modules/getCIArea";
 import Logic from "./modules/Logic";
 import Component from "./modules/Component";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import {
   BOTTOM_RESIZE,
   CANVAS,
@@ -636,7 +636,6 @@ function App() {
 
   return (
     <>
-    <SpeedInsights />
       <div
         id={MAIN}
         tabIndex={-1}
@@ -1096,6 +1095,7 @@ function App() {
           }
         }}
       >
+        <SpeedInsights />
         {/* bottom mode changes */}
         <div id={LEFT_TOOLS}>
           <div
