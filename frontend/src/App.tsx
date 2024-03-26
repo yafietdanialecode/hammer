@@ -252,7 +252,7 @@ function App() {
       // moving single component features below
       
       const parent = Elem.id(seleElement)!.parentElement!.id;
-      Elem.id(seleElement)!.style.outline = "1px solid rgb(107, 154, 255)";
+      Elem.id(seleElement)!.style.outline = "0.1vw solid rgb(107, 154, 255)";
 
       if (
         seleElement &&
@@ -533,6 +533,14 @@ function App() {
         }
         set_clipboard(new_clipboard);
         console.log('copied', Elem.id(seleElement)!.cloneNode(true));
+        // if child elements have id
+        let counter = 1;
+        Elem.id(seleElement)!.querySelectorAll('*').forEach((each: any) => {
+          if(each.id.length > 0){
+            each.id = Date.now() + counter;
+          }
+          counter++;
+        })
       }
 
       /**
@@ -993,7 +1001,7 @@ function App() {
             if (res.length == 1) {
               // this means user selected one element only
               set_seleElement(res[0]);
-              Elem.id(res[0])!.style.outline = '1px solid rgb(107, 154, 255)';
+              Elem.id(res[0])!.style.outline = '0.1vw solid rgb(107, 154, 255)';
             } else if (res.length > 1) {
               // this means user selected multiple elements only
 
@@ -1095,6 +1103,7 @@ function App() {
           }
         }}
       >
+
         <SpeedInsights />
         {/* bottom mode changes */}
         <div id={LEFT_TOOLS}>
@@ -1331,7 +1340,7 @@ function App() {
             
             // outline element
             if(Elem.id(id)!.parentElement!.id == CANVAS && mode == 'select'){
-              Elem.id(id)!.style.outline = '1px solid rgb(107, 154, 255)';
+              Elem.id(id)!.style.outline = '0.1vw solid rgb(107, 154, 255)';
             }
             if(id !== seleElement){
               Elem.id(seleElement)!.style.outline = 'none';
@@ -1375,7 +1384,7 @@ function App() {
                 element.style.overflow = 'auto';
                 element.style.lineBreak = 'no-break';
                 element.style.background = 'none';
-                element.style.outline = '1px solid rgb(107, 154, 255)'
+                element.style.outline = '0.1vw solid rgb(107, 154, 255)'
 
 
                 if(id === CANVAS){
@@ -1553,7 +1562,6 @@ function App() {
                 window.innerHeight
               )
             );
-            console.log(visibleComponents)
             
             // update the position of element state below
             State.update(seleElement, set_elemPosition);
@@ -1712,6 +1720,36 @@ function App() {
             />
           </div>
 
+
+ {/* align indicators */}
+
+ <div 
+              style={{
+                background: 'rgba(255, 0, 0, 0.5)',
+                zIndex: 5000,
+                width: '1px',
+                height: '2000px',
+                position: 'absolute',
+                top: '10500px',
+                left: '10500px'
+              }}
+          />
+          <div
+
+              style={{
+                background: 'rgba(255, 0, 0, 1)',
+                zIndex: 5000,
+                width: '5px',
+                height: '5px',
+                position: 'absolute',
+                top: '10498px',
+                left: '10498px',
+                borderRadius: '50%'
+              }}
+              id='indicator'
+          />
+
+
           {/* dev components*/}
           {selectionStarted &&
             selectionStarted2 &&
@@ -1761,6 +1799,7 @@ function App() {
           )}
         </div>
 
+         
 
         {/* 
       states are a key value pairs of useState hooks list 
@@ -1995,7 +2034,8 @@ function App() {
         {
           (document.getElementById(seleElement) &&
           seleElement !== CANVAS &&
-          !startMovingObject
+          !startMovingObject &&
+          !startResizing
           ) && (
             <div id={DECORATORS}>
               {/* element descriptor */}
@@ -2003,15 +2043,16 @@ function App() {
                 <div
                   style={{
                     position: "absolute",
-                    top: Unit.px(Style.top(seleElement) - 15),
+                    top: `calc(${Style.top(seleElement)}px - 1.5vw)`,
                     left: Unit.px(Style.left(seleElement)),
-                    width: "100px",
-                    height: "6px",
+                    width: "fit-content",
+                    height: "fit-content",
                     zIndex: 30,
-                    borderRadius: "50px",
                     background: "transparent",
-                    color: "rgb(107, 154, 255)",
-                    fontSize: "12px",
+                    fontSize: "0.9vw",
+                    color: 'rgb(107, 154, 255)',
+                    padding: '3px',
+                    borderRadius: '5px'
                   }}
                 >
                   {Component.name(Elem.id(seleElement)!)}
@@ -2152,14 +2193,15 @@ function App() {
                   id="topleft-resize"
                   style={{
                     position: "absolute",
-                    top: Unit.px(Style.top(seleElement) - 3),
-                    left: Unit.px(Style.left(seleElement) - 3),
-                    width: "6px",
-                    height: "6px",
+                    top: `calc(${Style.top(seleElement)}px - 0.25vw)`,
+                    left: `calc(${Style.left(seleElement)}px - 0.25vw)`,
+                    width: "0.5vw",
+                    height: "0.5vw",
                     zIndex: 30,
-                    background: 'transparent',
+                    background: 'white',
                     cursor: "nw-resize",
-                    transform: 'scale(5)'
+                    outline: '0.1vw solid rgb(107, 154, 255)',
+                    borderRadius: '0.05vw'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("top-left");
@@ -2178,14 +2220,15 @@ function App() {
                   id="topright-resize"
                   style={{
                     position: "absolute",
-                    top: Unit.px(Style.top(seleElement) - 3),
-                    left: Unit.px(Style.right(seleElement) - 3),
-                    width: "6px",
-                    height: "6px",
+                    top: `calc(${Style.top(seleElement)}px - 0.25vw)`,
+                    left: `calc(${Style.right(seleElement)}px - 0.25vw)`,
+                    width: "0.5vw",
+                    height: "0.5vw",
                     zIndex: 30,
-                    background: 'transparent',
+                    background: 'white',
+                    outline: '0.1vw solid rgb(107, 154, 255)',
                     cursor: "ne-resize",
-                    transform: 'scale(5)'
+                    borderRadius: '0.05vw'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("top-right");
@@ -2201,14 +2244,15 @@ function App() {
                   id="bottomright-resize"
                   style={{
                     position: "absolute",
-                    top: Unit.px(Style.bottom(seleElement) - 3),
-                    left: Unit.px(Style.right(seleElement) - 3),
-                    width: "6px",
-                    height: "6px",
+                    top: `calc(${Style.bottom(seleElement)}px - 0.25vw)`,
+                    left: `calc(${Style.right(seleElement)}px - 0.25vw)`,
+                    width: "0.5vw",
+                    height: "0.5vw",
                     zIndex: 30,
-                    background: 'transparent',
+                    background: 'white',
+                    outline: '0.1vw solid rgb(107, 154, 255)',
                     cursor: "nw-resize",
-                    transform: 'scale(5)'
+                    borderRadius: '0.05vw'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("bottom-right");
@@ -2224,15 +2268,15 @@ function App() {
                   id="bottomleft-resize"
                   style={{
                     position: "absolute",
-                    top: Unit.px(Style.bottom(seleElement) - 3),
-                    left: Unit.px(Style.left(seleElement) - 3),
-                    width: "6px",
-                    height: "6px",
+                    top: `calc(${Style.bottom(seleElement)}px - 0.25vw)`,
+                    left: `calc(${Style.left(seleElement)}px - 0.25vw)`,
+                    width: "0.5vw",
+                    height: "0.5vw",
                     zIndex: 30,
-                    // background: "rgb(107, 154, 255)",
-                    background: 'transparent',
+                    background: 'white',
+                    outline: '0.1vw solid rgb(107, 154, 255)',
                     cursor: "ne-resize",
-                    transform: 'scale(5)'
+                    borderRadius: '0.05vw'
                   }}
                   onMouseDown={() => {
                     set_whatToResize("bottom-left");
@@ -2253,7 +2297,7 @@ function App() {
                 background: "rgb(107, 154, 255)",
                 width: Unit.px(Style.width(seleElement)),
                 top: Unit.px(Style.top(seleElement)),
-                height: '1px',
+                height: '0.1vw',
                 left: Unit.px(Style.left(seleElement))
               }}
               />
@@ -2263,7 +2307,7 @@ function App() {
               style={{
                 position: 'absolute',
                 background: "rgb(107, 154, 255)",
-                width: '1px',
+                width: '0.1vw',
                 top: Unit.px(Style.top(seleElement)),
                 height: Unit.px(Style.height(seleElement)),
                 left: Unit.px(Style.left(seleElement))
@@ -2277,7 +2321,7 @@ function App() {
                 background: "rgb(107, 154, 255)",
                 width: Unit.px(Style.width(seleElement)),
                 top: Unit.px(Style.top(seleElement) + Style.height(seleElement) - 1),
-                height: '1px',
+                height: '0.1vw',
                 left: Unit.px(Style.left(seleElement))
               }}
               />
@@ -2287,16 +2331,21 @@ function App() {
               style={{
                 position: 'absolute',
                 background: "rgb(107, 154, 255)",
-                width: '1px',
+                width: '0.1vw',
                 top: Unit.px(Style.top(seleElement)),
                 height: Unit.px(Style.height(seleElement)),
                 left: Unit.px(Style.left(seleElement) + Style.width(seleElement))
               }}
               />
+
               </>}
 
             </div>
           )}
+
+
+
+        
 
         {/* context menu */}
         {displayContext && Elem.id(seleElement) && (
@@ -2358,6 +2407,10 @@ function App() {
             </p>
           </div>
         )}
+
+
+            
+
       </div>  
     </>
   );
