@@ -7,13 +7,13 @@ import {
 } from "react";
 import "./config.css";
 import "./App.css";
-import Elem from "./modules/Elem";
-import Unit from "./modules/unit";
-import Scroll from "./modules/scroll";
-import Style from "./modules/Style";
-import { getCIArea } from "./modules/getCIArea";
-import Logic from "./modules/Logic";
-import Component from "./modules/Component";
+import Elem from "./lib/modules/Elem";
+import Unit from "./lib/modules/unit";
+import Scroll from "./lib/modules/scroll";
+import Style from "./lib/modules/Style";
+import { getCIArea } from "./lib/modules/getCIArea";
+import Logic from "./lib/modules/Logic";
+import Component from "./lib/modules/Component";
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import {
   BOTTOM_RESIZE,
@@ -29,19 +29,20 @@ import {
   STATES,
   TOP_RESIZE,
   UPPER_TOOLS,
-} from "./id-storage/constants.config";
-import screenVisibleElements from "./scope/screenVisibleElements";
-import State from "./modules/State";
-import focusOn from "./modules/Focus";
+} from "./lib/id-storage/constants.config";
+import screenVisibleElements from "./lib/scope/screenVisibleElements";
+import State from "./lib/modules/State";
+import focusOn from "./lib/modules/Focus";
 import UnitClassTest from "./test/UnitClass.test";
 import { componentsData } from "./lib/components-data";
+import ED from "./lib/element-delete";
 
 
 
 
 function App() {
   
-  const [mode, set_mode] = useState('select')
+  const [mode, set_mode] = useState('move')
   
   // indicates how much user scrolled
   const [scrollTop, set_scrollTop] = useState(0);
@@ -83,7 +84,7 @@ function App() {
     const [elemPosition, set_elemPosition] = useState({ t: 0, r: 0, b: 0, l: 0, h: 0, w: 0})
 
   // cursor based
-  const [cursorStyle, set_cursorStyle] = useState("default");
+  const [cursorStyle, set_cursorStyle] = useState("grab");
 
   // movement
   const [startMovingObject, set_startMovingObject] = useState(false);
@@ -197,6 +198,11 @@ function App() {
   // when mouse move in the whole window
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   window.addEventListener("mousemove", (e: any) => {
+
+
+    // graphics functionality in the ui
+    // if(Logic.)
+
     // update mouse position every time
     set_mousePosition({ x: e.clientX, y: e.clientY });
 
@@ -498,27 +504,8 @@ function App() {
        * to delete element by pressing del key in laptop
        */
       if (e.key == "Delete") {
-        if (selectedElements.length < 2 && logic.notInExceptions(seleElement, [ CANVAS, MULTIPLE_ELEMENTS_WRAPPER ])) {
-          Elem.id(seleElement)!.remove();
-          set_seleElement(CANVAS);
-          Elem.id(CANVAS)!.focus({ preventScroll: true });
-        } else if(selectedElements.length > 1) {
-          selectedElements.map((each: string) => {
-            if (
-              Elem.id(each) &&
-              each.length > 0 &&
-              logic.CANVA_ELEMENT_EXCEPTION.every(
-                (id: string) => id !== each
-              )
-            ) {
-              Elem.id(each)?.remove();
-            }
-          });
-          set_seleElement(CANVAS);
-          set_selectedElements([]);
-          set_selectionStarted2(false);
-          set_selectionStarted(false);
-        }
+        ED.rm(seleElement, CANVAS, set_seleElement);
+        ED.rmm(selectedElements, CANVAS, set_seleElement, set_selectedElements);
       }
 
       /**
@@ -1262,7 +1249,7 @@ function App() {
 
         {/* page configuration editing */}
         <h1>{Elem.id(seleElement)!.getAttribute('data-name')} <sup className="page">page</sup></h1>
-        <p>ID: <input disabled value={page_id} type="text"/></p>
+        <label>ID: <input disabled value={page_id} type="text"/></label>
         <p>Title: <input type="text"
         value={title} placeholder={'ex: Home | AMCE'}
         onChange={(e: any) => {
@@ -1317,7 +1304,7 @@ function App() {
         <div
           id={CANVAS}
           style={{
-            cursor: cursorStyle + ' !important',
+            cursor: cursorStyle,
           }}
           /**
            * tabIndex is assigned to -1 to make it focusable element for
