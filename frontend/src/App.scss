@@ -153,6 +153,10 @@ body, html, #root, #main {
       outline: none;
     }
 
+    *:active {
+      outline: none;
+    }
+
     [data-type="video"] {
 
       overflow: auto;
@@ -377,6 +381,10 @@ body, html, #root, #main {
   
   th, td {
     padding: 5px;
+    font-size: 10px;
+    background-color: black;
+    color: white;
+    border-bottom: 1px solid rgb(53, 53, 53);
   }
 
   #decorators {

@@ -210,7 +210,7 @@ function App() {
      * when user selects in component mode
      * this decides how inclusive the selected range or zone will be
      */
-    if (selectionStarted && !startMovingObject) {
+    if (selectionStarted && !startMovingObject && mode == 'select') {
       set_selectionStarted2(true);
       set_includeSelectingUpto({
         x: e.clientX + scrollLeft,
@@ -220,7 +220,7 @@ function App() {
     }
   });
 
-  window.onmouseup = (e: any) => {
+  window.onmouseup = () => {
 
     // outline cleaner
     if(Elem.id(seleElement)!.parentElement!.id !== CANVAS){
@@ -249,135 +249,135 @@ function App() {
       focusOn(seleElement);
     }
 
-    /**
-     * the code inside the next if statement is a feature for migrating
-     * a child of page to CANVAS or to page and a child of CANVAS to page
-     */
-    // when user releases the mouse
-    if (movingFrom !== movingTo && startMovingObject) {
-      // moving single component features below
+    // /**
+    //  * the code inside the next if statement is a feature for migrating
+    //  * a child of page to CANVAS or to page and a child of CANVAS to page
+    //  */
+    // // when user releases the mouse
+    // if (movingFrom !== movingTo && startMovingObject) {
+    //   // moving single component features below
       
-      const parent = Elem.id(seleElement)!.parentElement!.id;
-      Elem.id(seleElement)!.style.outline = "0.1vw solid rgb(107, 154, 255)";
+    //   const parent = Elem.id(seleElement)!.parentElement!.id;
+    //   Elem.id(seleElement)!.style.outline = "0.1vw solid rgb(107, 154, 255)";
 
-      if (
-        seleElement &&
-        selectedElements.length < 2 &&
-        seleElement !== MULTIPLE_ELEMENTS_WRAPPER
-      ) {
-        /* moving single component from CANVAS > page
-         */
-        if (
-          movingFrom == CANVAS &&
-          movingTo != CANVAS &&
-          Elem.id(seleElement)!.getAttribute("data-type") !== "page"
-          && seleElement !== MULTIPLE_ELEMENTS_WRAPPER
-        ) {
-          Elem.id(seleElement)!.style.outline = 'none';
-          const clone: any = Elem.id(seleElement)!.cloneNode(true);
-          clone.style.top = Unit.px(
-            Style.top(seleElement) - Style.top(movingTo)
-          );
-          clone.style.left = Unit.px(
-            Style.left(seleElement) - Style.left(movingTo)
-          );
-          Elem.id(seleElement)?.remove();
-          Elem.id(movingTo)?.append(clone);
-        }
-        // moving single component from page > canvas
-        if (
-          movingFrom !== CANVAS &&
-          movingTo == CANVAS &&
-          Elem.id(seleElement)!.getAttribute("data-type") !== "page"
-          && seleElement !== MULTIPLE_ELEMENTS_WRAPPER
-        ) {
-          const clone: any = Elem.id(seleElement)!.cloneNode(true);
+    //   if (
+    //     seleElement &&
+    //     selectedElements.length < 2 &&
+    //     seleElement !== MULTIPLE_ELEMENTS_WRAPPER
+    //   ) {
+    //     /* moving single component from CANVAS > page
+    //      */
+    //     if (
+    //       movingFrom == CANVAS &&
+    //       movingTo != CANVAS &&
+    //       Elem.id(seleElement)!.getAttribute("data-type") !== "page"
+    //       && seleElement !== MULTIPLE_ELEMENTS_WRAPPER
+    //     ) {
+    //       Elem.id(seleElement)!.style.outline = 'none';
+    //       const clone: any = Elem.id(seleElement)!.cloneNode(true);
+    //       clone.style.top = Unit.px(
+    //         Style.top(seleElement) - Style.top(movingTo)
+    //       );
+    //       clone.style.left = Unit.px(
+    //         Style.left(seleElement) - Style.left(movingTo)
+    //       );
+    //       Elem.id(seleElement)?.remove();
+    //       Elem.id(movingTo)?.append(clone);
+    //     }
+    //     // moving single component from page > canvas
+    //     if (
+    //       movingFrom !== CANVAS &&
+    //       movingTo == CANVAS &&
+    //       Elem.id(seleElement)!.getAttribute("data-type") !== "page"
+    //       && seleElement !== MULTIPLE_ELEMENTS_WRAPPER
+    //     ) {
+    //       const clone: any = Elem.id(seleElement)!.cloneNode(true);
 
-          clone.style.top = Unit.px(
-            mousePosition.y +
-              scrollTop -
-              (objectCursorDifference.y - Style.top(parent)) +
-              scrollTop
-          );
-          clone.style.left = Unit.px(
-            mousePosition.x +
-              scrollLeft -
-              (objectCursorDifference.x - Style.left(parent)) +
-              scrollLeft
-          );
-          Elem.id(seleElement)?.remove();
-          Elem.id(CANVAS)?.append(clone);
-        }
-        // moving single component from page > page
-        if (
-          movingFrom !== CANVAS &&
-          movingTo !== CANVAS &&
-          Elem.id(seleElement)!.getAttribute("data-type") !== "page" &&
-          Elem.id(movingFrom)!.getAttribute("data-type") == "page" &&
-          Elem.id(movingTo)!.getAttribute("data-type") == "page" &&
-          seleElement !== MULTIPLE_ELEMENTS_WRAPPER
-        ) {
-          const clone: any = Elem.id(seleElement)!.cloneNode(true);
+    //       clone.style.top = Unit.px(
+    //         mousePosition.y +
+    //           scrollTop -
+    //           (objectCursorDifference.y - Style.top(parent)) +
+    //           scrollTop
+    //       );
+    //       clone.style.left = Unit.px(
+    //         mousePosition.x +
+    //           scrollLeft -
+    //           (objectCursorDifference.x - Style.left(parent)) +
+    //           scrollLeft
+    //       );
+    //       Elem.id(seleElement)?.remove();
+    //       Elem.id(CANVAS)?.append(clone);
+    //     }
+    //     // moving single component from page > page
+    //     if (
+    //       movingFrom !== CANVAS &&
+    //       movingTo !== CANVAS &&
+    //       Elem.id(seleElement)!.getAttribute("data-type") !== "page" &&
+    //       Elem.id(movingFrom)!.getAttribute("data-type") == "page" &&
+    //       Elem.id(movingTo)!.getAttribute("data-type") == "page" &&
+    //       seleElement !== MULTIPLE_ELEMENTS_WRAPPER
+    //     ) {
+    //       const clone: any = Elem.id(seleElement)!.cloneNode(true);
 
-          clone.style.top = Unit.px(
-            e.clientY -
-              (objectCursorDifference.y -
-                Style.top(Elem.id(seleElement)!.parentElement!.id)) -
-              Style.top(movingTo) +
-              scrollTop
-          );
-          clone.style.left = Unit.px(
-            e.clientX -
-              (objectCursorDifference.x -
-                Style.left(Elem.id(seleElement)!.parentElement!.id)) -
-              Style.left(movingTo) +
-              scrollLeft
-          );
+    //       clone.style.top = Unit.px(
+    //         e.clientY -
+    //           (objectCursorDifference.y -
+    //             Style.top(Elem.id(seleElement)!.parentElement!.id)) -
+    //           Style.top(movingTo) +
+    //           scrollTop
+    //       );
+    //       clone.style.left = Unit.px(
+    //         e.clientX -
+    //           (objectCursorDifference.x -
+    //             Style.left(Elem.id(seleElement)!.parentElement!.id)) -
+    //           Style.left(movingTo) +
+    //           scrollLeft
+    //       );
 
-          Elem.id(seleElement)?.remove();
-          Elem.id(movingTo)?.append(clone);
-        }
-      }
+    //       Elem.id(seleElement)?.remove();
+    //       Elem.id(movingTo)?.append(clone);
+    //     }
+    //   }
 
 
-      if (
-        selectedElements.length > 1 &&
-        seleElement === MULTIPLE_ELEMENTS_WRAPPER
-      ) {
-        /* moving single component from CANVAS > page
-         */
-        /**
-     * after user selects some component
-     * we will clone them and do some edits
-     * and append them to the wrapper (moving object wrapper)
-     * this helps us to don't update position of each selected
-     * element when we need to move them
-     */
-    if (selectedElements.length > 1 && Elem.id(movingTo)!.getAttribute('data-type') == PAGES_DATATYPE) {
+    //   if (
+    //     selectedElements.length > 1 &&
+    //     seleElement === MULTIPLE_ELEMENTS_WRAPPER
+    //   ) {
+    //     /* moving single component from CANVAS > page
+    //      */
+    //     /**
+    //  * after user selects some component
+    //  * we will clone them and do some edits
+    //  * and append them to the wrapper (moving object wrapper)
+    //  * this helps us to don't update position of each selected
+    //  * element when we need to move them
+    //  */
+    // if (selectedElements.length > 1 && Elem.id(movingTo)!.getAttribute('data-type') == PAGES_DATATYPE) {
 
-      selectedElements.map((each: string) => {
-        /**
-         * we clone them b/c they will be removed from the previous position temporarily
-         */
-        const copy: any = Elem.id(each)!.cloneNode(true);
-        /**
-         * top and left position of the wrapper and CANVAS is different
-         * that's why we update the elements position and append the new
-         * one to the wrapper
-         */
-        copy.style.top = Unit.px((Style.top(each) - Style.top(movingTo)));
-        copy.style.left = Unit.px(Style.left(each) - Style.left(movingTo));
-        Elem.id(each)?.remove();
-        Elem.id(movingTo)!.append(copy);
-      });
-      set_selectedElements([]);
-      set_seleElement(movingTo);
-    }
+    //   selectedElements.map((each: string) => {
+    //     /**
+    //      * we clone them b/c they will be removed from the previous position temporarily
+    //      */
+    //     const copy: any = Elem.id(each)!.cloneNode(true);
+    //     /**
+    //      * top and left position of the wrapper and CANVAS is different
+    //      * that's why we update the elements position and append the new
+    //      * one to the wrapper
+    //      */
+    //     copy.style.top = Unit.px((Style.top(each) - Style.top(movingTo)));
+    //     copy.style.left = Unit.px(Style.left(each) - Style.left(movingTo));
+    //     Elem.id(each)?.remove();
+    //     Elem.id(movingTo)!.append(copy);
+    //   });
+    //   set_selectedElements([]);
+    //   set_seleElement(movingTo);
+    // }
         
-      }
+    //   }
 
       
-    }
+    // }
 
     /**
      * when user release there mouse
@@ -1088,6 +1088,138 @@ function App() {
               );
             }
           }
+
+          // when user releases the mouse
+    if (movingFrom !== movingTo && startMovingObject) {
+      // moving single component features below
+      
+      Elem.id(seleElement)!.style.outline = "0.1vw solid rgb(107, 154, 255)";
+
+      if (
+        seleElement &&
+        selectedElements.length < 2 &&
+        seleElement !== MULTIPLE_ELEMENTS_WRAPPER
+      ) {
+        /* moving single component from CANVAS > page
+         */
+        if (
+          movingFrom == CANVAS &&
+          movingTo != CANVAS &&
+          Elem.id(seleElement)!.getAttribute("data-type") !== "page"
+          && seleElement !== MULTIPLE_ELEMENTS_WRAPPER
+        ) {
+          Elem.id(seleElement)!.style.outline = 'none';
+          const clone: any = Elem.id(seleElement)!.cloneNode(true);
+          clone.style.top = Unit.px(
+            (e.clientY - objectCursorDifference.y) - Style.top(movingTo)
+          );
+          clone.style.left = Unit.px(
+            (e.clientX - objectCursorDifference.x) - Style.left(movingTo)
+          );
+          Elem.id(seleElement)?.remove();
+          Elem.id(movingTo)?.append(clone);
+          // after that change states
+          set_movingFrom(movingTo);
+          set_objectCursorDifference({ x: objectCursorDifference.x + (scrollLeft + Style.left(movingTo)), y: objectCursorDifference.y + (scrollTop + Style.top(movingTo)) })
+        }
+        // moving single component from page > canvas
+        if (
+          movingFrom !== CANVAS &&
+          movingTo == CANVAS &&
+          Elem.id(seleElement)!.getAttribute("data-type") !== "page"
+          && seleElement !== MULTIPLE_ELEMENTS_WRAPPER
+        ) {
+          const clone: any = Elem.id(seleElement)!.cloneNode(true);
+
+          clone.style.top = Unit.px(
+              (e.clientY + scrollTop) -
+              (objectCursorDifference.y - (scrollTop + Style.top(movingFrom)))
+          );
+          clone.style.left = Unit.px(
+            (e.clientX + scrollLeft) -
+            (objectCursorDifference.x - (scrollLeft + Style.left(movingFrom)))
+            );
+          Elem.id(seleElement)?.remove();
+          Elem.id(CANVAS)?.append(clone);
+          // after that change states
+          set_objectCursorDifference({ x: objectCursorDifference.x - (scrollLeft + Style.left(movingFrom)), y: objectCursorDifference.y - (scrollTop + Style.top(movingFrom)) })
+          set_movingFrom(CANVAS);
+        }
+        // moving single component from page > page
+        if (
+          movingFrom !== CANVAS &&
+          movingTo !== CANVAS &&
+          Elem.id(seleElement)!.getAttribute("data-type") !== "page" &&
+          Elem.id(movingFrom)!.getAttribute("data-type") == "page" &&
+          Elem.id(movingTo)!.getAttribute("data-type") == "page" &&
+          seleElement !== MULTIPLE_ELEMENTS_WRAPPER
+        ) {
+          const clone: any = Elem.id(seleElement)!.cloneNode(true);
+
+          clone.style.top = Unit.px(
+            e.clientY -
+              (objectCursorDifference.y -
+                Style.top(Elem.id(seleElement)!.parentElement!.id)) -
+              Style.top(movingTo) +
+              scrollTop
+          );
+          clone.style.left = Unit.px(
+            e.clientX -
+              (objectCursorDifference.x -
+                Style.left(Elem.id(seleElement)!.parentElement!.id)) -
+              Style.left(movingTo) +
+              scrollLeft
+          );
+
+          Elem.id(seleElement)?.remove();
+          Elem.id(movingTo)?.append(clone);
+          set_movingFrom(movingTo)
+          
+        }
+      }
+
+
+      if (
+        selectedElements.length > 1 &&
+        seleElement === MULTIPLE_ELEMENTS_WRAPPER
+      ) {
+        /* moving single component from CANVAS > page
+         */
+        /**
+     * after user selects some component
+     * we will clone them and do some edits
+     * and append them to the wrapper (moving object wrapper)
+     * this helps us to don't update position of each selected
+     * element when we need to move them
+     */
+    if (selectedElements.length > 1 && Elem.id(movingTo)!.getAttribute('data-type') == PAGES_DATATYPE) {
+
+      selectedElements.map((each: string) => {
+        /**
+         * we clone them b/c they will be removed from the previous position temporarily
+         */
+        const copy: any = Elem.id(each)!.cloneNode(true);
+        /**
+         * top and left position of the wrapper and CANVAS is different
+         * that's why we update the elements position and append the new
+         * one to the wrapper
+         */
+        copy.style.top = Unit.px((Style.top(each) - Style.top(movingTo)));
+        copy.style.left = Unit.px(Style.left(each) - Style.left(movingTo));
+        Elem.id(each)?.remove();
+        Elem.id(movingTo)!.append(copy);
+      });
+      set_selectedElements([]);
+      set_seleElement(movingTo);
+    }
+        
+      }
+      // set_startMovingObject(false);
+      // set_selectionStarted(false);
+      // set_selectionStarted2(false);
+      
+    }
+
         }}
       >
 
@@ -2348,23 +2480,8 @@ function App() {
               <p
                 className="text-white bg-red"
                 onClick={() => {
-                  const exception: boolean =
-                    logic.CANVA_ELEMENT_EXCEPTION.every(
-                      (each: string) => each !== seleElement
-                    );
-                  if (exception) {
-                    // for single elment deleting
-                    if (selectedElements.length < 2) {
-                      Elem.id(seleElement)?.remove();
-                    }
-                    // for multiple element delete
-                    else if (seleElement == MULTIPLE_ELEMENTS_WRAPPER) {
-                      set_selectedElements([]);
-                      set_selectionStarted(false);
-                      set_selectionStarted2(false);
-                    }
-                  }
-
+                  ED.rm(seleElement, CANVAS, set_seleElement);
+                  ED.rmm(selectedElements, CANVAS, set_seleElement, set_selectedElements)
                   set_displayContext(false);
                 }}
               >

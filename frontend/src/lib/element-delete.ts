@@ -6,7 +6,7 @@ import Elem from "./modules/Elem";
 export default class ED {
     
     // this deletes a single element by id
-    static rm(id: string, redirect_to: string, changeSelection)
+    static rm(id: string, redirect_to: string, changeSelection: any)
     {
         // deletes the element if it exists in the dom
         if(Elem.id(id) && EC.ne(id, IRREMOVABLE_ELEMENTS)){        
