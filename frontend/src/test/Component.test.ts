@@ -1,5 +1,5 @@
-import { PAGES_DATATYPE } from "../id-storage/constants.config";
-import Component from "../modules/Component";
+import { PAGES_DATATYPE } from "../lib/id-storage/constants.config";
+import Component from "../lib/modules/Component";
 import Test from "./Test.test";
 
 

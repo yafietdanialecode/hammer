@@ -142,6 +142,9 @@ body, html, #root, #main {
   background-color: transparent;
   outline: none;
 }
+#main #canvas *:active {
+  outline: none;
+}
 #main #canvas [data-type=video] {
   overflow: auto;
   border-radius: 10px;
@@ -335,6 +338,10 @@ body, html, #root, #main {
 }
 #main #states th, #main #states td {
   padding: 5px;
+  font-size: 10px;
+  background-color: black;
+  color: white;
+  border-bottom: 1px solid rgb(53, 53, 53);
 }
 #main #states #decorators {
   display: contents;
