@@ -159,6 +159,8 @@ function App() {
     url: null,
     origin: CANVAS
   })
+
+
   
   /**
    * this is the hook that will start when
@@ -181,6 +183,7 @@ function App() {
     set_scripts([
       { id: '1', name: 'jquery', type: 'javascript', uri: 'http://jqueryonthego.com/download'}
     ])
+
   }, []);
 
   /**
@@ -193,6 +196,7 @@ function App() {
     // updating user's scroll amount
     set_scrollTop(Scroll.top(CANVAS)!);
     set_scrollLeft(Scroll.left(CANVAS)!);
+    
   });
 
   // when mouse move in the whole window
@@ -1526,6 +1530,7 @@ function App() {
             }
             }
 
+            
             // ui effect on cursor
             cursorStyle == 'grab' ? set_cursorStyle('grabbing') : set_cursorStyle('default');
 
@@ -1776,8 +1781,8 @@ function App() {
             data-type="page"
             data-name="About"
             style={{
-              width: "480px",
-              height: "800px",
+              width: "360px",
+              height: "780px",
               top: "10100px",
               left: "10600px",
               background: "white",
