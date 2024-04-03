@@ -1259,6 +1259,7 @@ function App() {
             >
               <i className="bi bi-cursor"></i>
             </button>
+            {/* move mode changer */}
             <button title="Move"
             onClick={() => {
               mode == 'move' ? set_mode('') : set_mode('move');
@@ -1270,12 +1271,14 @@ function App() {
               <i className="bi bi-arrows-move"></i>
             </button>
           </div>
+          {/* text mode changer */}
           <button title="text"
           onClick={() => {
             const isText = mode == 'text';
             isText ? set_mode('') : set_mode('text');
             isText ? set_cursorStyle('default') : set_cursorStyle('text');
             isText ? set_textEditingModeEnabled(false) : set_textEditingModeEnabled(true);
+            isText ? Elem.id(seleElement)!.setAttribute('contenteditable', 'false') : null;
             set_seleElement('');
           }}
           className={mode == 'text' ? 'tool-selected' : ''}
@@ -1533,6 +1536,13 @@ function App() {
             
             // ui effect on cursor
             cursorStyle == 'grab' ? set_cursorStyle('grabbing') : set_cursorStyle('default');
+
+            // opened content editable element remover
+            if(Elem.isContentEditable(seleElement))
+            {
+              Elem.isContentEditable(seleElement, 'false');
+              set_textEditingModeEnabled(false);
+            }
 
             // some checks
             const isCanvas: boolean = id === CANVAS ? true : false;

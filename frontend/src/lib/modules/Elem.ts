@@ -23,7 +23,7 @@ export default class Elem {
     }
 
     // to set multiple attributes for element
-    static setMAttribute(id: string, kv: any){
+    static setMAttribute(id: string, kv: object){
         if(Elem.id(id)){
             Object.keys(kv).forEach((key: string) => {
                 Elem.id(id)!.setAttribute(key, kv[key]);
@@ -31,4 +31,24 @@ export default class Elem {
         }
     }
 
+    // existence of element checker
+    static exists(id: string){
+        if(this.id(id)!){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    // contenteditable enabled or not
+    static isContentEditable(id: string, value?: 'true' | 'false') {
+        
+        if(this.exists(id)){
+                // if you need to set value
+                if(value){
+                    Elem.id(id)!.setAttribute('contenteditable', value);
+                }
+            return Elem.id(id)!.isContentEditable;
+        }
+    }
 }

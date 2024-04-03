@@ -151,6 +151,7 @@ body, html, #root, #main {
     * {
       background-color: transparent;
       outline: none;
+      cursor: unset;
     }
 
     *:active {
