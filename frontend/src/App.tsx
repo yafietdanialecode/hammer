@@ -160,6 +160,8 @@ function App() {
     origin: CANVAS
   })
 
+  // key state trackers previous
+  const [previous_key, set_previous_key] = useState('');
 
   
   /**
@@ -628,6 +630,9 @@ function App() {
         // e.preventDefault();
       }
     }
+
+    // save the key as last key
+    set_previous_key(e.key);
   }
 
   // this is the logic class
@@ -1533,16 +1538,17 @@ function App() {
             }
             }
 
-            
-            // ui effect on cursor
-            cursorStyle == 'grab' ? set_cursorStyle('grabbing') : set_cursorStyle('default');
 
             // opened content editable element remover
-            if(Elem.isContentEditable(seleElement))
+            if(Elem.isContentEditable(seleElement) && seleElement !== e.target.id)
             {
               Elem.isContentEditable(seleElement, 'false');
               set_textEditingModeEnabled(false);
             }
+            
+            // ui effect on cursor
+            cursorStyle == 'grab' ? set_cursorStyle('grabbing') : set_cursorStyle('default');
+
 
             // some checks
             const isCanvas: boolean = id === CANVAS ? true : false;
@@ -1699,6 +1705,7 @@ function App() {
             
             // update the position of element state below
             State.update(seleElement, set_elemPosition);
+            console.log("------------- mouse down event completed --------------")
           }}
           onWheel={(e: WheelEvent) => {
             // updating user's scroll amount
