@@ -170,6 +170,8 @@ body, html, #root, #main {
         transition: all, 0ms;
       }
     }
+
+    
     
     
   // dev components
@@ -401,6 +403,76 @@ body, html, #root, #main {
   }
 }
 
+
+#design-tools {
+  width: 20vw;
+  height: 90vh;
+  background-color: white;
+  position: fixed;
+  top: 10vh;
+  right: 0px;
+  z-index: 50000;
+
+  * {
+    font-size: 0.9vw;
+  }
+
+  details {
+
+    summary {
+      background-color: rgb(94, 94, 94);
+      color: white ;
+      padding: 0.5vw;
+      list-style: none;
+    }
+
+    label {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: row;
+      padding: 0.5vw;
+
+      span {
+        color: gray;
+      }
+
+      .section-tools {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+
+        [type="color"] {
+          width: 2vw;
+          height: 2vw;
+          border: none;
+          outline: none;
+        }
+        [type="text"] {
+          width: 5vw;
+          height: 2vw;
+          border: none;
+          outline: none;
+          padding-left: 0.5vw;
+        }
+        select {
+          width: 5vw;
+          height: 2vw;
+          border: none;
+          outline: none;
+          padding-left: 0.5vw;
+        }
+      }
+
+      input {
+        width: 100%;
+        border: none;
+      }
+    }
+  }
+
+}
 
 }
 

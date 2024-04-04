@@ -353,6 +353,64 @@ body, html, #root, #main {
   left: 0px;
   z-index: 40000;
 }
+#main #design-tools {
+  width: 20vw;
+  height: 90vh;
+  background-color: white;
+  position: fixed;
+  top: 10vh;
+  right: 0px;
+  z-index: 50000;
+}
+#main #design-tools * {
+  font-size: 0.9vw;
+}
+#main #design-tools details summary {
+  background-color: rgb(94, 94, 94);
+  color: white;
+  padding: 0.5vw;
+  list-style: none;
+}
+#main #design-tools details label {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  padding: 0.5vw;
+}
+#main #design-tools details label span {
+  color: gray;
+}
+#main #design-tools details label .section-tools {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+#main #design-tools details label .section-tools [type=color] {
+  width: 2vw;
+  height: 2vw;
+  border: none;
+  outline: none;
+}
+#main #design-tools details label .section-tools [type=text] {
+  width: 5vw;
+  height: 2vw;
+  border: none;
+  outline: none;
+  padding-left: 0.5vw;
+}
+#main #design-tools details label .section-tools select {
+  width: 5vw;
+  height: 2vw;
+  border: none;
+  outline: none;
+  padding-left: 0.5vw;
+}
+#main #design-tools details label input {
+  width: 100%;
+  border: none;
+}
 
 #context-menu {
   position: fixed;

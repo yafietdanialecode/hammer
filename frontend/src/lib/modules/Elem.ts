@@ -22,10 +22,18 @@ export default class Elem {
         }
     }
 
-    // to set multiple attributes for element
-    static setMAttribute(id: string, kv: object){
+    static isWrapper(id: string){
         if(Elem.id(id)){
-            Object.keys(kv).forEach((key: string) => {
+            return Elem.id(id)!.getAttribute('data-type') == 'mask'
+        }else {
+            return false
+        }
+    }
+
+    // to set multiple attributes for element
+    static setMAttribute(id: string, kv: any){
+        if(Elem.id(id)){
+            Object.keys(kv).forEach((key: any) => {
                 Elem.id(id)!.setAttribute(key, kv[key]);
             })
         }

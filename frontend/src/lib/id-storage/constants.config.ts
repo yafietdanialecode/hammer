@@ -12,7 +12,7 @@ export const LEFT_TOOLS = 'left-tools';
 export const PAGES_DATATYPE = 'page';
 export const DECORATORS = 'decorators'
 export const IRREMOVABLE_ELEMENTS = [ CANVAS, LEFT_TOOLS, UPPER_TOOLS, MAIN, 'root', MULTIPLE_ELEMENTS_WRAPPER ];
-
+export const SCALE_REFERENCE = 'scale-reference';
 
 
 // development constants

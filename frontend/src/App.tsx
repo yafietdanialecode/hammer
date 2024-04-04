@@ -26,6 +26,7 @@ import {
   MULTIPLE_ELEMENTS_WRAPPER,
   PAGES_DATATYPE,
   RIGHT_RESIZE,
+  SCALE_REFERENCE,
   STATES,
   TOP_RESIZE,
   UPPER_TOOLS,
@@ -36,6 +37,7 @@ import focusOn from "./lib/modules/Focus";
 import UnitClassTest from "./test/UnitClass.test";
 import { componentsData } from "./lib/components-data";
 import ED from "./lib/element-delete";
+import InputSection from "./ui/input-section";
 
 
 
@@ -198,7 +200,9 @@ function App() {
     // updating user's scroll amount
     set_scrollTop(Scroll.top(CANVAS)!);
     set_scrollLeft(Scroll.left(CANVAS)!);
-    
+
+    console.clear();
+    console.log('ref_width: ' + (Style.width(SCALE_REFERENCE)));
   });
 
   // when mouse move in the whole window
@@ -1793,6 +1797,20 @@ function App() {
             />
           </div>
 
+          <div id="wrapper"
+          data-type='mask'
+           style={{
+              width: "300px",
+              height: "480px",
+              top: "10400px",
+              left: "10600px",
+              background: "lightblue",
+              position: "absolute",
+              zIndex: 0,
+            }}>
+
+          </div>
+
           <div
             id="page-1"
             data-type="page"
@@ -1815,7 +1833,8 @@ function App() {
               width: '160px',
               height: '100px',
               top: '10px',
-              left: '10px'
+              left: '10px',
+              background: 'white'
             }}
             >
 <iframe src="https://www.youtube.com/embed/IKqV7DB8Iwg?si=ArWkFG2GkR_U06Dw" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>            </div>
@@ -1940,7 +1959,27 @@ function App() {
           )}
         </div>
 
-         
+        {/* scale reference box */}
+        <div id="scale-reference" style={{ width: '1vh', height: '1vh'}} />
+
+
+
+        <div id="design-tools">
+
+          <details open={true}>
+            <summary>Background</summary>
+            <InputSection label={'fill'} type={'color-and-text'}/>
+
+          </details>
+          <details open={true}>
+            <summary>Typography</summary>
+            <InputSection label={'color'} type={'color-and-text'} />
+            <InputSection label={'font'} type={'selection'} options={[ {name: 'Arial', value: 'arial', key: 0 }]} />
+            <InputSection label={'weight'} type={'selection'} options={[ {name: 'Arial', value: 'arial', key: 0 }]} />
+            <InputSection label={'size'} type={'selection'} options={[ {name: 'Arial', value: 'arial', key: 0 }]} />
+            <InputSection label={'transform'} type={'selection'} options={[ {name: 'Arial', value: 'arial', key: 0 }]} />
+          </details>
+        </div>
 
         {/* 
       states are a key value pairs of useState hooks list 
@@ -1950,6 +1989,10 @@ function App() {
         {displayDevStates && (
           <table id={STATES}>
             <tbody>
+              <tr>
+                <td>previous_key</td>
+                <td>{previous_key}</td>
+              </tr>
               <tr>
                 <td>movingFrom</td>
                 <td>{movingFrom}</td>
