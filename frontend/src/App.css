@@ -143,6 +143,9 @@ body, html, #root, #main {
   outline: none;
   cursor: unset;
 }
+#main #canvas p * {
+  color: unset;
+}
 #main #canvas *:active {
   outline: none;
 }
@@ -365,9 +368,43 @@ body, html, #root, #main {
 #main #design-tools * {
   font-size: 0.9vw;
 }
-#main #design-tools details summary {
-  background-color: rgb(94, 94, 94);
+#main #design-tools #align-handv {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.1vw;
+}
+#main #design-tools #align-handv button {
+  width: 3vw;
+  height: 3vw;
+  margin: 0.1vw;
+  border-radius: 0.5vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#main #design-tools #align-handv button * {
+  color: gray;
+  width: 1.2vw;
+  height: 1.2vw;
+  background: transparent;
+}
+#main #design-tools #align-handv button:hover {
+  background-color: lightgray;
+}
+#main #design-tools #align-handv button:focus {
+  background-color: gray;
+}
+#main #design-tools #align-handv button:focus * {
   color: white;
+}
+#main #design-tools hr {
+  height: 0.1vw;
+  width: 100%;
+  background-color: lightgray;
+}
+#main #design-tools details summary {
   padding: 0.5vw;
   list-style: none;
 }

@@ -38,6 +38,7 @@ import UnitClassTest from "./test/UnitClass.test";
 import { componentsData } from "./lib/components-data";
 import ED from "./lib/element-delete";
 import InputSection from "./ui/input-section";
+import { AlignHorizontalCenter, AlignHorizontalLeft, AlignHorizontalRight, AlignVerticalBottom, AlignVerticalCenter, AlignVerticalTop } from "@mui/icons-material";
 
 
 
@@ -81,7 +82,7 @@ function App() {
   ] = useState({ x: 0, y: 0 });
 
   // seleElement
-  const [seleElement, set_seleElement] = useState("");
+  const [seleElement, set_seleElement] = useState(CANVAS);
     // element position
     const [elemPosition, set_elemPosition] = useState({ t: 0, r: 0, b: 0, l: 0, h: 0, w: 0})
 
@@ -515,7 +516,10 @@ function App() {
        */
       if (e.key == "Delete") {
         ED.rm(seleElement, CANVAS, set_seleElement);
-        ED.rmm(selectedElements, CANVAS, set_seleElement, set_selectedElements);
+        // delete multiple
+        if(selectedElements.length > 1){
+          ED.rmm(selectedElements, CANVAS, set_seleElement, set_selectedElements);
+        }
       }
 
       /**
@@ -1102,7 +1106,10 @@ function App() {
             }
           }
 
-          // when user releases the mouse
+          /**
+           * moving element from page to canvas and other features
+           * are here
+           */
     if (movingFrom !== movingTo && startMovingObject) {
       // moving single component features below
       
@@ -1965,15 +1972,33 @@ function App() {
 
 
         <div id="design-tools">
-
+          <details>
+            <summary>Position</summary>
+            {/* those are the alignment options */}
+            <div id="align-handv"> {/* horizontal align then vertical alignment */}
+              <button><AlignHorizontalLeft /></button>
+              <button><AlignHorizontalCenter /></button>
+              <button><AlignHorizontalRight/></button>
+              <button><AlignVerticalTop/></button>
+              <button><AlignVerticalCenter/></button>
+              <button><AlignVerticalBottom/></button>
+            </div>
+          </details>
+          <hr />
           <details open={true}>
             <summary>Background</summary>
-            <InputSection label={'fill'} type={'color-and-text'}/>
+            <InputSection 
+            applyTo={'background-color'}
+            element={seleElement}
+            label={'fill'} type={'color-and-text'}/>
 
           </details>
           <details open={true}>
             <summary>Typography</summary>
-            <InputSection label={'color'} type={'color-and-text'} />
+            <InputSection
+            applyTo={'color'}
+            element={seleElement}
+            label={'color'} type={'color-and-text'} />
             <InputSection label={'font'} type={'selection'} options={[ {name: 'Arial', value: 'arial', key: 0 }]} />
             <InputSection label={'weight'} type={'selection'} options={[ {name: 'Arial', value: 'arial', key: 0 }]} />
             <InputSection label={'size'} type={'selection'} options={[ {name: 'Arial', value: 'arial', key: 0 }]} />

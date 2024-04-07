@@ -154,6 +154,12 @@ body, html, #root, #main {
       cursor: unset;
     }
 
+    p {
+      * {
+        color: unset;
+      }
+    }
+
     *:active {
       outline: none;
     }
@@ -417,11 +423,52 @@ body, html, #root, #main {
     font-size: 0.9vw;
   }
 
+
+  
+  #align-handv {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.1vw;
+
+    button {
+      width: 3vw;
+      height: 3vw;
+      margin: 0.1vw;
+      border-radius: 0.5vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      * {
+        color: gray;
+        width: 1.2vw;
+        height: 1.2vw;
+        background: transparent;
+      }
+    }
+    button:hover {
+      background-color: lightgray;
+    }
+    button:focus {
+      background-color: gray;
+      * {
+        color: white;
+      }
+    }
+  }
+
+  hr {
+    height: 0.1vw;
+    width: 100%;
+    background-color: lightgray;
+  }
+
   details {
 
     summary {
-      background-color: rgb(94, 94, 94);
-      color: white ;
+      // background-color: rgb(94, 94, 94);
+      // color: white ;
       padding: 0.5vw;
       list-style: none;
     }
@@ -437,6 +484,7 @@ body, html, #root, #main {
       span {
         color: gray;
       }
+
 
       .section-tools {
         display: flex;
