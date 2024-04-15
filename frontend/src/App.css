@@ -149,6 +149,9 @@ body, html, #root, #main {
 #main #canvas *:active {
   outline: none;
 }
+#main #canvas svg * {
+  pointer-events: none;
+}
 #main #canvas [data-type=video] {
   overflow: auto;
   border-radius: 10px;
@@ -368,36 +371,60 @@ body, html, #root, #main {
 #main #design-tools * {
   font-size: 0.9vw;
 }
-#main #design-tools #align-handv {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.1vw;
+#main #design-tools .gap-btwn {
+  -moz-column-gap: 0.5vw;
+       column-gap: 0.5vw;
 }
-#main #design-tools #align-handv button {
-  width: 3vw;
-  height: 3vw;
+#main #design-tools .fill-display {
+  width: 1.5vw;
+  height: 1.5vw;
+  margin: 0.1vw;
+}
+#main #design-tools .tool-btn {
+  width: 2.5vw;
+  height: 2.5vw;
   margin: 0.1vw;
   border-radius: 0.5vw;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-#main #design-tools #align-handv button * {
-  color: gray;
+#main #design-tools .tool-btn * {
+  color: rgb(59, 59, 59);
   width: 1.2vw;
   height: 1.2vw;
   background: transparent;
 }
-#main #design-tools #align-handv button:hover {
-  background-color: lightgray;
+#main #design-tools .tool-btn:hover {
+  background-color: rgb(248, 248, 248);
 }
-#main #design-tools #align-handv button:focus {
-  background-color: gray;
+#main #design-tools .tool-btn:focus {
+  background-color: rgb(46, 46, 46);
 }
-#main #design-tools #align-handv button:focus * {
+#main #design-tools .tool-btn:focus * {
   color: white;
+}
+#main #design-tools input {
+  outline: none;
+}
+#main #design-tools .flex-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.25vw;
+  align-items: center;
+  flex-direction: row;
+}
+#main #design-tools .flex-row:hover {
+  outline: 1px solid lightgray;
+}
+#main #design-tools #align-handv {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  -moz-column-gap: 0.1vw;
+       column-gap: 0.1vw;
+  align-items: center;
+  padding: 0.1vw;
 }
 #main #design-tools hr {
   height: 0.1vw;
@@ -447,6 +474,27 @@ body, html, #root, #main {
 #main #design-tools details label input {
   width: 100%;
   border: none;
+}
+
+#loading {
+  width: 100vw;
+  height: 100vh;
+  padding: 0px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 1vh;
+}
+#loading img {
+  border-radius: 50%;
+  filter: drop-shadow(0px 0px 5px lightblue);
+}
+#loading * {
+  font-size: 1.5vw;
 }
 
 #context-menu {

@@ -164,6 +164,13 @@ body, html, #root, #main {
       outline: none;
     }
 
+    svg {
+
+      * {
+        pointer-events: none;
+      }
+    }
+
     [data-type="video"] {
 
       overflow: auto;
@@ -423,39 +430,65 @@ body, html, #root, #main {
     font-size: 0.9vw;
   }
 
+  .gap-btwn {
+    column-gap: 0.5vw;
+  }
 
+  .fill-display {
+    width: 1.5vw;
+    height: 1.5vw;
+    margin: 0.1vw;
+  }
+  .tool-btn {
+    width: 2.5vw;
+    height: 2.5vw;
+    margin: 0.1vw;
+    border-radius: 0.5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    * {
+      color: rgb(59, 59, 59);
+      width: 1.2vw;
+      height: 1.2vw;
+      background: transparent;
+    }
+  }
+  
+  .tool-btn:hover {
+    background-color: rgb(248, 248, 248);
+  }
+
+  .tool-btn:focus {
+    background-color: rgb(46, 46, 46);
+    * {
+      color: white;
+    }
+  }
+
+  input {
+    outline: none;
+  }
+
+  .flex-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0.25vw;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .flex-row:hover {
+    outline: 1px solid lightgray;
+  }
   
   #align-handv {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
+    column-gap: 0.1vw;
     align-items: center;
     padding: 0.1vw;
-
-    button {
-      width: 3vw;
-      height: 3vw;
-      margin: 0.1vw;
-      border-radius: 0.5vw;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      * {
-        color: gray;
-        width: 1.2vw;
-        height: 1.2vw;
-        background: transparent;
-      }
-    }
-    button:hover {
-      background-color: lightgray;
-    }
-    button:focus {
-      background-color: gray;
-      * {
-        color: white;
-      }
-    }
   }
 
   hr {
@@ -524,6 +557,28 @@ body, html, #root, #main {
 
 }
 
+#loading {
+  width: 100vw;
+  height: 100vh;
+  padding: 0px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 1vh;
+
+  img {
+    border-radius: 50%;
+    filter: drop-shadow(0px 0px 5px lightblue);
+  }
+
+  * {
+    font-size: 1.5vw;
+  }
+}
 
 
 

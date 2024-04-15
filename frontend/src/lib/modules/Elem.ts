@@ -13,6 +13,14 @@ export default class Elem {
             return document.getElementById('canvas')
         }
     }
+
+    static getAtt(id: string, key: string){
+        if(Elem.id(id)!){
+            return Elem.id(id)!.getAttribute(key);
+        }else {
+            return false
+        }
+    }
     
     static setAttribute(id: string, key: string, value: string){
         if(Elem.id(id)){
