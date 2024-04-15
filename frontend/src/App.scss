@@ -69,6 +69,8 @@ body, html, #root, #main {
       position: fixed;
       left: 1vw;
       top: 1vw;
+      border: 0.2vw solid gray;
+      border-radius: 50%;
     }
 
   }
@@ -151,10 +153,24 @@ body, html, #root, #main {
     * {
       background-color: transparent;
       outline: none;
+      cursor: unset;
+    }
+
+    p {
+      * {
+        color: unset;
+      }
     }
 
     *:active {
       outline: none;
+    }
+
+    svg {
+
+      * {
+        pointer-events: none;
+      }
     }
 
     [data-type="video"] {
@@ -169,6 +185,8 @@ body, html, #root, #main {
         transition: all, 0ms;
       }
     }
+
+    
     
     
   // dev components
@@ -401,8 +419,175 @@ body, html, #root, #main {
 }
 
 
+#design-tools {
+  width: 20vw;
+  height: 90vh;
+  background-color: white;
+  position: fixed;
+  top: 10vh;
+  right: 0px;
+  z-index: 50000;
+
+  * {
+    font-size: 0.9vw;
+  }
+
+  .gap-btwn {
+    column-gap: 0.5vw;
+  }
+
+  .fill-display {
+    width: 1.5vw;
+    height: 1.5vw;
+    margin: 0.1vw;
+  }
+  .tool-btn {
+    width: 2.5vw;
+    height: 2.5vw;
+    margin: 0.1vw;
+    border-radius: 0.5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    * {
+      color: rgb(59, 59, 59);
+      width: 1.2vw;
+      height: 1.2vw;
+      background: transparent;
+    }
+  }
+  
+  .tool-btn:hover {
+    background-color: rgb(248, 248, 248);
+  }
+
+  .tool-btn:focus {
+    background-color: rgb(46, 46, 46);
+    * {
+      color: white;
+    }
+  }
+
+  input {
+    outline: none;
+  }
+
+  .flex-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0.25vw;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .flex-row:hover {
+    outline: 1px solid lightgray;
+  }
+  
+  #align-handv {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    column-gap: 0.1vw;
+    align-items: center;
+    padding: 0.1vw;
+  }
+
+  hr {
+    height: 0.1vw;
+    width: 100%;
+    background-color: lightgray;
+  }
+
+  details {
+
+    summary {
+      // background-color: rgb(94, 94, 94);
+      // color: white ;
+      padding: 0.5vw;
+      list-style: none;
+    }
+
+    label {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: row;
+      padding: 0.5vw;
+
+      span {
+        color: gray;
+      }
+
+
+      .section-tools {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+
+        [type="color"] {
+          width: 2vw;
+          height: 2vw;
+          border: none;
+          outline: none;
+        }
+        [type="text"] {
+          width: 5vw;
+          height: 2vw;
+          border: none;
+          outline: none;
+          padding-left: 0.5vw;
+        }
+        select {
+          width: 5vw;
+          height: 2vw;
+          border: none;
+          outline: none;
+          padding-left: 0.5vw;
+        }
+      }
+
+      input {
+        width: 100%;
+        border: none;
+      }
+    }
+  }
+
 }
 
+}
+
+#loading {
+  width: 100vw;
+  height: 100vh;
+  padding: 0px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 4vh;
+  pointer-events: none;
+
+  img {
+    border-radius: 50%;
+    // filter: drop-shadow(0px 0px 0.3vw lightblue);
+    border: 0.2vw solid gray;
+  }
+
+  * {
+    font-size: 1.5vw;
+  }
+  #progress {
+    * {
+      fill: black;
+    }
+  }
+}
 
 
 

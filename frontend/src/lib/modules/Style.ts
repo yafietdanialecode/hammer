@@ -2,7 +2,12 @@ import Elem from "./Elem";
 
 export default class Style {
 
-    static top(id: string): number {
+    static top(id: string, value?: any): number {
+        // if value provided
+        if(value){
+            Elem.id(id)!.style.top = value;
+        }
+
         if(Elem.id(id)){
             let element = Elem.id(id) as HTMLElement;
             return element.getBoundingClientRect().top
@@ -26,7 +31,13 @@ export default class Style {
         return 0;
     }
 
-    static left(id: string): number{
+    static left(id: string, value?: any): number{
+
+        // if value provided
+        if(value){
+            Elem.id(id)!.style.left = value;
+        }
+
         if(Elem.id(id)){
             let element = Elem.id(id) as HTMLElement;
             return element.getBoundingClientRect().left
@@ -34,7 +45,11 @@ export default class Style {
         return 0;
     }
 
-    static width(id: string): number{
+    static width(id: string, value?: any): number{
+        // if value provided
+        if(value){
+            Elem.id(id)!.style.width = value;
+        }
         if(Elem.id(id)){
             let element = Elem.id(id) as HTMLElement;
             return element.getBoundingClientRect().width
@@ -42,15 +57,23 @@ export default class Style {
         return 0;
     }
 
-    static height(id: string): number{
+    static height(id: string, value?: any): number{
+        // if value provided
+        if(value){
+            Elem.id(id)!.style.height = value;
+        }
         if(Elem.id(id)){
-            let element = Elem.id(id) as HTMLElement;
+            const element = Elem.id(id) as HTMLElement;
             return element.getBoundingClientRect().height
         }
         return 0;
     }
 
-    static zIndex(id: string): number {
+    static zIndex(id: string, value?: any): number {
+        // if value provided
+        if(value){
+            Elem.id(id)!.style.zIndex = value;
+        }
         if(Elem.id(id)){
             const element: HTMLElement = Elem.id(id)!;
             const z: number = parseInt(getComputedStyle(element).zIndex);
@@ -58,4 +81,27 @@ export default class Style {
         }
         return 0;
     }
+
+    static backgroundColor(id: string, value?: any){
+
+        // if this is for setting
+        if(value){
+            Elem.id(id)!.style.backgroundColor = value;
+        }
+
+        if(Elem.id(id)){
+            return Elem.id(id)!.style.backgroundColor;
+        }else {
+            return '#fff'
+        }
+    }
+
+    static color (id: string, value?: any) {
+        // if this is setting
+        if(value) {
+            Elem.id(id)!.style.color = value;
+        }
+        return getComputedStyle(Elem.id(id)!)
+    }
+
 }

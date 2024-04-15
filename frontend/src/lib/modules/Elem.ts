@@ -13,6 +13,14 @@ export default class Elem {
             return document.getElementById('canvas')
         }
     }
+
+    static getAtt(id: string, key: string){
+        if(Elem.id(id)!){
+            return Elem.id(id)!.getAttribute(key);
+        }else {
+            return false
+        }
+    }
     
     static setAttribute(id: string, key: string, value: string){
         if(Elem.id(id)){
@@ -22,13 +30,41 @@ export default class Elem {
         }
     }
 
+    static isWrapper(id: string){
+        if(Elem.id(id)){
+            return Elem.id(id)!.getAttribute('data-type') == 'mask'
+        }else {
+            return false
+        }
+    }
+
     // to set multiple attributes for element
     static setMAttribute(id: string, kv: any){
         if(Elem.id(id)){
-            Object.keys(kv).forEach((key: string) => {
+            Object.keys(kv).forEach((key: any) => {
                 Elem.id(id)!.setAttribute(key, kv[key]);
             })
         }
     }
 
+    // existence of element checker
+    static exists(id: string){
+        if(this.id(id)!){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    // contenteditable enabled or not
+    static isContentEditable(id: string, value?: 'true' | 'false') {
+        
+        if(this.exists(id)){
+                // if you need to set value
+                if(value){
+                    Elem.id(id)!.setAttribute('contenteditable', value);
+                }
+            return Elem.id(id)!.isContentEditable;
+        }
+    }
 }
