@@ -36,7 +36,7 @@ import {
 import screenVisibleElements from "./lib/scope/screenVisibleElements";
 // import State from "./lib/modules/State";
 import focusOn from "./lib/modules/Focus";
-import UnitClassTest from "./test/UnitClass.test";
+// import UnitClassTest from "./test/UnitClass.test";
 import { componentsData } from "./lib/components-data";
 import ED from "./lib/element-delete";
 import InputSection from "./ui/input-section";
@@ -207,6 +207,9 @@ function App() {
     set_scripts([
       { id: '1', name: 'jquery', type: 'javascript', uri: 'http://jqueryonthego.com/download'}
     ])
+
+    // this code is not necessary for now
+    set_displayDevStates(false)
 
   }, []);
 
@@ -1278,7 +1281,7 @@ function App() {
         <SpeedInsights />
         {/* bottom mode changes */}
         <div id={LEFT_TOOLS}
-        onMouseDown={(e: any) => (e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
+        onMouseDown={(e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
         >
           <div
             style={{
@@ -1357,7 +1360,7 @@ function App() {
          * currently it holds the logo
          */}
         <div 
-          onMouseDown={(e: any) => (e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
+          onMouseDown={(e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
           id={UPPER_TOOLS}><div id={LOGO} />          
           <div style={{ fontSize: '1vw', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: '700' }}>Workspace &gt;<input
           placeholder="Untitled"
@@ -1396,7 +1399,7 @@ function App() {
 
         {/* add new element */}
         {addNewElement && <div id="add-new-element"
-                onMouseDown={(e: any) => (e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
+                onMouseDown={(e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
         >
                 <input id="search-components" type="text" placeholder="Search Component"
                 onChange={(e: any) => set_newElement(e.target.value)}
@@ -1444,7 +1447,7 @@ function App() {
         {/* right-menu */}
 
         {(displayRightMenu && Elem.id(seleElement)! && Elem.id(seleElement)!.getAttribute('data-type') == PAGES_DATATYPE) && <div id="right-menu"
-        onMouseDown={(e: any) => (e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
+        onMouseDown={(e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
         >
 
         {/* page configuration editing */}
