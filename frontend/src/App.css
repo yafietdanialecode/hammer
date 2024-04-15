@@ -75,6 +75,8 @@ body, html, #root, #main {
   position: fixed;
   left: 1vw;
   top: 1vw;
+  border: 0.2vw solid gray;
+  border-radius: 50%;
 }
 #main #left-tools {
   width: 4vw;
@@ -487,14 +489,18 @@ body, html, #root, #main {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  row-gap: 1vh;
+  row-gap: 4vh;
+  pointer-events: none;
 }
 #loading img {
   border-radius: 50%;
-  filter: drop-shadow(0px 0px 5px lightblue);
+  border: 0.2vw solid gray;
 }
 #loading * {
   font-size: 1.5vw;
+}
+#loading #progress * {
+  fill: black;
 }
 
 #context-menu {

@@ -69,6 +69,8 @@ body, html, #root, #main {
       position: fixed;
       left: 1vw;
       top: 1vw;
+      border: 0.2vw solid gray;
+      border-radius: 50%;
     }
 
   }
@@ -568,15 +570,22 @@ body, html, #root, #main {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  row-gap: 1vh;
+  row-gap: 4vh;
+  pointer-events: none;
 
   img {
     border-radius: 50%;
-    filter: drop-shadow(0px 0px 5px lightblue);
+    // filter: drop-shadow(0px 0px 0.3vw lightblue);
+    border: 0.2vw solid gray;
   }
 
   * {
     font-size: 1.5vw;
+  }
+  #progress {
+    * {
+      fill: black;
+    }
   }
 }
 

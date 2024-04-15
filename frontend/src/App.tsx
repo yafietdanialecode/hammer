@@ -25,6 +25,7 @@ import {
   MAIN,
   MULTIPLE_ELEMENTS_WRAPPER,
   PAGES_DATATYPE,
+  PROJECT_TITLE,
   REFERENCE,
   RIGHT_RESIZE,
   SCALE_REFERENCE,
@@ -1276,7 +1277,9 @@ function App() {
 
         <SpeedInsights />
         {/* bottom mode changes */}
-        <div id={LEFT_TOOLS}>
+        <div id={LEFT_TOOLS}
+        onMouseDown={(e: any) => (e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
+        >
           <div
             style={{
               background: "white",
@@ -1353,9 +1356,19 @@ function App() {
         {/*
          * currently it holds the logo
          */}
-        <div id={UPPER_TOOLS}>
-          <div id={LOGO} />
-          <button
+        <div 
+          onMouseDown={(e: any) => (e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
+          id={UPPER_TOOLS}><div id={LOGO} />          
+          <div style={{ fontSize: '1vw', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: '700' }}>Workspace &gt;<input
+          placeholder="Untitled"
+          id={PROJECT_TITLE}
+          contentEditable
+          style={{ fontSize: '1vw', padding: '0.2vw', outline: 'none', textOverflow: 'ellipsis'}}
+          onChange={(e: any) => document.querySelector('title')!.textContent = 'Hammer | ' + e.target.value}
+          onFocus={() => set_textEditingModeEnabled(true)}
+          /></div>
+          
+          {/* <button
           onClick={() => {
             const UTest = new UnitClassTest();
             UTest.test_px();
@@ -1378,11 +1391,13 @@ function App() {
             }
           >
             center
-          </button>
+          </button> */}
         </div>
 
         {/* add new element */}
-        {addNewElement && <div id="add-new-element">
+        {addNewElement && <div id="add-new-element"
+                onMouseDown={(e: any) => (e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
+        >
                 <input id="search-components" type="text" placeholder="Search Component"
                 onChange={(e: any) => set_newElement(e.target.value)}
                 value={newElement}
@@ -1428,7 +1443,9 @@ function App() {
 
         {/* right-menu */}
 
-        {(displayRightMenu && Elem.id(seleElement)! && Elem.id(seleElement)!.getAttribute('data-type') == PAGES_DATATYPE) && <div id="right-menu">
+        {(displayRightMenu && Elem.id(seleElement)! && Elem.id(seleElement)!.getAttribute('data-type') == PAGES_DATATYPE) && <div id="right-menu"
+        onMouseDown={(e: any) => (e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
+        >
 
         {/* page configuration editing */}
         <h1>{Elem.id(seleElement)!.getAttribute('data-name')} <sup className="page">page</sup></h1>
@@ -1500,12 +1517,13 @@ function App() {
           draggable={false}
           
           onMouseDown={(e: any) => {
-
             const id = e.target.id == '' ? e.target.parentElement.id : e.target.id;
             const data_type = Elem.getAtt(id, 'data-type') || Component.name(Elem.id(id)!);
             const contentEditable = Elem.id(id)!.isContentEditable;
             const parent = Elem.id(id)!.parentElement!.id;
             const isPage = Elem.getAtt(id, 'data-type') === PAGES_DATATYPE;
+
+            (Elem.id(id)!.tagName == 'INPUT' || Elem.id(id)!.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false);
 
             // save element state and config
             const element_state: any = {};
@@ -2703,13 +2721,16 @@ function App() {
         <img
         alt={'Logo'}
         style={{
-          width: '8vw'
+          width: '5vw'
         }}
         src="/logo.svg" />
-        <h1>Hammer</h1>
+        {/* <h1 style={{ marginBottom: '1vw'}}>Hammer</h1> */}
         <LinearProgress
+        id='progress'
         style={{
-          width: '10vw'
+          width: '10vw',
+          height: '0.2vw',
+          borderRadius: '1vw'
         }}
         />
         </div>}  
