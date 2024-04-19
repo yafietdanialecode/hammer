@@ -56,7 +56,7 @@ function App() {
   const [scrollLeft, set_scrollLeft] = useState(0);
   
   // this is state recorder for undo and redo
-  const [state_record, update_state_record]:any = useState([]);
+  const [state_record, update_state_record] = useState([]);
   const [state_record_cursor, set_state_record_cursor] = useState(0);
 
   // selection event verification 1
@@ -1516,7 +1516,7 @@ function App() {
         if(state_record[state_record.length - 1] != Elem.id(CANVAS)!.innerHTML && seleElement == e.target.id && mode !== 'move'){
           if(state_record_cursor < state_record.length - 1){ // if user undo to some stuff
             // remove all after cursor position
-            const new_state:any = [];
+            const new_state = [];
             for(let i = 0; i <= state_record_cursor; i++){
               new_state.push(state_record[i]);
             }
