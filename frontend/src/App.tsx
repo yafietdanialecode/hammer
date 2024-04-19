@@ -54,7 +54,10 @@ function App() {
   // indicates how much user scrolled
   const [scrollTop, set_scrollTop] = useState(0);
   const [scrollLeft, set_scrollLeft] = useState(0);
-
+  
+  // this is state recorder for undo and redo
+  const [state_record, update_state_record] = useState([]);
+  const [state_record_cursor, set_state_record_cursor] = useState(0);
 
   // selection event verification 1
   const [selectionStarted, set_selectionStarted] = useState(false);
@@ -195,8 +198,8 @@ function App() {
     console.log("page initiated");
     Elem.id(CANVAS)!.scrollTo({
       behavior: "instant",
-      top: 10000,
-      left: 10000,
+      top: 10000 - 100,
+      left: 10000 - 100,
     });
 
     set_tags([ 'amazing', 'good' ]);
@@ -210,7 +213,6 @@ function App() {
 
     // this code is not necessary for now
     set_displayDevStates(false)
-
   }, []);
 
   /**
@@ -224,18 +226,22 @@ function App() {
     set_scrollTop(Scroll.top(CANVAS)!);
     set_scrollLeft(Scroll.left(CANVAS)!);
 
-    console.clear();
-    console.log('ref_width: ' + (Style.width(SCALE_REFERENCE)));
-    console.clear();
-    console.log('window_width: ' + (window.innerWidth));
-    console.log('actual_width: ' + screen.width);
-    console.log('scale: ' + (screen.width / window.innerWidth))
+    // console.clear();
+    // console.log('ref_width: ' + (Style.width(SCALE_REFERENCE)));
+    // console.clear();
+    // console.log('window_width: ' + (window.innerWidth));
+    // console.log('actual_width: ' + screen.width);
+    // console.log('scale: ' + (screen.width / window.innerWidth))
     set_scale((screen.width / window.innerWidth));
   });
 
 
   window.addEventListener('load', () => {
     set_loading(false);
+    document.addEventListener('DOMContentLoaded', () => {
+    // the loaded ui recorder
+    update_state_record([Elem.id(CANVAS)!.innerHTML])
+    })
   })
 
   // when mouse move in the whole window
@@ -660,6 +666,24 @@ function App() {
           }, 100)          
           break;
       }
+
+      // for redo and undo 
+      if(e.key == 'z' && e.ctrlKey && !e.shiftKey){
+        console.log('undo: current record index: ', state_record_cursor)
+        if(state_record_cursor > 0){
+          // undoing
+          console.log('undo to ', state_record_cursor - 1);
+          Elem.id(CANVAS)!.innerHTML = state_record[state_record_cursor - 1];
+          set_state_record_cursor(state_record_cursor - 1);
+        }else {
+          console.log('max reached: ', state_record_cursor)
+        }
+      }else if(e.key == 'z' && e.ctrlKey && e.shiftKey){
+        if(state_record[state_record_cursor + 1]){
+          Elem.id(CANVAS)!.innerHTML = state_record[state_record_cursor + 1];
+          set_state_record_cursor(state_record_cursor + 1);
+        }
+      }
     }
 
     // if user is editing text
@@ -683,7 +707,7 @@ function App() {
         tabIndex={-1}
         onMouseMove={(e: MouseEvent) => {
 
-
+          // move mode
           if(mode === 'move' && startMovingFeature){
             // let s = scale / 5;
             // scale < 1 ? s = scale : null;
@@ -691,10 +715,7 @@ function App() {
             Elem.id(CANVAS)!.scrollBy({ left: 0 - (e.movementX * scale_fix), top: 0 - (e.movementY * scale_fix), behavior: 'instant' })
           }
 
-          /**
-           * resizing features
-           */
-
+          // resize component
           if (startResizing) {
             /**
              * this is the action taker for each type ( specifically 8 types of resizes )
@@ -959,10 +980,8 @@ function App() {
             }
           }
 
-          /**
-           * this is the code who set's selected component position
-           * both top and left
-           */
+          
+          // move component
           if (startMovingObject) {
             if (Elem.id(seleElement)!.parentElement!.id === CANVAS) {
               Elem.id(seleElement)!.style.top = Unit.px(
@@ -1012,25 +1031,7 @@ function App() {
           }
 
 
-          /**
-           * this is realtime alignment feature relative to other components
-           */
-
-          // if(startMovingObject){
-          //   // element center horizontal based on parent indicator
-          //   const PARENT = Elem.id(seleElement)!.parentElement!.id;
-          //   const PARENT_LEFT = Style.left(PARENT);
-          //   const ELEMENT_LEFT = Style.left(seleElement)! + scrollLeft;
-
-          // }
-
-          /**
-           * if selection of elements verified by two verifications
-           * know this code will do:
-           *    - identify which elements could be selected and register them
-           *    - and tells the wrapper (for moving elements ) the information like
-           *      what is it's position and size
-           */
+          // select component(s)
           if (selectionStarted && selectionStarted2) {
             const res = getCIArea(startSelectingFrom, includeSelectingUpto);
             set_selectedElements(res);
@@ -1084,17 +1085,8 @@ function App() {
             }
           }
 
-          /**
-           * if user is moving elements only not pages
-           * we will actually move components inside the wrapper
-           * wrapper in this code means the elements parent
-           * if user's mouse starts grabbing the element from the out side (CANVAS)
-           *        - when user enters pages we have to move the element inside the page
-           *
-           * if user's mouse starts grabbing the element from the inside (pages)
-           *        - when user move the component to the outside (CANVAS) move the element to outside
-           */
-
+          
+          // scroll screen
           if (startMovingObject || (selectionStarted2 && selectionStarted) || startResizing) {
             // for scroll up
             if (mousePosition.y < 50) {
@@ -1277,9 +1269,10 @@ function App() {
           visibility: loading ? 'hidden' : 'visible'
         }}
       >
-
+        {/* speen insights for vercel deployment */}
         <SpeedInsights />
-        {/* bottom mode changes */}
+
+        {/* mode options */}
         <div id={LEFT_TOOLS}
         onMouseDown={(e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
         >
@@ -1356,12 +1349,10 @@ function App() {
         </div>
 
         {/* upper tools */}
-        {/*
-         * currently it holds the logo
-         */}
         <div 
           onMouseDown={(e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
-          id={UPPER_TOOLS}><div id={LOGO} />          
+          id={UPPER_TOOLS}>
+          <div id={LOGO} />          
           <div style={{ fontSize: '1vw', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: '700' }}>Workspace &gt;<input
           placeholder="Untitled"
           id={PROJECT_TITLE}
@@ -1444,8 +1435,7 @@ function App() {
         </div>}
 
 
-        {/* right-menu */}
-
+        {/* page config */}
         {(displayRightMenu && Elem.id(seleElement)! && Elem.id(seleElement)!.getAttribute('data-type') == PAGES_DATATYPE) && <div id="right-menu"
         onMouseDown={(e: any) => (e.target.tagName == 'INPUT' || e.target.isContentEditable) ? set_textEditingModeEnabled(true) : set_textEditingModeEnabled(false)}
         >
@@ -1518,6 +1508,26 @@ function App() {
            * draggable is bad for images for dev environment not production
            */
           draggable={false}
+
+          onMouseUp={(e: any) => {
+            // state recorder
+        if(state_record[state_record.length - 1] != Elem.id(CANVAS)!.innerHTML && seleElement == e.target.id && mode !== 'move'){
+          if(state_record_cursor < state_record.length - 1){ // if user undo to some stuff
+            // remove all after cursor position
+            const new_state = [];
+            for(let i = 0; i <= state_record_cursor; i++){
+              new_state.push(state_record[i]);
+            }
+            // now let's update the state_record
+            update_state_record(new_state);
+          }
+
+          // now set the current state
+          update_state_record([...state_record, Elem.id(CANVAS)!.innerHTML]);
+          set_state_record_cursor(state_record_cursor + 1);
+          console.log('state record just got updated to ', state_record)
+        }
+          }}
           
           onMouseDown={(e: any) => {
             const id = e.target.id == '' ? e.target.parentElement.id : e.target.id;
@@ -1815,15 +1825,20 @@ function App() {
               height: "800px",
               top: "10100px",
               left: "10100px",
-              background: "white",
+              background: "black",
               position: "absolute",
               zIndex: 0,
             }}
           >
-
-
+<svg id="third-svg" style={{ position: 'absolute', top: '0px', left: '0px', zIndex: 6}} width="60" height="291" viewBox="0 0 60 291" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="60" height="60" rx="16" fill="#5B45CC" fill-opacity="0.4"/>
+<path d="M40 18C41.1046 18 42 18.8954 42 20V36C42 37.1046 41.1046 38 40 38H20C18.8954 38 18 37.1046 18 36L18 20C18 18.8954 18.8954 18 20 18L40 18Z" fill="#A694FF" fill-opacity="0.3"/>
+<path d="M15 42H45M18 20L18 36C18 37.1046 18.8954 38 20 38H40C41.1046 38 42 37.1046 42 36V20C42 18.8954 41.1046 18 40 18L20 18C18.8954 18 18 18.8954 18 20Z" stroke="#AD94FF" stroke-width="2"/>
+<path d="M30 66L30 291" stroke="#878787" stroke-width="2" stroke-dasharray="4 8"/>
+</svg>
+<img id="amazing" draggable={'false'} src="https://assets-global.website-files.com/62d58a323cbc396f06a780aa/65375f2ad14a4d731410f610_Hero%20New-p-1600.webp" style={{ width: '100%', position: 'absolute', top: '0px', left: '0PX'}} />
 <svg id="second-svg" style={{ position: 'absolute', top: '0px', left: '0px', zIndex: 6}} width="100px" height="100px" viewBox="0 0 24 24" fill="gold" xmlns="http://www.w3.org/2000/svg">
-<path d="M20 16V8.5C20 7.67157 19.3587 7 18.5195 7C18 7 17 7.3 17 8.5V5.5C17 4.67157 16.3588 4 15.5195 4C15.013 4 14 4.3 14 5.5V3.5C14 2.67157 13.3588 2 12.5195 2C11.6803 2 11 2.67157 11 3.5V5.5C11 4.3 10.0065 4 9.5 4C8.66076 4 8 4.69115 8 5.51957L8.00004 14" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="first-path" d="M20 16V8.5C20 7.67157 19.3587 7 18.5195 7C18 7 17 7.3 17 8.5V5.5C17 4.67157 16.3588 4 15.5195 4C15.013 4 14 4.3 14 5.5V3.5C14 2.67157 13.3588 2 12.5195 2C11.6803 2 11 2.67157 11 3.5V5.5C11 4.3 10.0065 4 9.5 4C8.66076 4 8 4.69115 8 5.51957L8.00004 14" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M11 5.5V11" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M14 5.5V11" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M17 5.5V11" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1950,8 +1965,8 @@ function App() {
             />
           </div>
 
-
- {/* align indicators */}
+{/* 
+ align indicators
 
  <div 
               style={{
@@ -1977,7 +1992,7 @@ function App() {
                 borderRadius: '50%'
               }}
               id='indicator'
-          />
+          /> */}
 
 
           {/* dev components*/}
@@ -2040,32 +2055,74 @@ function App() {
         }}
         ></div>
 
-        {/* scale reference box */}
-        <div id="scale-reference" style={{ width: '1vh', height: '1vh'}} />
-
-
-
+        {/* design tools */}
         {Elem.id(seleElement) && <div id="design-tools">
           <details open>
             <summary>Position</summary>
             {/* those are the alignment options */}
             <div id="align-handv"> {/* horizontal align then vertical alignment */}
-              <button className="tool-btn"><AlignHorizontalLeft /></button>
-              <button className="tool-btn"><AlignHorizontalCenter /></button>
-              <button className="tool-btn"><AlignHorizontalRight/></button>
-              <button className="tool-btn"><AlignVerticalTop/></button>
-              <button className="tool-btn"><AlignVerticalCenter/></button>
-              <button className="tool-btn"><AlignVerticalBottom/></button>
+              <button className="tool-btn"
+              onClick={() => {
+                const parent_id = Elem.id(seleElement)!.parentElement!.id;
+                if(Elem.isPage(parent_id)){
+                  Style.left(seleElement, '0px');
+                }
+              }}
+              ><AlignHorizontalLeft /></button>
+              <button className="tool-btn"
+              onClick={() => {
+                const parent_id = Elem.id(seleElement)!.parentElement!.id;
+                if(Elem.isPage(parent_id)){
+                  Style.left(seleElement, Unit.px((Style.width(parent_id) / 2) - (Style.width(seleElement) / 2)));
+                }
+              }}
+              ><AlignHorizontalCenter /></button>
+              <button className="tool-btn"
+              onClick={() => {
+                const parent_id = Elem.id(seleElement)!.parentElement!.id;
+                if(Elem.isPage(parent_id)){
+                  Style.left(seleElement, Unit.px(Style.width(parent_id) - Style.width(seleElement)));
+                }
+              }}
+              ><AlignHorizontalRight/></button>
+              {/* align the element vertically top */}
+              <button className="tool-btn"
+              onClick={() => {
+                const parent_id = Elem.id(seleElement)!.parentElement!.id;
+                if(Elem.isPage(parent_id)){
+                  Style.top(seleElement, '0px');
+                }
+              }}
+              ><AlignVerticalTop/></button>
+
+              {/* align the element vertically center */}
+              <button className="tool-btn"
+              onClick={() => {
+                const parent_id = Elem.id(seleElement)!.parentElement!.id;
+                if(Elem.isPage(parent_id)){
+                  Style.top(seleElement, Unit.px((Style.height(parent_id) / 2) - (Style.height(seleElement) / 2)));
+                }
+              }}
+              ><AlignVerticalCenter/></button>
+
+              {/* align the element vertically bottom */}
+              <button className="tool-btn"
+              onClick={() => {
+                const parent_id = Elem.id(seleElement)!.parentElement!.id;
+                if(Elem.isPage(parent_id)){
+                  Style.top(seleElement, Unit.px(Style.height(parent_id) - Style.height(seleElement)));
+                }
+              }}><AlignVerticalBottom/></button>
             </div>
           </details>
           <hr />
           <div className="flex-row">
-          <div className="flex-row"><span>X</span> <input type="number"/></div>
-          <div className="flex-row"><span>Y</span> <input type="number"/></div>
+          <div className="flex-row"><span>X</span> <input type="number" value={Style.left(seleElement)}/></div>
+          <div className="flex-row"><span>Y</span> <input type="number" value={Style.top(seleElement)}/></div>
           </div>
           <div className="flex-row">
-          <div className="flex-row"><span>W</span> <input type="number"/></div>
-          <div className="flex-row"><span>H</span> <input type="number"/></div>
+          <div className="flex-row"><span>W</span> <input type="number" value={Style.width(seleElement)}/></div>
+          <div className="flex-row"><span>H</span> <input type="number" value={Style.height(seleElement)}/></div>
           </div>
           <hr />
           <details open>
@@ -2290,26 +2347,28 @@ function App() {
 
         </div>
 
-        {9 < 5 && <div
+        {/* those are list of visible elemnets */}
+        {/* {visibleComponents.length > 0 && <div
           id="visible-elements"
           style={{
             position: "fixed",
             left: "0px",
             bottom: "0px",
             background: "white",
-            width: "100px",
+            width: "10vw",
             height: "fit-content",
             minHeight: "200px",
           }}
         >
           {visibleComponents.map((each: any) => {
             return (
-              <button className="width-full bg-primary text-white">
+              <button 
+              style={{ fontSize: '1vw'}} className="width-full bg-primary text-white">
                 {each}
               </button>
             );
           })}
-        </div>}
+        </div>} */}
 
         {displayDevStates && (
           <table id="states" style={{ right: "350px", height: "fit-content" }}>

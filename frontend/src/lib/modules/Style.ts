@@ -15,7 +15,12 @@ export default class Style {
         return 0;
     }
 
-    static right(id: string): number{
+    static right(id: string, value?: any): number{
+        // if value provided
+        if(value){
+            Elem.id(id)!.style.right = value;
+        }
+
         if(Elem.id(id)){
             let element = Elem.id(id) as HTMLElement;
             return element.getBoundingClientRect().right

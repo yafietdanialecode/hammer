@@ -16,6 +16,7 @@
      -moz-user-select: none !important;
           user-select: none !important;
   scrollbar-width: 0px;
+  transition: all 0ms;
 }
 
 *::-webkit-scrollbar {
