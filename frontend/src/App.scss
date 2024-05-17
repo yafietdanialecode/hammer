@@ -28,18 +28,23 @@
   removing those elements display and
   user only childs of main only
 */
-body, html, #root, #main {
+body, html, #root {
   display: contents;
+  background-color: transparent;
+  transition: all 0ms;
+  width: 100vw;
+  height: 100vh;
 }
  
 /*
   main holds canvas and upper tools and all other displayed elements
 */
 #main {
-  width: 100vw;
-  height: 100vh;
-  background-color: rgb(255, 255, 255);
+  width: 100vw !important;
+  height: 100vh !important;
   display: contents;
+  z-index: -60000;
+  transition: all 0ms;
 
   /*
     upper tools holds some file, mode editing and project title editing
@@ -150,11 +155,13 @@ body, html, #root, #main {
     overflow: auto !important;
     touch-action: none;
     transform: translate3d(0, 0, 0);
+    transition: all 50ms;
 
     * {
       background-color: transparent;
       outline: none;
       cursor: unset;
+      transition: all 50ms;
     }
 
     p {
@@ -164,7 +171,7 @@ body, html, #root, #main {
     }
 
     *:active {
-      outline: none;
+      outline: none !important;
     }
 
     svg {
@@ -408,12 +415,14 @@ body, html, #root, #main {
 
   #decorators {
     display: contents;
+    transition: none !important;
 
     * {
       position: absolute;
       top: 0px;
       left: 0px;
       z-index: 40000;
+      transition: none !important;
     }
 
   }
@@ -432,6 +441,7 @@ body, html, #root, #main {
   * {
     font-size: 0.9vw;
   }
+  
 
   .gap-btwn {
     column-gap: 0.5vw;
@@ -476,14 +486,33 @@ body, html, #root, #main {
   .flex-row {
     display: flex;
     justify-content: space-between;
-    padding: 0 0.25vw;
+    padding: 0.25vw;
     align-items: center;
     flex-direction: row;
+    column-gap: 0.1vw;
+    
+    .flex-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 49%;
+      column-gap: 5%;
+      
+      input {
+        width: 60%;
+        text-align: right;
+      }
+      input:hover, input:focus {
+        outline: 0.1vw solid lightgray;
+
+      }
+    }
+
   }
 
-  .flex-row:hover {
-    outline: 1px solid lightgray;
-  }
+  // .flex-row:hover {
+  //   outline: 1px solid lightgray;
+  // }
   
   #align-handv {
     width: 100%;
@@ -492,6 +521,12 @@ body, html, #root, #main {
     column-gap: 0.1vw;
     align-items: center;
     padding: 0.1vw;
+
+    input {
+      width: 40%;
+      margin: 5%;
+    }
+    
   }
 
   hr {
@@ -553,7 +588,11 @@ body, html, #root, #main {
         width: 100%;
         border: none;
       }
+      input[type="range"]{
+        width: 100%;
+      }
     }
+
   }
 
 }
@@ -584,13 +623,13 @@ body, html, #root, #main {
     font-size: 1.5vw;
   }
   #progress {
+    filter: grayscale(100%);
     * {
       fill: black;
-    }
   }
 }
 
-
+}
 
 
 

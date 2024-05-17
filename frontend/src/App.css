@@ -28,18 +28,23 @@
   removing those elements display and
   user only childs of main only
 */
-body, html, #root, #main {
+body, html, #root {
   display: contents;
+  background-color: transparent;
+  transition: all 0ms;
+  width: 100vw;
+  height: 100vh;
 }
 
 /*
   main holds canvas and upper tools and all other displayed elements
 */
 #main {
-  width: 100vw;
-  height: 100vh;
-  background-color: rgb(255, 255, 255);
+  width: 100vw !important;
+  height: 100vh !important;
   display: contents;
+  z-index: -60000;
+  transition: all 0ms;
   /*
     upper tools holds some file, mode editing and project title editing
   */
@@ -136,6 +141,7 @@ body, html, #root, #main {
   overflow: auto !important;
   touch-action: none;
   transform: translate3d(0, 0, 0);
+  transition: all 50ms;
   /*
     a div that wraps the selected elements and move them
     under it when you get out from it it will put them where user leaves it
@@ -145,12 +151,13 @@ body, html, #root, #main {
   background-color: transparent;
   outline: none;
   cursor: unset;
+  transition: all 50ms;
 }
 #main #canvas p * {
   color: unset;
 }
 #main #canvas *:active {
-  outline: none;
+  outline: none !important;
 }
 #main #canvas svg * {
   pointer-events: none;
@@ -355,12 +362,14 @@ body, html, #root, #main {
 }
 #main #states #decorators {
   display: contents;
+  transition: none !important;
 }
 #main #states #decorators * {
   position: absolute;
   top: 0px;
   left: 0px;
   z-index: 40000;
+  transition: none !important;
 }
 #main #design-tools {
   width: 20vw;
@@ -413,12 +422,26 @@ body, html, #root, #main {
 #main #design-tools .flex-row {
   display: flex;
   justify-content: space-between;
-  padding: 0 0.25vw;
+  padding: 0.25vw;
   align-items: center;
   flex-direction: row;
+  -moz-column-gap: 0.1vw;
+       column-gap: 0.1vw;
 }
-#main #design-tools .flex-row:hover {
-  outline: 1px solid lightgray;
+#main #design-tools .flex-row .flex-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 49%;
+  -moz-column-gap: 5%;
+       column-gap: 5%;
+}
+#main #design-tools .flex-row .flex-row input {
+  width: 60%;
+  text-align: right;
+}
+#main #design-tools .flex-row .flex-row input:hover, #main #design-tools .flex-row .flex-row input:focus {
+  outline: 0.1vw solid lightgray;
 }
 #main #design-tools #align-handv {
   width: 100%;
@@ -428,6 +451,10 @@ body, html, #root, #main {
        column-gap: 0.1vw;
   align-items: center;
   padding: 0.1vw;
+}
+#main #design-tools #align-handv input {
+  width: 40%;
+  margin: 5%;
 }
 #main #design-tools hr {
   height: 0.1vw;
@@ -478,6 +505,9 @@ body, html, #root, #main {
   width: 100%;
   border: none;
 }
+#main #design-tools details label input[type=range] {
+  width: 100%;
+}
 
 #loading {
   width: 100vw;
@@ -499,6 +529,9 @@ body, html, #root, #main {
 }
 #loading * {
   font-size: 1.5vw;
+}
+#loading #progress {
+  filter: grayscale(100%);
 }
 #loading #progress * {
   fill: black;

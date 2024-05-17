@@ -22,7 +22,7 @@ const InputSection = (props: any) => {
                               
                 }}
                 type="color"/> <input 
-                onChange={() => 
+                onChange={(e: any) => 
                 {
                     const childs = Elem.id(props.element)!.querySelectorAll('*');  
                     childs.forEach((child: any) => child.setAttribute('stroke', props.value))          

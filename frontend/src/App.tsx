@@ -40,7 +40,7 @@ import focusOn from "./lib/modules/Focus";
 import { componentsData } from "./lib/components-data";
 import ED from "./lib/element-delete";
 import InputSection from "./ui/input-section";
-import { Add, AlignHorizontalCenter, AlignHorizontalLeft, AlignHorizontalRight, AlignVerticalBottom, AlignVerticalCenter, AlignVerticalTop, Apps, Remove, Visibility } from "@mui/icons-material";
+import { Add, AlignHorizontalCenter, AlignHorizontalLeft, AlignHorizontalRight, AlignVerticalBottom, AlignVerticalCenter, AlignVerticalTop, Apps, FormatAlignCenter, FormatAlignJustify, FormatAlignLeft, FormatAlignRight, Remove, Visibility } from "@mui/icons-material";
 import { LinearProgress } from "@mui/material";
 
 
@@ -48,6 +48,7 @@ import { LinearProgress } from "@mui/material";
 
 function App() {
   
+  const [refi, refresh] = useState(0);
   const [mode, set_mode] = useState('move');
   const [scale, set_scale] = useState(1); // this is the nx the user zoom the screen [ warning this will be good if you don't resize the actual screen ]
    
@@ -187,7 +188,6 @@ function App() {
 
   // key state trackers previous
   const [previous_key, set_previous_key] = useState('');
-
   
   /**
    * this is the hook that will start when
@@ -249,7 +249,7 @@ function App() {
   // when mouse move in the whole window
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   window.addEventListener("mousemove", (e: any) => {
-
+    refresh(Date.now());
 
     // graphics functionality in the ui
     // if(Logic.)
@@ -690,8 +690,9 @@ function App() {
 
     // if user is editing text
     if(textEditingModeEnabled){
-      if(e.key == 'Enter'){
-        // e.preventDefault();
+      const logic = new Logic("root", { CANVAS_ID: CANVAS });
+      if(e.key == 'Enter' && logic.notInExceptions(e.target.tagName, ['P', "SPAN", "DIV"])){
+        e.preventDefault();
       }
     }
 
@@ -706,14 +707,15 @@ function App() {
     <>
       <div
         id={MAIN}
+
         tabIndex={-1}
         onMouseMove={(e: MouseEvent) => {
-
+          refresh(Date.now());
           // move mode
           if(mode === 'move' && startMovingFeature){
             // let s = scale / 5;
             // scale < 1 ? s = scale : null;
-            const scale_fix = (5 - scale) / 5;
+            const scale_fix = (5 - scale);
             Elem.id(CANVAS)!.scrollBy({ left: 0 - (e.movementX * scale_fix), top: 0 - (e.movementY * scale_fix), behavior: 'instant' })
           }
 
@@ -1268,10 +1270,13 @@ function App() {
         }}
       }
         style={{
-          visibility: loading ? 'hidden' : 'visible'
+          visibility: loading ? 'hidden' : 'visible',
+          background: !loading ? Style.background(CANVAS, Style.background(CANVAS)) + ' !important' : 'unset',
+          width: '100vw',
+          height: '100vh'
         }}
       >
-        {/* speen insights for vercel deployment */}
+        {/* speed insights for vercel deployment */}
         <SpeedInsights />
 
         {/* mode options */}
@@ -1511,6 +1516,7 @@ function App() {
            */
           draggable={false}
 
+          // canvas onmouseup
           onMouseUp={(e: any) => {
             // state recorder
         if(state_record[state_record.length - 1] != Elem.id(CANVAS)!.innerHTML && seleElement == e.target.id && mode !== 'move'){
@@ -1531,6 +1537,7 @@ function App() {
         }
           }}
           
+          // canvas onmousedown
           onMouseDown={(e: any) => {
             const id = e.target.id == '' ? e.target.parentElement.id : e.target.id;
             const data_type = Elem.getAtt(id, 'data-type') || Component.name(Elem.id(id)!);
@@ -1621,6 +1628,13 @@ function App() {
                 setTimeout(() => focusOn(new_id), 100)
                 set_textEditingModeEnabled(true)
               }else if(mode == 'text') {
+              
+              // if user needs to edit the content of button
+              if(Component.name(Elem.id(id)!) == 'Button'){
+              // now help the user to edit the button
+
+              }
+
               Elem.id(id)!.setAttribute('contenteditable', 'false');  
               set_textEditingModeEnabled(false);
               set_mode('select')
@@ -1775,7 +1789,10 @@ function App() {
             
             console.log("------------- mouse down event completed --------------")
           }}
+
+          // canvas onwheel
           onWheel={(e: WheelEvent) => {
+            refresh(Date.now());
             // updating user's scroll amount
             set_scrollTop(Scroll.top(CANVAS)!);
             set_scrollLeft(Scroll.left(CANVAS)!);
@@ -1801,23 +1818,6 @@ function App() {
             }}
           ></div>
 
-          <button
-          tabIndex={-1}
-            id="btn"
-            style={{
-              position: "absolute",
-              top: "10100px",
-              left: "10100px",
-              padding: "10px 20px",
-              zIndex: 3,
-              width: "150px",
-              background: "black",
-              color: "white",
-            }}
-          >
-            Click Here
-          </button>
-
           <div
             id="page-0"
             data-name="Home"
@@ -1832,6 +1832,26 @@ function App() {
               zIndex: 0,
             }}
           >
+            <a data-href="/task"
+            title="/task" data-target="_blank"
+            style={{
+              display: 'contents'
+            }}
+            draggable={'false'}
+            >
+            <button
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              background: 'black',
+              color: 'white'
+            }}
+            id="link"
+            >
+            link
+          </button>
+            </a>
 <svg id="third-svg" style={{ position: 'absolute', top: '0px', left: '0px', zIndex: 6}} width="60" height="291" viewBox="0 0 60 291" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="60" height="60" rx="16" fill="#5B45CC" fill-opacity="0.4"/>
 <path d="M40 18C41.1046 18 42 18.8954 42 20V36C42 37.1046 41.1046 38 40 38H20C18.8954 38 18 37.1046 18 36L18 20C18 18.8954 18.8954 18 20 18L40 18Z" fill="#A694FF" fill-opacity="0.3"/>
@@ -2060,7 +2080,7 @@ function App() {
         {/* design tools */}
         {Elem.id(seleElement) && <div id="design-tools">
           <details open>
-            <summary>Position</summary>
+            <summary>Position & Alignment</summary>
             {/* those are the alignment options */}
             <div id="align-handv"> {/* horizontal align then vertical alignment */}
               <button className="tool-btn"
@@ -2068,6 +2088,7 @@ function App() {
                 const parent_id = Elem.id(seleElement)!.parentElement!.id;
                 if(Elem.isPage(parent_id)){
                   Style.left(seleElement, '0px');
+                  refresh(Date.now())
                 }
               }}
               ><AlignHorizontalLeft /></button>
@@ -2076,6 +2097,7 @@ function App() {
                 const parent_id = Elem.id(seleElement)!.parentElement!.id;
                 if(Elem.isPage(parent_id)){
                   Style.left(seleElement, Unit.px((Style.width(parent_id) / 2) - (Style.width(seleElement) / 2)));
+                  refresh(Date.now())
                 }
               }}
               ><AlignHorizontalCenter /></button>
@@ -2084,6 +2106,7 @@ function App() {
                 const parent_id = Elem.id(seleElement)!.parentElement!.id;
                 if(Elem.isPage(parent_id)){
                   Style.left(seleElement, Unit.px(Style.width(parent_id) - Style.width(seleElement)));
+                  refresh(Date.now())
                 }
               }}
               ><AlignHorizontalRight/></button>
@@ -2093,6 +2116,7 @@ function App() {
                 const parent_id = Elem.id(seleElement)!.parentElement!.id;
                 if(Elem.isPage(parent_id)){
                   Style.top(seleElement, '0px');
+                  refresh(Date.now())
                 }
               }}
               ><AlignVerticalTop/></button>
@@ -2103,6 +2127,7 @@ function App() {
                 const parent_id = Elem.id(seleElement)!.parentElement!.id;
                 if(Elem.isPage(parent_id)){
                   Style.top(seleElement, Unit.px((Style.height(parent_id) / 2) - (Style.height(seleElement) / 2)));
+                  refresh(Date.now())
                 }
               }}
               ><AlignVerticalCenter/></button>
@@ -2113,20 +2138,21 @@ function App() {
                 const parent_id = Elem.id(seleElement)!.parentElement!.id;
                 if(Elem.isPage(parent_id)){
                   Style.top(seleElement, Unit.px(Style.height(parent_id) - Style.height(seleElement)));
+                  refresh(Date.now())
                 }
               }}><AlignVerticalBottom/></button>
             </div>
+            
           </details>
-          <hr />
+
           <div className="flex-row">
-          <div className="flex-row"><span>X</span> <input type="number" value={Style.left(seleElement)}/></div>
-          <div className="flex-row"><span>Y</span> <input type="number" value={Style.top(seleElement)}/></div>
+          <div className="flex-row"><span>X</span> <input type="number" value={parseInt(Elem.id(seleElement)!.style.left)}/></div>
+          <div className="flex-row"><span>Y</span> <input type="number" value={parseInt(Elem.id(seleElement)!.style.top)}/></div>
           </div>
           <div className="flex-row">
-          <div className="flex-row"><span>W</span> <input type="number" value={Style.width(seleElement)}/></div>
-          <div className="flex-row"><span>H</span> <input type="number" value={Style.height(seleElement)}/></div>
+          <div className="flex-row"><span>W</span> <input type="text" value={parseInt(Elem.id(seleElement)!.style.width) || 'auto'}/></div>
+          <div className="flex-row"><span>H</span> <input type="text" value={parseInt(Elem.id(seleElement)!.style.height) || 'auto'}/></div>
           </div>
-          <hr />
           <details open>
             <summary
             style={{
@@ -2140,13 +2166,17 @@ function App() {
             </div>
             </summary>
             <div className="list-layer flex-row">
-              <div style={{ background: Style.backgroundColor(seleElement)}} className="fill-display"></div>
-              <input className="value" value={element_style.background} onChange={(e: any) => {
+              <input type="color" onChange={(e: any) => Style.backgroundColor(seleElement, e.target.value)} value={Style.backgroundColor(seleElement)} className="fill-display"/>
+              <input className="value" value={Style.backgroundColor(seleElement)} onChange={(e: any) => {
                 Style.backgroundColor(seleElement, e.target.value)
                 }} />
               <div className="opacity"></div>
               <button className='tool-btn'><Visibility/></button>
-              <button className='tool-btn'><Remove/></button>
+              <button className='tool-btn'
+              onClick={() => {
+                Style.backgroundColor(seleElement, 'transparent')
+                }}
+              ><Remove/></button>
             </div>
 
             <div className="list-layer flex-row">
@@ -2161,20 +2191,66 @@ function App() {
           <hr />
           <details open={true}>
             <summary>Typography</summary>
+            {/* those are the text alignment options */}
+            <div id="align-handv"> {/* text left alignment */}
+              <button className="tool-btn"
+              onClick={() => {
+                Style.textAlign(seleElement, 'left');
+              }}
+              ><FormatAlignLeft /></button>
+              <button className="tool-btn"
+              onClick={() => {
+                Style.textAlign(seleElement, 'center');
+              }}
+              ><FormatAlignCenter /></button>
+              <button className="tool-btn"
+              onClick={() => {
+                Style.textAlign(seleElement, 'right')
+              }}
+              ><FormatAlignRight /></button>
+              
+              <button className="tool-btn"
+              onClick={() => {
+                Style.textAlign(seleElement, 'justify')
+              }}
+              ><FormatAlignJustify /></button>
+            </div>
             <InputSection
             applyTo={'color'}
             element={seleElement}
-            value={Elem.id(seleElement)!.style.color}
+            value={getComputedStyle(Elem.id(seleElement)!).color}
             label={'color'} type={'color-and-text'} />
             <InputSection
             applyTo={'fill'}
             element={seleElement}
             value={Elem.id(seleElement)!.style.fill}
             label={'Fill'} type={'color-and-text'} />
+            <InputSection
+            applyTo={'stroke'}
+            element={seleElement}
+            value={Elem.id(seleElement)!.style.fill}
+            label={'Stroke'} type={'color-and-text'} />
             <InputSection label={'font'} type={'selection'} options={[ {name: 'Calibri', value: 'calibri', key: 0 }]} />
             <InputSection applyTo={'font-weight'} element={seleElement} label={'weight'} type={'text'} options={[ {name: 'Light', value: 100, key: 0 }]} />
-            <InputSection applyTo={'font-size'} element={seleElement} label={'size'} type={'text'} options={[ {name: 'Arial', value: 'arial', key: 0 }]} />
+            <label><span>size</span><input type="number" min={0} value={parseInt(Style.fontSize(seleElement))} onChange={(e: any) => {
+              Style.fontSize(seleElement, Unit.px(e.target.value))
+              refresh(Date.now());
+              }} /></label>
             <InputSection label={'transform'} type={'selection'} options={[ {name: 'Arial', value: 'arial', key: 0 }]} />
+          </details>
+          <details open={true}>
+          <summary>Border</summary>
+          <label>
+            <span>Radius</span>
+          <input
+          type="range"
+          min={0}
+          max={parseInt(Style.borderRadius(seleElement)) + 10}
+          value={parseInt(Style.borderRadius(seleElement))}
+          onChange={(e: any) => {
+            Style.borderRadius(seleElement, Unit.px(e.target.value))
+          }}
+          />          </label>
           </details>
         </div>}
 
@@ -2417,7 +2493,6 @@ function App() {
         {
           (document.getElementById(seleElement) &&
           seleElement !== CANVAS &&
-          !startMovingObject &&
           !startResizing
           ) && (
             <div id={DECORATORS}>
@@ -2442,8 +2517,10 @@ function App() {
                 </div>
               )}
 
+              
+
               {/* rotate feature */}
-              {!startMovingObject && Elem.id(seleElement) && (
+              {Elem.id(seleElement) && (
                 <div
                   style={{
                     position: "absolute",
@@ -2457,20 +2534,23 @@ function App() {
                     zIndex: 30,
                     cursor: "crosshair",
                     borderRadius: "50px",
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}
-                  onMouseDown={() => {
-                    set_whatToResize("topleft-rotate");
-                    set_startResizing(true);
-                    set_elementBottomPosition({
-                      x: 0,
-                      y: Style.bottom(seleElement),
-                    });
-                  }}
-                />
+                  >
+                    <input
+                    onChange={(e: any) => Elem.id(seleElement)!.style.transform = ` rotate(${e.target.value}deg)`}
+                    style={{
+                      width: '50vw !important',
+                      opacity: '0'
+                    }}
+                    type="range" value={0} min={-90} max={90} />
+                    </div>
               )}
 
               {/* this is the top resize feature of element */}
-              {!startMovingObject && Elem.id(seleElement) && (
+              {Elem.id(seleElement) && (
                 <div
                   id={TOP_RESIZE}
                   style={{
@@ -2495,8 +2575,8 @@ function App() {
                 ></div>
               )}
 
-              {/* this is the right resize feature of element */}
-              {!startMovingObject && Elem.id(seleElement) && (
+              {/* resize button on the right side of the component */}
+              {Elem.id(seleElement) && (
                 <div
                   id={RIGHT_RESIZE}
                   style={{
@@ -2521,8 +2601,8 @@ function App() {
                 ></div>
               )}
 
-              {/* this is the bottom resize feature of element */}
-              {!startMovingObject && Elem.id(seleElement) && (
+              {/* resize button on the bottom side of the component */}
+              {Elem.id(seleElement) && (
                 <div
                   id={BOTTOM_RESIZE}
                   style={{
@@ -2544,8 +2624,8 @@ function App() {
                 ></div>
               )}
 
-              {/* this is the left resize feature of element */}
-              {!startMovingObject && Elem.id(seleElement) && (
+              {/* resize button on the left side of the component */}
+              {Elem.id(seleElement) && (
                 <div
                   id={LEFT_RESIZE}
                   style={{
@@ -2570,8 +2650,8 @@ function App() {
                 ></div>
               )}
 
-              {/* top-left corner resize button */}
-              {!startMovingObject && Elem.id(seleElement) && (
+              {/* resize button on the top-left corner of the component */}
+              {Elem.id(seleElement) && (
                 <div
                   id="topleft-resize"
                   style={{
@@ -2598,7 +2678,7 @@ function App() {
               )}
 
               {/* top-right corner resize button */}
-              {!startMovingObject && Elem.id(seleElement) && (
+              {Elem.id(seleElement) && (
                 <div
                   id="topright-resize"
                   style={{
@@ -2622,7 +2702,7 @@ function App() {
               )}
 
               {/* bottom-right corner resize button */}
-              {!startMovingObject && Elem.id(seleElement) && (
+              {Elem.id(seleElement) && (
                 <div
                   id="bottomright-resize"
                   style={{
@@ -2646,7 +2726,7 @@ function App() {
               )}
 
               {/* bottom-left corner resize button */}
-              {!startMovingObject && Elem.id(seleElement) && (
+              {Elem.id(seleElement) && (
                 <div
                   id="bottomleft-resize"
                   style={{
@@ -2773,6 +2853,7 @@ function App() {
             <p>
               Prototype
             </p>
+            <span style={{visibility: 'hidden'}}>{refi}</span>
           </div>
         )}
 

@@ -101,6 +101,20 @@ export default class Style {
         }
     }
 
+    static background(id: string, value?: any){
+
+        // if this is for setting
+        if(value){
+            Elem.id(id)!.style.background = value;
+        }
+
+        if(Elem.id(id)){
+            return Elem.id(id)!.style.background;
+        }else {
+            return '#fff'
+        }
+    }
+    
     static color (id: string, value?: any) {
         // if this is setting
         if(value) {
@@ -109,4 +123,30 @@ export default class Style {
         return getComputedStyle(Elem.id(id)!)
     }
 
+    static borderRadius(id: string, value?: any){
+        // if this is setting
+        if(value){
+            Elem.id(id)!.style.borderRadius = value;
+        }
+
+        return getComputedStyle(Elem.id(id)!).borderRadius
+    }
+
+    static fontSize(id: string, value?: any){
+        // if this is setting
+        if(value){
+            Elem.id(id)!.style.fontSize = value;
+        }
+
+        return Elem.id(id)!.style.fontSize
+    }
+
+    static textAlign(id: string, value?: 'center' | 'left' | 'right' | 'justify'){
+        // if value passed
+        if(value){
+            Elem.id(id)!.style.textAlign = value;
+        }
+
+        return Elem.id(id)!.style.textAlign;
+    }
 }

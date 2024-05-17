@@ -26,8 +26,8 @@ class Logic {
         selectElementsMethod(res);
     }
 
-    notInExceptions(id: string, exceptions: string[] | []) {
-        const checking: boolean = exceptions.every((each: string) => each !== id);
+    notInExceptions(target: string, exceptions: string[] | []) {
+        const checking: boolean = exceptions.every((each: string) => each !== target);
         return checking;
     }
 
