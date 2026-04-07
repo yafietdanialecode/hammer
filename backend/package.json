@@ -21,7 +21,7 @@
     "express": "^4.19.1",
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
-    "pm2": "^5.3.1"
+    "pm2": "^6.0.14"
   },
   "devDependencies": {
     "@types/concurrently": "^7.0.0",
